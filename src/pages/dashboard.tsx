@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
+import { Badge } from "@/components/ui/badge";
 
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -21,6 +22,7 @@ export default function Dashboard() {
   const [optimizedResume, setOptimizedResume] = useState("");
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [userEmail, setUserEmail] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
   
   useEffect(() => {
     // Get email from URL query or localStorage
@@ -29,11 +31,21 @@ export default function Dashboard() {
       setUserEmail(email);
       // Store email in localStorage for persistence
       localStorage.setItem("userEmail", email);
+      
+      // Check if user is admin (in a real app, this would be verified server-side)
+      if (email === "admin@example.com") {
+        setIsAdmin(true);
+      }
     } else {
       // Try to get from localStorage
       const storedEmail = localStorage.getItem("userEmail");
       if (storedEmail) {
         setUserEmail(storedEmail);
+        
+        // Check if user is admin (in a real app, this would be verified server-side)
+        if (storedEmail === "admin@example.com") {
+          setIsAdmin(true);
+        }
       } else {
         // If no email is found, redirect to home page
         router.push("/");
@@ -82,6 +94,11 @@ export default function Dashboard() {
               <TabsTrigger value="analyze">Analyze & Optimize</TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
               <TabsTrigger value="account">Account</TabsTrigger>
+              {isAdmin && (
+                <TabsTrigger value="admin" onClick={() => router.push("/user-management")}>
+                  Admin Panel
+                </TabsTrigger>
+              )}
             </TabsList>
             
             <TabsContent value="analyze">

@@ -9,32 +9,58 @@ const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
 type ResponseData = {
   hasSubscription: boolean;
   message?: string;
+  requestId?: string;
+};
+
+// Helper function to generate a unique request ID
+const generateRequestId = (): string => {
+  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 10)}`;
 };
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
+  // Generate a unique request ID for tracking
+  const requestId = generateRequestId();
+  
   // Only allow POST requests
   if (req.method !== 'POST') {
-    return res.status(405).json({ hasSubscription: false, message: 'Method not allowed' });
+    console.log(`[${requestId}] Method not allowed: ${req.method}`);
+    return res.status(405).json({ 
+      hasSubscription: false, 
+      message: 'Method not allowed',
+      requestId 
+    });
   }
 
   try {
+    // Log the full request for troubleshooting
+    console.log(`[${requestId}] Request body:`, JSON.stringify(req.body, null, 2));
+    
     const { email } = req.body;
 
     if (!email) {
-      return res.status(400).json({ hasSubscription: false, message: 'Email is required' });
+      console.log(`[${requestId}] Missing email in request`);
+      return res.status(400).json({ 
+        hasSubscription: false, 
+        message: 'Email is required',
+        requestId 
+      });
     }
 
-    console.log(`Checking subscription for email: ${email}`);
+    console.log(`[${requestId}] Checking subscription for email: ${email}`);
 
     // Get the product ID from environment variable
     const productId = process.env.STRIPE_PRODUCT_ID;
     
     if (!productId) {
-      console.error('STRIPE_PRODUCT_ID environment variable is not set');
-      return res.status(500).json({ hasSubscription: false, message: 'Server configuration error' });
+      console.error(`[${requestId}] STRIPE_PRODUCT_ID environment variable is not set`);
+      return res.status(500).json({ 
+        hasSubscription: false, 
+        message: 'Server configuration error',
+        requestId 
+      });
     }
 
     // 1. List all subscriptions
@@ -43,7 +69,14 @@ export default async function handler(
       status: 'active',
     });
 
-    console.log(`Found ${subscriptions.data.length} active subscriptions`);
+    console.log(`[${requestId}] Found ${subscriptions.data.length} active subscriptions`);
+    
+    // Log the Stripe API response for troubleshooting
+    console.log(`[${requestId}] Stripe subscriptions response:`, JSON.stringify({
+      count: subscriptions.data.length,
+      has_more: subscriptions.has_more,
+      subscription_ids: subscriptions.data.map(sub => sub.id)
+    }, null, 2));
 
     // 2. Filter subscriptions by customer email and product ID
     for (const subscription of subscriptions.data) {
@@ -53,20 +86,43 @@ export default async function handler(
         
         // Check if this is the customer we're looking for
         if ('email' in customer && customer.email === email) {
-          console.log(`Found customer with matching email: ${email}`);
+          console.log(`[${requestId}] Found customer with matching email: ${email}`);
+          
+          // Log customer details for troubleshooting (excluding sensitive data)
+          console.log(`[${requestId}] Customer details:`, JSON.stringify({
+            id: customer.id,
+            email: customer.email,
+            name: customer.name,
+            created: customer.created,
+            subscriptions: subscription.id
+          }, null, 2));
           
           // Check if any of the subscription items match our product
           const items = await stripe.subscriptionItems.list({
             subscription: subscription.id,
           });
           
+          console.log(`[${requestId}] Found ${items.data.length} subscription items for customer`);
+          
           for (const item of items.data) {
             // Get the price to check its product
             const price = await stripe.prices.retrieve(item.price.id);
             
+            // Log price details for troubleshooting
+            console.log(`[${requestId}] Price details:`, JSON.stringify({
+              price_id: item.price.id,
+              product_id: price.product,
+              matches_target_product: price.product === productId
+            }, null, 2));
+            
             if (price.product === productId) {
-              console.log(`Found matching product subscription for email: ${email}`);
-              return res.status(200).json({ hasSubscription: true });
+              console.log(`[${requestId}] Found matching product subscription for email: ${email}`);
+              
+              // Return success response with request ID
+              return res.status(200).json({ 
+                hasSubscription: true,
+                requestId
+              });
             }
           }
         }
@@ -74,13 +130,29 @@ export default async function handler(
     }
 
     // No matching subscription found
-    console.log(`No matching subscription found for email: ${email}`);
-    return res.status(200).json({ hasSubscription: false });
+    console.log(`[${requestId}] No matching subscription found for email: ${email}`);
+    
+    // Return response with request ID for tracking
+    return res.status(200).json({ 
+      hasSubscription: false,
+      requestId
+    });
   } catch (error) {
-    console.error('Error checking subscription:', error);
+    console.error(`[${requestId}] Error checking subscription:`, error);
+    
+    // Log the error details for troubleshooting
+    const errorDetails = error instanceof Error ? {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    } : error;
+    
+    console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
+    
     return res.status(500).json({ 
       hasSubscription: false, 
-      message: 'Error checking subscription status' 
+      message: 'Error checking subscription status',
+      requestId
     });
   }
 }
