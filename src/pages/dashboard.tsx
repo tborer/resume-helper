@@ -28,26 +28,31 @@ export default function Dashboard() {
     // Get email from URL query or localStorage
     if (router.query.email) {
       const email = router.query.email as string;
+      console.log("Dashboard: Email from query:", email);
       setUserEmail(email);
       // Store email in localStorage for persistence
       localStorage.setItem("userEmail", email);
       
       // Check if user is admin (in a real app, this would be verified server-side)
-      if (email === "admin@example.com" || email === "tray14@hotmail.com") {
+      if (email.toLowerCase() === "admin@example.com" || email.toLowerCase() === "tray14@hotmail.com") {
+        console.log("Dashboard: Setting admin status to true for:", email);
         setIsAdmin(true);
       }
     } else {
       // Try to get from localStorage
       const storedEmail = localStorage.getItem("userEmail");
+      console.log("Dashboard: Email from localStorage:", storedEmail);
       if (storedEmail) {
         setUserEmail(storedEmail);
         
         // Check if user is admin (in a real app, this would be verified server-side)
-        if (storedEmail === "admin@example.com" || storedEmail === "tray14@hotmail.com") {
+        if (storedEmail.toLowerCase() === "admin@example.com" || storedEmail.toLowerCase() === "tray14@hotmail.com") {
+          console.log("Dashboard: Setting admin status to true for stored email:", storedEmail);
           setIsAdmin(true);
         }
       } else {
         // If no email is found, redirect to home page
+        console.log("Dashboard: No email found, redirecting to home");
         router.push("/");
       }
     }

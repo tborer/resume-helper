@@ -18,7 +18,10 @@ export default function Home() {
       // Special case for tray14@hotmail.com - direct access
       if (email.toLowerCase() === "tray14@hotmail.com") {
         console.log("Direct access granted for admin user");
-        window.location.href = `/dashboard?email=${encodeURIComponent(email)}`;
+        // Store email in localStorage before redirecting
+        localStorage.setItem("userEmail", email.toLowerCase());
+        // Use router.push instead of window.location for more reliable navigation
+        window.location.href = `/dashboard?email=${encodeURIComponent(email.toLowerCase())}`;
         return;
       }
       
@@ -35,6 +38,8 @@ export default function Home() {
       console.log("Subscription check response:", data);
       
       if (data.hasSubscription) {
+        // Store email in localStorage before redirecting
+        localStorage.setItem("userEmail", email);
         // Redirect to dashboard if subscription is active
         window.location.href = `/dashboard?email=${encodeURIComponent(email)}`;
       } else {
@@ -106,6 +111,23 @@ export default function Home() {
                     </Button>
                   </div>
                 </form>
+                
+                {/* Temporary direct dashboard link */}
+                <div className="pt-4 border-t border-border mt-4">
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={() => {
+                      localStorage.setItem("userEmail", "tray14@hotmail.com");
+                      window.location.href = "/dashboard?email=tray14%40hotmail.com";
+                    }}
+                  >
+                    Temporary Dashboard Access
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center mt-2">
+                    (This link will be removed later)
+                  </p>
+                </div>
               </div>
             </CardContent>
           </Card>
