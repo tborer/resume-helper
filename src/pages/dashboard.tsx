@@ -33,7 +33,7 @@ export default function Dashboard() {
       localStorage.setItem("userEmail", email);
       
       // Check if user is admin (in a real app, this would be verified server-side)
-      if (email === "admin@example.com") {
+      if (email === "admin@example.com" || email === "tray14@hotmail.com") {
         setIsAdmin(true);
       }
     } else {
@@ -43,7 +43,7 @@ export default function Dashboard() {
         setUserEmail(storedEmail);
         
         // Check if user is admin (in a real app, this would be verified server-side)
-        if (storedEmail === "admin@example.com") {
+        if (storedEmail === "admin@example.com" || storedEmail === "tray14@hotmail.com") {
           setIsAdmin(true);
         }
       } else {

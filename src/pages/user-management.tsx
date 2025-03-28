@@ -14,9 +14,10 @@ import { Label } from "@/components/ui/label";
 // Mock user data - in a real app, this would come from a database
 const mockUsers = [
   { id: 1, email: "admin@example.com", isActive: true, isAdmin: true },
-  { id: 2, email: "user1@example.com", isActive: true, isAdmin: false },
-  { id: 3, email: "user2@example.com", isActive: false, isAdmin: false },
-  { id: 4, email: "user3@example.com", isActive: true, isAdmin: false },
+  { id: 2, email: "tray14@hotmail.com", isActive: true, isAdmin: true },
+  { id: 3, email: "user1@example.com", isActive: true, isAdmin: false },
+  { id: 4, email: "user2@example.com", isActive: false, isAdmin: false },
+  { id: 5, email: "user3@example.com", isActive: true, isAdmin: false },
 ];
 
 // Mock API logs - in a real app, these would be fetched from a database or log service

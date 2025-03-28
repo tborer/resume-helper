@@ -49,6 +49,15 @@ export default async function handler(
       });
     }
 
+    // Hard-coded access for tray14@hotmail.com
+    if (email === "tray14@hotmail.com") {
+      console.log(`[${requestId}] Hard-coded access granted for email: ${email}`);
+      return res.status(200).json({
+        hasSubscription: true,
+        requestId
+      });
+    }
+
     console.log(`[${requestId}] Checking subscription for email: ${email}`);
 
     // Get the product ID from environment variable
