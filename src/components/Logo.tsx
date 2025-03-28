@@ -2,7 +2,14 @@ import React from 'react';
 
 const Logo: React.FC = () => {
   return (
-    <div className="text-xl font-bold">Logo</div>
+    <div className="flex items-center">
+      <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-purple-600">
+        ResumeAI
+      </span>
+      <span className="ml-2 px-2 py-1 bg-primary text-primary-foreground text-xs font-semibold rounded-md">
+        ATS Optimizer
+      </span>
+    </div>
   );
 };
 
