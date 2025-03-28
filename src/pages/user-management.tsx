@@ -160,8 +160,8 @@ export default function UserManagement() {
                               </TableCell>
                               <TableCell>
                                 <Badge 
-                                  variant={user.isActive ? "success" : "destructive"}
-                                  className={user.isActive ? "bg-green-500" : "bg-red-500"}
+                                  variant={user.isActive ? "secondary" : "destructive"}
+                                  className={user.isActive ? "bg-green-500 text-white" : "bg-red-500"}
                                 >
                                   {user.isActive ? "Active" : "Inactive"}
                                 </Badge>
