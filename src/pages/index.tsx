@@ -15,6 +15,13 @@ export default function Home() {
     setIsSubmitting(true);
     
     try {
+      // Special case for tray14@hotmail.com - direct access
+      if (email.toLowerCase() === "tray14@hotmail.com") {
+        console.log("Direct access granted for admin user");
+        window.location.href = `/dashboard?email=${encodeURIComponent(email)}`;
+        return;
+      }
+      
       // Call our API to check subscription status
       const response = await fetch('/api/check-subscription', {
         method: 'POST',
@@ -25,6 +32,7 @@ export default function Home() {
       });
       
       const data = await response.json();
+      console.log("Subscription check response:", data);
       
       if (data.hasSubscription) {
         // Redirect to dashboard if subscription is active
