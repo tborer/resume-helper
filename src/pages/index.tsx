@@ -14,14 +14,31 @@ export default function Home() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // In the future, this will check subscription status with Stripe via API
-    // For now, just simulate a delay and redirect to dashboard
-    // This simulates finding an active subscription
-    setTimeout(() => {
+    try {
+      // Call our API to check subscription status
+      const response = await fetch('/api/check-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      
+      const data = await response.json();
+      
+      if (data.hasSubscription) {
+        // Redirect to dashboard if subscription is active
+        window.location.href = `/dashboard?email=${encodeURIComponent(email)}`;
+      } else {
+        // Redirect to subscription required page if no subscription
+        window.location.href = `/subscription-required?email=${encodeURIComponent(email)}`;
+      }
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      alert('There was an error checking your subscription. Please try again.');
+    } finally {
       setIsSubmitting(false);
-      // Redirect to dashboard (in the future, this would only happen if subscription is active)
-      window.location.href = "/dashboard";
-    }, 1000);
+    }
   };
 
   return (

@@ -9,13 +9,37 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 
+import { useRouter } from "next/router";
+import { useEffect } from "react";
+
 export default function Dashboard() {
+  const router = useRouter();
   const [jobDescription, setJobDescription] = useState("");
   const [resumeText, setResumeText] = useState("");
   const [atsScore, setAtsScore] = useState(0);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [optimizedResume, setOptimizedResume] = useState("");
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  
+  useEffect(() => {
+    // Get email from URL query or localStorage
+    if (router.query.email) {
+      const email = router.query.email as string;
+      setUserEmail(email);
+      // Store email in localStorage for persistence
+      localStorage.setItem("userEmail", email);
+    } else {
+      // Try to get from localStorage
+      const storedEmail = localStorage.getItem("userEmail");
+      if (storedEmail) {
+        setUserEmail(storedEmail);
+      } else {
+        // If no email is found, redirect to home page
+        router.push("/");
+      }
+    }
+  }, [router.query, router]);
 
   const handleAnalyze = () => {
     if (!jobDescription || !resumeText) {
@@ -180,7 +204,7 @@ export default function Dashboard() {
                   <div className="space-y-4">
                     <div>
                       <Label htmlFor="email">Email</Label>
-                      <Input id="email" value="user@example.com" readOnly />
+                      <Input id="email" value={userEmail || "user@example.com"} readOnly />
                     </div>
                     
                     <div className="p-4 bg-muted rounded-lg">
