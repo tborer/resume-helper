@@ -14,12 +14,13 @@ export default function Home() {
     e.preventDefault();
     setIsSubmitting(true);
     
-    // In the future, this will check subscription status with Stripe
-    // For now, just simulate a delay
+    // In the future, this will check subscription status with Stripe via API
+    // For now, just simulate a delay and redirect to dashboard
+    // This simulates finding an active subscription
     setTimeout(() => {
       setIsSubmitting(false);
-      // This would redirect to checkout or unlock features
-      alert("Email submitted: " + email);
+      // Redirect to dashboard (in the future, this would only happen if subscription is active)
+      window.location.href = "/dashboard";
     }, 1000);
   };
 
@@ -51,20 +52,36 @@ export default function Home() {
               <CardDescription>Enter your email to check your subscription or get started</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleEmailSubmit}>
-                <div className="flex flex-col space-y-4">
-                  <Input
-                    type="email"
-                    placeholder="your.email@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Checking..." : "Continue"}
-                  </Button>
+              <div className="flex flex-col space-y-4">
+                <Button 
+                  className="w-full" 
+                  onClick={() => window.location.href = "https://buy.stripe.com/5kAcP0dXHgZTf3q6oy"}
+                >
+                  Get It Now
+                </Button>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-background px-2 text-muted-foreground">Or check your subscription</span>
+                  </div>
                 </div>
-              </form>
+                <form onSubmit={handleEmailSubmit}>
+                  <div className="flex flex-col space-y-4">
+                    <Input
+                      type="email"
+                      placeholder="your.email@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                    />
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? "Checking..." : "Continue"}
+                    </Button>
+                  </div>
+                </form>
+              </div>
             </CardContent>
           </Card>
 
@@ -129,19 +146,36 @@ export default function Home() {
                 <p className="mb-6 text-muted-foreground">
                   Don't let your resume get lost in the ATS black hole. Optimize it now and stand out from the competition.
                 </p>
-                <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-                  <Input
-                    type="email"
-                    placeholder="your.email@example.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                    className="flex-grow"
-                  />
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Checking..." : "Get Started"}
+                <div className="flex flex-col gap-4 max-w-md mx-auto">
+                  <Button 
+                    className="w-full" 
+                    onClick={() => window.location.href = "https://buy.stripe.com/5kAcP0dXHgZTf3q6oy"}
+                    size="lg"
+                  >
+                    Get It Now
                   </Button>
-                </form>
+                  <div className="relative">
+                    <div className="absolute inset-0 flex items-center">
+                      <span className="w-full border-t border-border" />
+                    </div>
+                    <div className="relative flex justify-center text-xs uppercase">
+                      <span className="bg-background px-2 text-muted-foreground">Or check your subscription</span>
+                    </div>
+                  </div>
+                  <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-4 w-full">
+                    <Input
+                      type="email"
+                      placeholder="your.email@example.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      required
+                      className="flex-grow"
+                    />
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? "Checking..." : "Continue"}
+                    </Button>
+                  </form>
+                </div>
               </div>
             </CardContent>
           </Card>
