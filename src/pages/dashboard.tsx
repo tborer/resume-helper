@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
+import { AlertCircle, CheckCircle } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -23,6 +25,16 @@ export default function Dashboard() {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  
+  // Stripe Testing states
+  const [testEmail, setTestEmail] = useState("");
+  const [isTestingSubscription, setIsTestingSubscription] = useState(false);
+  const [isTestingPurchase, setIsTestingPurchase] = useState(false);
+  const [testResult, setTestResult] = useState<{
+    success: boolean;
+    message: string;
+    details?: any;
+  } | null>(null);
   
   useEffect(() => {
     // Get email from URL query or localStorage
@@ -80,6 +92,94 @@ export default function Dashboard() {
       setAnalysisComplete(true);
     }, 2000);
   };
+  
+  // Test subscription status for a given email
+  const handleTestSubscription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!testEmail) {
+      alert("Please enter an email to test");
+      return;
+    }
+    
+    setIsTestingSubscription(true);
+    setTestResult(null);
+    
+    try {
+      // Call our API to check subscription status
+      const response = await fetch('/api/check-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: testEmail }),
+      });
+      
+      const data = await response.json();
+      console.log("Subscription test response:", data);
+      
+      setTestResult({
+        success: true,
+        message: data.hasSubscription 
+          ? `✅ User ${testEmail} has an active subscription` 
+          : `❌ User ${testEmail} does not have an active subscription`,
+        details: data
+      });
+    } catch (error) {
+      console.error('Error testing subscription:', error);
+      setTestResult({
+        success: false,
+        message: "Error testing subscription status",
+        details: error
+      });
+    } finally {
+      setIsTestingSubscription(false);
+    }
+  };
+  
+  // Test purchase link
+  const handleTestPurchase = async () => {
+    setIsTestingPurchase(true);
+    setTestResult(null);
+    
+    try {
+      // Call our API to test the purchase link
+      const response = await fetch('/api/test-purchase-link', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      const data = await response.json();
+      console.log("Purchase link test response:", data);
+      
+      if (data.success && data.purchaseLink) {
+        // Open the purchase link in a new tab
+        window.open(data.purchaseLink, '_blank');
+        
+        setTestResult({
+          success: true,
+          message: "✅ Purchase link opened in a new tab",
+          details: data
+        });
+      } else {
+        setTestResult({
+          success: false,
+          message: "❌ Failed to get purchase link",
+          details: data
+        });
+      }
+    } catch (error) {
+      console.error('Error testing purchase link:', error);
+      setTestResult({
+        success: false,
+        message: "Error testing purchase link",
+        details: error
+      });
+    } finally {
+      setIsTestingPurchase(false);
+    }
+  };
 
   return (
     <>
@@ -100,9 +200,14 @@ export default function Dashboard() {
               <TabsTrigger value="history">History</TabsTrigger>
               <TabsTrigger value="account">Account</TabsTrigger>
               {isAdmin && (
-                <TabsTrigger value="admin" onClick={() => router.push("/user-management")}>
-                  Admin Panel
-                </TabsTrigger>
+                <>
+                  <TabsTrigger value="admin" onClick={() => router.push("/user-management")}>
+                    Admin Panel
+                  </TabsTrigger>
+                  <TabsTrigger value="stripe-testing">
+                    Stripe Testing
+                  </TabsTrigger>
+                </>
               )}
             </TabsList>
             
@@ -240,6 +345,92 @@ export default function Dashboard() {
                 </CardContent>
               </Card>
             </TabsContent>
+            
+            {isAdmin && (
+              <TabsContent value="stripe-testing">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Subscription Test Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Test Subscription Status</CardTitle>
+                      <CardDescription>Check if a user has an active subscription</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <form onSubmit={handleTestSubscription} className="space-y-4">
+                        <div>
+                          <Label htmlFor="test-email">Email to Test</Label>
+                          <Input 
+                            id="test-email" 
+                            type="email" 
+                            placeholder="user@example.com" 
+                            value={testEmail}
+                            onChange={(e) => setTestEmail(e.target.value)}
+                            required
+                          />
+                        </div>
+                        <Button 
+                          type="submit" 
+                          className="w-full"
+                          disabled={isTestingSubscription}
+                        >
+                          {isTestingSubscription ? "Testing..." : "Test Subscription"}
+                        </Button>
+                      </form>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Purchase Test Card */}
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>Test Purchase Flow</CardTitle>
+                      <CardDescription>Test the Stripe purchase link</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <p className="text-sm text-muted-foreground">
+                          This will open the Stripe checkout page in a new tab. You can use Stripe's test card numbers to simulate a purchase.
+                        </p>
+                        <Button 
+                          onClick={handleTestPurchase} 
+                          className="w-full"
+                          disabled={isTestingPurchase}
+                        >
+                          {isTestingPurchase ? "Testing..." : "Test Purchase"}
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Test Results */}
+                {testResult && (
+                  <div className="mt-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Test Results</CardTitle>
+                        <CardDescription>Details from the API response</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <Alert variant={testResult.success ? "default" : "destructive"} className="mb-4">
+                          <div className="flex items-center gap-2">
+                            {testResult.success ? <CheckCircle className="h-4 w-4" /> : <AlertCircle className="h-4 w-4" />}
+                            <AlertTitle>{testResult.success ? "Success" : "Error"}</AlertTitle>
+                          </div>
+                          <AlertDescription>{testResult.message}</AlertDescription>
+                        </Alert>
+                        
+                        <div className="mt-4">
+                          <h4 className="text-sm font-semibold mb-2">Response Details:</h4>
+                          <pre className="bg-muted p-4 rounded-md overflow-auto text-xs">
+                            {JSON.stringify(testResult.details, null, 2)}
+                          </pre>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                )}
+              </TabsContent>
+            )}
           </Tabs>
         </main>
         
