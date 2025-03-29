@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Copy } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import { useRouter } from "next/router";
@@ -441,41 +441,10 @@ export default function Dashboard() {
                     
                     <Card>
                       <CardHeader>
-                        <CardTitle>Current ATS Match</CardTitle>
-                        <CardDescription>Analysis of your resume against the job description</CardDescription>
+                        <CardTitle>Match Analysis</CardTitle>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-4">
-                          <div className="flex items-center justify-center">
-                            <div className="relative h-32 w-32">
-                              <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-3xl font-bold">{atsScore}%</span>
-                              </div>
-                              <svg className="h-full w-full" viewBox="0 0 100 100">
-                                <circle
-                                  className="text-muted stroke-current"
-                                  strokeWidth="10"
-                                  fill="transparent"
-                                  r="40"
-                                  cx="50"
-                                  cy="50"
-                                />
-                                <circle
-                                  className="text-primary stroke-current"
-                                  strokeWidth="10"
-                                  strokeLinecap="round"
-                                  fill="transparent"
-                                  r="40"
-                                  cx="50"
-                                  cy="50"
-                                  strokeDasharray={`${atsScore * 2.51} 251`}
-                                  strokeDashoffset="0"
-                                  transform="rotate(-90 50 50)"
-                                />
-                              </svg>
-                            </div>
-                          </div>
-                          
                           <div className="p-4 bg-muted rounded-lg">
                             <h4 className="font-semibold mb-2">Match Analysis</h4>
                             <p className="text-sm">
@@ -494,12 +463,34 @@ export default function Dashboard() {
                       <CardDescription>Your ATS-optimized resume</CardDescription>
                     </CardHeader>
                     <CardContent>
-                      <Textarea 
-                        value={optimizedResume}
-                        className="min-h-[200px] mb-4"
-                        readOnly
-                      />
-                      <Button className="w-full">Download Optimized Resume</Button>
+                      <div className="relative">
+                        <Textarea 
+                          value={optimizedResume}
+                          className="min-h-[200px] mb-4"
+                          readOnly
+                        />
+                        <Button 
+                          className="absolute top-2 right-2"
+                          size="sm"
+                          onClick={() => {
+                            navigator.clipboard.writeText(optimizedResume);
+                            alert("Optimized resume copied to clipboard!");
+                          }}
+                        >
+                          <Copy className="h-4 w-4 mr-1" />
+                          Copy
+                        </Button>
+                      </div>
+                      <Button 
+                        className="w-full"
+                        onClick={() => {
+                          navigator.clipboard.writeText(optimizedResume);
+                          alert("Optimized resume copied to clipboard!");
+                        }}
+                      >
+                        <Copy className="h-4 w-4 mr-1" />
+                        Copy to Clipboard
+                      </Button>
                     </CardContent>
                   </Card>
                 </div>
@@ -671,7 +662,7 @@ export default function Dashboard() {
         
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} ResumeAI. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} ResumeAI, an Agile Rant product. All rights reserved.</p>
           </div>
         </footer>
       </div>

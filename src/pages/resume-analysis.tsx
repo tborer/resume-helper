@@ -390,7 +390,6 @@ export default function ResumeAnalysis() {
                             />
                             <Button 
                               size="sm"
-                              variant="outline"
                               className="absolute top-2 right-2"
                               onClick={copyToClipboard}
                             >
@@ -407,6 +406,13 @@ export default function ResumeAnalysis() {
                               )}
                             </Button>
                           </div>
+                          <Button 
+                            className="w-full"
+                            onClick={copyToClipboard}
+                          >
+                            <Copy className="h-4 w-4 mr-1" />
+                            Copy to Clipboard
+                          </Button>
                           <p className="text-sm text-muted-foreground mt-2">
                             This optimized resume maintains your actual experience while incorporating keywords 
                             and phrases from the job description to improve your chances of passing ATS screening.
@@ -423,7 +429,7 @@ export default function ResumeAnalysis() {
         
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} ResumeAI. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} ResumeAI, an Agile Rant product. All rights reserved.</p>
           </div>
         </footer>
       </div>
