@@ -9,10 +9,12 @@ import { CheckCircle } from "lucide-react";
 export default function Home() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [magicLinkSent, setMagicLinkSent] = useState(false);
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setMagicLinkSent(false);
     
     try {
       // Special case for tray14@hotmail.com - direct access
@@ -25,8 +27,8 @@ export default function Home() {
         return;
       }
       
-      // Call our API to check subscription status
-      const response = await fetch('/api/check-subscription', {
+      // Call our API to check subscription and send magic link
+      const response = await fetch('/api/send-magic-link', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -35,20 +37,18 @@ export default function Home() {
       });
       
       const data = await response.json();
-      console.log("Subscription check response:", data);
+      console.log("Magic link response:", data);
       
-      if (data.hasSubscription) {
-        // Store email in localStorage before redirecting
-        localStorage.setItem("userEmail", email);
-        // Redirect to dashboard if subscription is active
-        window.location.href = `/dashboard?email=${encodeURIComponent(email)}`;
+      if (data.success) {
+        // Show success message that magic link was sent
+        setMagicLinkSent(true);
       } else {
         // Redirect to subscription required page if no subscription
         window.location.href = `/subscription-required?email=${encodeURIComponent(email)}`;
       }
     } catch (error) {
-      console.error('Error checking subscription:', error);
-      alert('There was an error checking your subscription. Please try again.');
+      console.error('Error sending magic link:', error);
+      alert('There was an error processing your request. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -97,20 +97,36 @@ export default function Home() {
                     <span className="bg-background px-2 text-muted-foreground">Or check your subscription</span>
                   </div>
                 </div>
-                <form onSubmit={handleEmailSubmit}>
-                  <div className="flex flex-col space-y-4">
-                    <Input
-                      type="email"
-                      placeholder="your.email@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                    />
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? "Checking..." : "Continue"}
-                    </Button>
+                {magicLinkSent ? (
+                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4 mt-2">
+                    <div className="flex items-start">
+                      <div className="flex-shrink-0">
+                        <CheckCircle className="h-5 w-5 text-green-500" />
+                      </div>
+                      <div className="ml-3">
+                        <h3 className="text-sm font-medium text-green-800 dark:text-green-300">Magic Link Sent!</h3>
+                        <div className="mt-2 text-sm text-green-700 dark:text-green-400">
+                          <p>We've sent a magic link to <strong>{email}</strong>. Please check your inbox and click the link to access your account.</p>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </form>
+                ) : (
+                  <form onSubmit={handleEmailSubmit}>
+                    <div className="flex flex-col space-y-4">
+                      <Input
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                      />
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Checking..." : "Continue"}
+                      </Button>
+                    </div>
+                  </form>
+                )}
                 
                 {/* Temporary direct dashboard link */}
                 <div className="pt-4 border-t border-border mt-4">
@@ -209,19 +225,35 @@ export default function Home() {
                       <span className="bg-background px-2 text-muted-foreground">Or check your subscription</span>
                     </div>
                   </div>
-                  <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-4 w-full">
-                    <Input
-                      type="email"
-                      placeholder="your.email@example.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      required
-                      className="flex-grow"
-                    />
-                    <Button type="submit" disabled={isSubmitting}>
-                      {isSubmitting ? "Checking..." : "Continue"}
-                    </Button>
-                  </form>
+                  {magicLinkSent ? (
+                    <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md p-4 mt-2">
+                      <div className="flex items-start">
+                        <div className="flex-shrink-0">
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                        </div>
+                        <div className="ml-3">
+                          <h3 className="text-sm font-medium text-green-800 dark:text-green-300">Magic Link Sent!</h3>
+                          <div className="mt-2 text-sm text-green-700 dark:text-green-400">
+                            <p>We've sent a magic link to <strong>{email}</strong>. Please check your inbox and click the link to access your account.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <form onSubmit={handleEmailSubmit} className="flex flex-col sm:flex-row gap-4 w-full">
+                      <Input
+                        type="email"
+                        placeholder="your.email@example.com"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        className="flex-grow"
+                      />
+                      <Button type="submit" disabled={isSubmitting}>
+                        {isSubmitting ? "Checking..." : "Continue"}
+                      </Button>
+                    </form>
+                  )}
                 </div>
               </div>
             </CardContent>

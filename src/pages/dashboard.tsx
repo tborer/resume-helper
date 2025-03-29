@@ -325,14 +325,9 @@ export default function Dashboard() {
               <TabsTrigger value="history">History</TabsTrigger>
               <TabsTrigger value="account">Account</TabsTrigger>
               {isAdmin && (
-                <>
-                  <TabsTrigger value="admin" onClick={() => router.push("/user-management")}>
-                    Admin Panel
-                  </TabsTrigger>
-                  <TabsTrigger value="stripe-testing">
-                    Stripe Testing
-                  </TabsTrigger>
-                </>
+                <TabsTrigger value="admin" onClick={() => router.push("/user-management")}>
+                  Admin Panel
+                </TabsTrigger>
               )}
             </TabsList>
             
