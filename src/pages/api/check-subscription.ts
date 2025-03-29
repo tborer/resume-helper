@@ -49,7 +49,9 @@ export default async function handler(
       });
     }
 
-    // Hard-coded access for tray14@hotmail.com
+    // TEMPORARY ACCESS: Remove this block once database is connected
+    // This provides temporary access for development/testing
+    // DATABASE UPDATE REQUIRED: Replace with actual database check for subscription status
     if (email === "tray14@hotmail.com") {
       console.log(`[${requestId}] Hard-coded access granted for email: ${email}`);
       return res.status(200).json({

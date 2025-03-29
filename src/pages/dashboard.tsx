@@ -56,7 +56,9 @@ export default function Dashboard() {
       // Store email in localStorage for persistence
       localStorage.setItem("userEmail", email);
       
-      // Check if user is admin (in a real app, this would be verified server-side)
+      // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
+      // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
+      // This should be done by checking the user's isAdmin flag in the database
       if (email.toLowerCase() === "admin@example.com" || email.toLowerCase() === "tray14@hotmail.com") {
         console.log("Dashboard: Setting admin status to true for:", email);
         setIsAdmin(true);
@@ -71,7 +73,9 @@ export default function Dashboard() {
       if (storedEmail) {
         setUserEmail(storedEmail);
         
-        // Check if user is admin (in a real app, this would be verified server-side)
+        // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
+        // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
+        // This should be done by checking the user's isAdmin flag in the database
         if (storedEmail.toLowerCase() === "admin@example.com" || storedEmail.toLowerCase() === "tray14@hotmail.com") {
           console.log("Dashboard: Setting admin status to true for stored email:", storedEmail);
           setIsAdmin(true);
@@ -87,16 +91,37 @@ export default function Dashboard() {
     }
   }, [router.query, router]);
   
-  // Load the Gemini API key from localStorage
+  // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
+  // This function should be updated to fetch the API key from the database instead of localStorage
   const loadGeminiApiKey = (email: string) => {
+    // TEMPORARY IMPLEMENTATION: Using localStorage for development
     const key = localStorage.getItem(`gemini_api_key_${email}`);
     if (key) {
       setGeminiApiKey(key);
       console.log("Dashboard: Loaded Gemini API key for user:", email);
     }
+    
+    // Future implementation with database:
+    // const fetchApiKey = async (email) => {
+    //   try {
+    //     const response = await fetch('/api/users/get-api-key', {
+    //       method: 'POST',
+    //       headers: { 'Content-Type': 'application/json' },
+    //       body: JSON.stringify({ email })
+    //     });
+    //     const data = await response.json();
+    //     if (data.apiKey) {
+    //       setGeminiApiKey(data.apiKey);
+    //     }
+    //   } catch (error) {
+    //     console.error('Error fetching API key:', error);
+    //   }
+    // };
+    // fetchApiKey(email);
   };
   
-  // Save the Gemini API key
+  // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
+  // This function should be updated to save the API key to the database instead of localStorage
   const saveGeminiApiKey = async () => {
     if (!userEmail) {
       setApiKeySaveMessage("Error: User email not found");
@@ -114,9 +139,22 @@ export default function Dashboard() {
     setApiKeySaveMessage("");
     
     try {
-      // In a real app, we would save this to a database via an API call
-      // For now, we'll just save it to localStorage
+      // TEMPORARY IMPLEMENTATION: Using localStorage for development
       localStorage.setItem(`gemini_api_key_${userEmail}`, geminiApiKey);
+      
+      // Future implementation with database:
+      // const response = await fetch('/api/users/save-api-key', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify({ 
+      //     email: userEmail,
+      //     apiKey: geminiApiKey 
+      //   })
+      // });
+      // const data = await response.json();
+      // if (!data.success) {
+      //   throw new Error(data.message || 'Failed to save API key');
+      // }
       
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
