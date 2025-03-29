@@ -57,7 +57,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>ResumeAI - ATS Resume Optimizer</title>
+        <title>Resume Rocket Match AI - ATS Resume Optimizer</title>
         <meta name="description" content="Optimize your resume for ATS systems and land more interviews" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -317,7 +317,7 @@ export default function Home() {
         {/* Footer */}
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} ResumeAI, an Agile Rant product. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Resume Rocket Match AI, an Agile Rant product. All rights reserved.</p>
           </div>
         </footer>
       </div>

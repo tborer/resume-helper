@@ -310,7 +310,7 @@ export default function Dashboard() {
   return (
     <>
       <Head>
-        <title>Dashboard | ResumeAI - ATS Resume Optimizer</title>
+        <title>Dashboard | Resume Rocket Match AI - ATS Resume Optimizer</title>
         <meta name="description" content="Optimize your resume for ATS systems" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -331,7 +331,7 @@ export default function Dashboard() {
                 <DialogHeader>
                   <DialogTitle>Feature Request</DialogTitle>
                   <DialogDescription>
-                    Submit a feature request for the ResumeAI tool. We value your feedback!
+                    Submit a feature request for the Resume Rocket Match AI tool. We value your feedback!
                   </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={async (e) => {
@@ -747,7 +747,7 @@ export default function Dashboard() {
         
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} ResumeAI, an Agile Rant product. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Resume Rocket Match AI, an Agile Rant product. All rights reserved.</p>
           </div>
         </footer>
       </div>

@@ -12,7 +12,7 @@ export default function SubscriptionRequired() {
   return (
     <>
       <Head>
-        <title>Subscription Required | ResumeAI - ATS Resume Optimizer</title>
+        <title>Subscription Required | Resume Rocket Match AI - ATS Resume Optimizer</title>
         <meta name="description" content="Subscription required to access the ATS Resume Optimizer" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -56,7 +56,7 @@ export default function SubscriptionRequired() {
         </main>
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} ResumeAI. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Resume Rocket Match AI. All rights reserved.</p>
           </div>
         </footer>
       </div>
