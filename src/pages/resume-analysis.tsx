@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -6,20 +6,29 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Loader2 } from "lucide-react";
+import { Loader2, Copy, CheckCircle } from "lucide-react";
 import { useRouter } from "next/router";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function ResumeAnalysis() {
   const router = useRouter();
   const [jobDescription, setJobDescription] = useState("");
   const [resumeText, setResumeText] = useState("");
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isOptimizing, setIsOptimizing] = useState(false);
   const [analysisComplete, setAnalysisComplete] = useState(false);
+  const [optimizationComplete, setOptimizationComplete] = useState(false);
+  const optimizedResumeRef = useRef<HTMLTextAreaElement>(null);
+  const [copySuccess, setCopySuccess] = useState(false);
   
   // States for analysis results
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
   const [matchScore, setMatchScore] = useState<number | null>(null);
   const [matchJustification, setMatchJustification] = useState("");
+  
+  // States for optimization results
+  const [optimizedResume, setOptimizedResume] = useState("");
+  const [optimizedScore, setOptimizedScore] = useState<number | null>(null);
   
   // Get the API key from localStorage
   const getApiKey = () => {
@@ -85,6 +94,65 @@ export default function ResumeAnalysis() {
       alert("There was an error analyzing your resume. Please try again.");
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+  
+  const handleOptimize = async () => {
+    if (!jobDescription || !resumeText) {
+      alert("Please enter both job description and resume");
+      return;
+    }
+    
+    const apiKey = getApiKey();
+    if (!apiKey) {
+      alert("Please add your Google Gemini API key in the Account tab");
+      return;
+    }
+
+    setIsOptimizing(true);
+    setOptimizedResume("");
+    setOptimizedScore(null);
+    
+    try {
+      // Call the optimize-resume API
+      const response = await fetch('/api/optimize-resume', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          jobDescription, 
+          resume: resumeText, 
+          apiKey 
+        })
+      });
+      
+      const data = await response.json();
+      
+      if (data.error) {
+        console.error("Error optimizing resume:", data.error);
+        alert("There was an error optimizing your resume. Please try again.");
+      } else {
+        setOptimizedResume(data.optimizedResume || "");
+        setOptimizedScore(data.matchingScore || 95);
+        setOptimizationComplete(true);
+      }
+    } catch (error) {
+      console.error("Error during optimization:", error);
+      alert("There was an error optimizing your resume. Please try again.");
+    } finally {
+      setIsOptimizing(false);
+    }
+  };
+  
+  const copyToClipboard = () => {
+    if (optimizedResumeRef.current) {
+      optimizedResumeRef.current.select();
+      document.execCommand('copy');
+      setCopySuccess(true);
+      
+      // Reset copy success after 2 seconds
+      setTimeout(() => {
+        setCopySuccess(false);
+      }, 2000);
     }
   };
 
@@ -163,80 +231,192 @@ export default function ResumeAnalysis() {
             </Card>
           )}
           
+          {isOptimizing && (
+            <Card className="mb-6">
+              <CardContent className="pt-6">
+                <div className="flex flex-col items-center justify-center py-4">
+                  <Loader2 className="h-8 w-8 animate-spin mb-2" />
+                  <p className="text-center text-muted-foreground">
+                    Optimizing your resume for this job description...
+                    <br />
+                    This may take a minute or two.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+          
           {analysisComplete && (
             <div className="space-y-6">
-              {/* Top Keywords Section */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Top 10 Keywords from Job Description</CardTitle>
-                  <CardDescription>These are the most important terms to include in your resume</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  {topKeywords.length > 0 ? (
-                    <div className="flex flex-wrap gap-2">
-                      {topKeywords.map((keyword, index) => (
-                        <Badge key={index} variant="secondary" className="px-3 py-1 text-sm">
-                          {keyword}
-                        </Badge>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-center py-4 text-muted-foreground">
-                      No keywords could be extracted. Please try again with a more detailed job description.
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-              
-              {/* Match Score Section */}
-              {matchScore !== null && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Resume Match Score</CardTitle>
-                    <CardDescription>How well your resume matches the job description</CardDescription>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="mb-4">
-                      <div className="flex justify-between mb-2">
-                        <span>Match Score</span>
-                        <span className="font-bold">{matchScore}%</span>
-                      </div>
-                      <Progress value={matchScore} className="h-2" />
-                    </div>
+              <Tabs defaultValue="analysis" className="w-full">
+                <TabsList className="mb-6 w-full justify-start">
+                  <TabsTrigger value="analysis">Analysis Results</TabsTrigger>
+                  <TabsTrigger value="optimize">Optimize Resume</TabsTrigger>
+                </TabsList>
+                
+                <TabsContent value="analysis">
+                  <div className="space-y-6">
+                    {/* Top Keywords Section */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Top 10 Keywords from Job Description</CardTitle>
+                        <CardDescription>These are the most important terms to include in your resume</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        {topKeywords.length > 0 ? (
+                          <div className="flex flex-wrap gap-2">
+                            {topKeywords.map((keyword, index) => (
+                              <Badge key={index} variant="secondary" className="px-3 py-1 text-sm">
+                                {keyword}
+                              </Badge>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-center py-4 text-muted-foreground">
+                            No keywords could be extracted. Please try again with a more detailed job description.
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
                     
-                    <div className="p-4 bg-muted rounded-lg">
-                      <h4 className="font-semibold mb-2">Justification</h4>
-                      <p className="text-sm whitespace-pre-line">{matchJustification}</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-              
-              {/* Next Steps */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Next Steps</CardTitle>
-                  <CardDescription>Improve your resume based on the analysis</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <ul className="list-disc pl-5 space-y-2">
-                    <li>Update your resume to include more of the top keywords</li>
-                    <li>Focus on quantifiable achievements that demonstrate the required skills</li>
-                    <li>Tailor your experience descriptions to match the job requirements</li>
-                    <li>Consider the formatting and structure of your resume for better ATS readability</li>
-                  </ul>
-                  
-                  <div className="mt-6">
-                    <Button 
-                      onClick={() => router.push('/dashboard')} 
-                      variant="outline" 
-                      className="w-full"
-                    >
-                      Return to Dashboard
-                    </Button>
+                    {/* Match Score Section */}
+                    {matchScore !== null && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Resume Match Score</CardTitle>
+                          <CardDescription>How well your resume matches the job description</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="mb-4">
+                            <div className="flex justify-between mb-2">
+                              <span>Match Score</span>
+                              <span className="font-bold">{matchScore}%</span>
+                            </div>
+                            <Progress value={matchScore} className="h-2" />
+                          </div>
+                          
+                          <div className="p-4 bg-muted rounded-lg">
+                            <h4 className="font-semibold mb-2">Justification</h4>
+                            <p className="text-sm whitespace-pre-line">{matchJustification}</p>
+                          </div>
+                        </CardContent>
+                      </Card>
+                    )}
+                    
+                    {/* Next Steps */}
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>Next Steps</CardTitle>
+                        <CardDescription>Improve your resume based on the analysis</CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <ul className="list-disc pl-5 space-y-2">
+                          <li>Update your resume to include more of the top keywords</li>
+                          <li>Focus on quantifiable achievements that demonstrate the required skills</li>
+                          <li>Tailor your experience descriptions to match the job requirements</li>
+                          <li>Consider the formatting and structure of your resume for better ATS readability</li>
+                        </ul>
+                        
+                        <div className="mt-6">
+                          <Button 
+                            onClick={() => router.push('/dashboard')} 
+                            variant="outline" 
+                            className="w-full"
+                          >
+                            Return to Dashboard
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
                   </div>
-                </CardContent>
-              </Card>
+                </TabsContent>
+                
+                <TabsContent value="optimize">
+                  <div className="space-y-6">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle>AI-Powered Resume Optimization</CardTitle>
+                        <CardDescription>
+                          Let our AI optimize your resume for this specific job description
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="mb-4 text-sm text-muted-foreground">
+                          Our AI will analyze your resume and the job description, then create an optimized version 
+                          that incorporates relevant keywords and phrases to achieve a higher ATS match score.
+                        </p>
+                        
+                        {!optimizationComplete ? (
+                          <Button 
+                            onClick={handleOptimize} 
+                            disabled={isOptimizing}
+                            className="w-full"
+                          >
+                            {isOptimizing ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Optimizing Resume...
+                              </>
+                            ) : "Generate Optimized Resume"}
+                          </Button>
+                        ) : (
+                          <div className="p-4 bg-muted rounded-lg">
+                            <div className="flex justify-between items-center mb-2">
+                              <h4 className="font-semibold">Optimized Match Score</h4>
+                              <span className="font-bold text-green-500">{optimizedScore}%</span>
+                            </div>
+                            <Progress value={optimizedScore || 0} className="h-2 mb-4" />
+                            <p className="text-sm text-muted-foreground">
+                              Your optimized resume now has a significantly higher match score with this job description.
+                            </p>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                    
+                    {optimizationComplete && (
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Your Optimized Resume</CardTitle>
+                          <CardDescription>Copy and use this optimized version for your application</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="relative">
+                            <Textarea 
+                              ref={optimizedResumeRef}
+                              value={optimizedResume}
+                              className="min-h-[400px] mb-4 font-mono text-sm"
+                              readOnly
+                            />
+                            <Button 
+                              size="sm"
+                              variant="outline"
+                              className="absolute top-2 right-2"
+                              onClick={copyToClipboard}
+                            >
+                              {copySuccess ? (
+                                <>
+                                  <CheckCircle className="h-4 w-4 mr-1" />
+                                  Copied!
+                                </>
+                              ) : (
+                                <>
+                                  <Copy className="h-4 w-4 mr-1" />
+                                  Copy
+                                </>
+                              )}
+                            </Button>
+                          </div>
+                          <p className="text-sm text-muted-foreground mt-2">
+                            This optimized resume maintains your actual experience while incorporating keywords 
+                            and phrases from the job description to improve your chances of passing ATS screening.
+                          </p>
+                        </CardContent>
+                      </Card>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
           )}
         </main>
