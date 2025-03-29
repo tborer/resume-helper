@@ -645,7 +645,13 @@ export default function Dashboard() {
                       <p className="text-sm text-muted-foreground mt-1">Your subscription renews on April 28, 2025</p>
                     </div>
                     
-                    <Button variant="outline" className="w-full">Manage Subscription</Button>
+                    <Button 
+                      variant="outline" 
+                      className="w-full"
+                      onClick={() => window.open("https://billing.stripe.com/p/login/9AQ15k2zx5kMgaA9AA", "_blank")}
+                    >
+                      Manage Subscription
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
