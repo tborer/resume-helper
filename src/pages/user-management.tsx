@@ -3,7 +3,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Switch } from "@/components/ui/switch";
@@ -12,7 +12,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertCircle, CheckCircle } from "lucide-react";
+import { AlertCircle, CheckCircle, Loader2, PlusCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // Mock user data - in a real app, this would come from a database
 const mockUsers = [
@@ -75,6 +76,96 @@ export default function UserManagement() {
   const [masterApiKeySaveMessage, setMasterApiKeySaveMessage] = useState("");
   const [masterApiKeySaveSuccess, setMasterApiKeySaveSuccess] = useState(false);
   
+  // Add User states
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
+  const [isAddingUser, setIsAddingUser] = useState(false);
+  const [addUserMessage, setAddUserMessage] = useState("");
+  const [addUserSuccess, setAddUserSuccess] = useState(false);
+  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+  
+  // Feature Requests states
+  const [featureRequests, setFeatureRequests] = useState<any[]>([]);
+  const [isLoadingFeatureRequests, setIsLoadingFeatureRequests] = useState(false);
+  
+  // Fetch users from the API
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data.length > 0 ? data : mockUsers);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+  
+  // Fetch feature requests from the API
+  const fetchFeatureRequests = async () => {
+    setIsLoadingFeatureRequests(true);
+    try {
+      const response = await fetch('/api/feature-requests');
+      if (response.ok) {
+        const data = await response.json();
+        setFeatureRequests(data);
+      }
+    } catch (error) {
+      console.error('Error fetching feature requests:', error);
+    } finally {
+      setIsLoadingFeatureRequests(false);
+    }
+  };
+  
+  // Add a new user
+  const handleAddUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (!newUserEmail) {
+      setAddUserMessage("Please enter an email address");
+      setAddUserSuccess(false);
+      return;
+    }
+    
+    setIsAddingUser(true);
+    setAddUserMessage("");
+    
+    try {
+      const response = await fetch('/api/users/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: newUserEmail,
+          isAdmin: newUserIsAdmin,
+        }),
+      });
+      
+      const data = await response.json();
+      
+      if (response.ok) {
+        setAddUserSuccess(true);
+        setAddUserMessage("User added successfully");
+        setNewUserEmail("");
+        setNewUserIsAdmin(false);
+        setShowAddUserDialog(false);
+        
+        // Refresh the user list
+        fetchUsers();
+      } else {
+        setAddUserSuccess(false);
+        setAddUserMessage(data.message || "Error adding user");
+      }
+    } catch (error) {
+      console.error('Error adding user:', error);
+      setAddUserSuccess(false);
+      setAddUserMessage("Error adding user");
+    } finally {
+      setIsAddingUser(false);
+    }
+  };
+  
   useEffect(() => {
     // Get email from localStorage
     const storedEmail = localStorage.getItem("userEmail");
@@ -91,6 +182,10 @@ export default function UserManagement() {
         if (savedMasterApiKey) {
           setMasterApiKey(savedMasterApiKey);
         }
+        
+        // Fetch users and feature requests
+        fetchUsers();
+        fetchFeatureRequests();
       } else {
         // Redirect non-admin users to dashboard
         router.push("/dashboard");
@@ -283,6 +378,7 @@ export default function UserManagement() {
           <Tabs defaultValue="users" className="w-full">
             <TabsList className="mb-6">
               <TabsTrigger value="users">User Management</TabsTrigger>
+              <TabsTrigger value="feature-requests">Feature Requests</TabsTrigger>
               <TabsTrigger value="logs">API Logs</TabsTrigger>
               <TabsTrigger value="stripe-testing">Stripe Testing</TabsTrigger>
               <TabsTrigger value="master-api-key">Master API Key</TabsTrigger>
@@ -293,9 +389,70 @@ export default function UserManagement() {
             
             <TabsContent value="users">
               <Card>
-                <CardHeader>
-                  <CardTitle>User Management</CardTitle>
-                  <CardDescription>Manage user access and permissions</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <div>
+                    <CardTitle>User Management</CardTitle>
+                    <CardDescription>Manage user access and permissions</CardDescription>
+                  </div>
+                  <Dialog open={showAddUserDialog} onOpenChange={setShowAddUserDialog}>
+                    <DialogTrigger asChild>
+                      <Button size="sm" className="ml-auto">
+                        <PlusCircle className="mr-2 h-4 w-4" />
+                        Add User
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <DialogHeader>
+                        <DialogTitle>Add New User</DialogTitle>
+                        <DialogDescription>
+                          Add a new user to the system. They will be granted access to the tool.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <form onSubmit={handleAddUser}>
+                        <div className="grid gap-4 py-4">
+                          <div className="grid gap-2">
+                            <Label htmlFor="new-user-email">Email</Label>
+                            <Input
+                              id="new-user-email"
+                              type="email"
+                              placeholder="user@example.com"
+                              value={newUserEmail}
+                              onChange={(e) => setNewUserEmail(e.target.value)}
+                              required
+                            />
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Checkbox
+                              id="new-user-admin"
+                              checked={newUserIsAdmin}
+                              onCheckedChange={(checked) => setNewUserIsAdmin(checked === true)}
+                            />
+                            <Label htmlFor="new-user-admin">Grant admin privileges</Label>
+                          </div>
+                          {addUserMessage && (
+                            <p className={`text-sm ${addUserSuccess ? "text-green-500" : "text-red-500"}`}>
+                              {addUserMessage}
+                            </p>
+                          )}
+                        </div>
+                        <DialogFooter>
+                          <Button type="button" variant="outline" onClick={() => setShowAddUserDialog(false)}>
+                            Cancel
+                          </Button>
+                          <Button type="submit" disabled={isAddingUser}>
+                            {isAddingUser ? (
+                              <>
+                                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                Adding...
+                              </>
+                            ) : (
+                              "Add User"
+                            )}
+                          </Button>
+                        </DialogFooter>
+                      </form>
+                    </DialogContent>
+                  </Dialog>
                 </CardHeader>
                 <CardContent>
                   <div className="mb-6">
@@ -391,6 +548,68 @@ export default function UserManagement() {
                     </Table>
                   </div>
                 </CardContent>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="feature-requests">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Feature Requests</CardTitle>
+                  <CardDescription>View and manage user feature requests</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {isLoadingFeatureRequests ? (
+                    <div className="flex justify-center items-center py-8">
+                      <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : featureRequests.length > 0 ? (
+                    <div className="space-y-6">
+                      {featureRequests.map((request) => (
+                        <div key={request.id} className="border rounded-lg p-4">
+                          <div className="flex justify-between mb-2">
+                            <div className="font-medium">{request.user.email}</div>
+                            <div className="text-sm text-muted-foreground">
+                              {new Date(request.createdAt).toLocaleString()}
+                            </div>
+                          </div>
+                          <div className="mt-2 p-3 bg-muted rounded-md">
+                            <p className="whitespace-pre-wrap">{request.content}</p>
+                          </div>
+                          <div className="mt-3 flex justify-between items-center">
+                            <Badge variant={
+                              request.status === 'approved' ? 'secondary' : 
+                              request.status === 'rejected' ? 'destructive' : 
+                              'outline'
+                            }>
+                              {request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      No feature requests found
+                    </div>
+                  )}
+                </CardContent>
+                <CardFooter>
+                  <Button 
+                    variant="outline" 
+                    className="w-full" 
+                    onClick={fetchFeatureRequests}
+                    disabled={isLoadingFeatureRequests}
+                  >
+                    {isLoadingFeatureRequests ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Refreshing...
+                      </>
+                    ) : (
+                      "Refresh Feature Requests"
+                    )}
+                  </Button>
+                </CardFooter>
               </Card>
             </TabsContent>
             

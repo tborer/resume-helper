@@ -9,8 +9,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { AlertCircle, CheckCircle, Copy } from "lucide-react";
+import { AlertCircle, CheckCircle, Copy, MessageSquarePlus } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 import { useRouter } from "next/router";
 import { useEffect } from "react";
@@ -317,7 +318,72 @@ export default function Dashboard() {
       <div className="bg-background min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
-          <h1 className="text-3xl font-bold mb-6">Resume ATS Optimizer</h1>
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold">Resume ATS Optimizer</h1>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <MessageSquarePlus className="mr-2 h-4 w-4" />
+                  Request Feature
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Feature Request</DialogTitle>
+                  <DialogDescription>
+                    Submit a feature request for the ResumeAI tool. We value your feedback!
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const form = e.target as HTMLFormElement;
+                  const formData = new FormData(form);
+                  const content = formData.get('feature-request') as string;
+                  
+                  if (!content || !userEmail) return;
+                  
+                  try {
+                    const response = await fetch('/api/feature-requests/create', {
+                      method: 'POST',
+                      headers: {
+                        'Content-Type': 'application/json',
+                      },
+                      body: JSON.stringify({
+                        content,
+                        email: userEmail,
+                      }),
+                    });
+                    
+                    if (response.ok) {
+                      alert('Feature request submitted successfully!');
+                      form.reset();
+                    } else {
+                      alert('Error submitting feature request. Please try again.');
+                    }
+                  } catch (error) {
+                    console.error('Error submitting feature request:', error);
+                    alert('Error submitting feature request. Please try again.');
+                  }
+                }}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="feature-request">Your Feature Request</Label>
+                      <Textarea
+                        id="feature-request"
+                        name="feature-request"
+                        placeholder="Describe the feature you'd like to see..."
+                        className="min-h-[100px]"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Submit Request</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+          </div>
           
           <Tabs defaultValue="analyze" className="w-full">
             <TabsList className="mb-6">
