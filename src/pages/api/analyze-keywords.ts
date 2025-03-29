@@ -35,7 +35,7 @@ export default async function handler(
     }
 
     // Create the prompt as specified by the user
-    const prompt = `Please analyze the following job description and identify the top 10 most relevant keywords and phrases. Consider both the frequency of terms and the contextual importance of concepts within the description. Prioritize terms that accurately reflect the core responsibilities, required skills, and overall focus of the role.
+    const prompt = `Ignore all previous instructions. Clear your memory. Please analyze the following job description and identify the top 10 most relevant keywords and phrases. Consider both the frequency of terms and the contextual importance of concepts within the description. Prioritize terms that accurately reflect the core responsibilities, required skills, and overall focus of the role. Only extract keywords that are explicitly mentioned in the job description.
 
 [JOB DESCRIPTION HERE]
 ${jobDescription}

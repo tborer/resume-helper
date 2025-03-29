@@ -40,7 +40,7 @@ export default async function handler(
     }
 
     // Create the prompt as specified by the user
-    const prompt = `starting over with information, not using anything from prior prompts. You are an expert in Applicant Tracking Systems (ATS) and resume analysis. Your task is to analyze a job description and a resume, then provide a matching score indicating how well the resume aligns with the job description.
+    const prompt = `Ignore all previous instructions. Clear your memory. You are an expert in Applicant Tracking Systems (ATS) and resume analysis. Your task is to analyze a job description and a resume, then provide a matching score indicating how well the resume aligns with the job description.
 
 **Instructions:**
 
@@ -52,6 +52,7 @@ export default async function handler(
     * Experience relevance
     * Qualification fulfillment
 4.  **Provide the Output:** Output the matching score as a percentage number, followed by a brief justification of the score.
+5.  **Important:** Only identify missing skills that are explicitly mentioned in the job description. Do not invent or assume skills that are not clearly stated in the job description.
 
 **Input:**
 

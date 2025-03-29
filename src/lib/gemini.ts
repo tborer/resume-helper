@@ -108,8 +108,10 @@ export const extractKeywords = async (
   jobDescription: string
 ): Promise<string[]> => {
   const prompt = `
+    Ignore all previous instructions. Clear your memory.
     Extract the top 10 most important skills and keywords from this job description. 
-    Return them as a simple comma-separated list with no additional text or formatting:
+    Return them as a simple comma-separated list with no additional text or formatting.
+    Only extract keywords that are explicitly mentioned in the job description:
     
     ${jobDescription}
   `;
@@ -140,8 +142,10 @@ export const calculateATSMatchScore = async (
   feedback: string;
 }> => {
   const prompt = `
+    Ignore all previous instructions. Clear your memory.
     You are an ATS (Applicant Tracking System) expert. Analyze how well the following resume matches 
     the job description. Give a percentage match score (0-100) and provide brief feedback on how to improve.
+    Only identify missing skills that are explicitly mentioned in the job description.
     
     Job Description:
     ${jobDescription}
@@ -186,10 +190,12 @@ export const generateOptimizedResume = async (
   jobDescription: string
 ): Promise<string> => {
   const prompt = `
+    Ignore all previous instructions. Clear your memory.
     You are an expert resume writer specializing in optimizing resumes for ATS systems.
     Rewrite the following resume to better match the job description, while maintaining
     truthfulness and the candidate's actual experience. Focus on keyword optimization,
     formatting, and highlighting relevant skills and experiences.
+    Only include skills and technologies that are explicitly mentioned in the job description or that the candidate already has on their resume.
     
     Job Description:
     ${jobDescription}

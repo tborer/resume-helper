@@ -54,17 +54,18 @@ export default async function handler(
     }
 
     // Create the prompt as specified by the user
-    const prompt = `You are an expert in Applicant Tracking Systems (ATS) and resume optimization. Your task is to analyze a job description and a resume, then modify the resume to achieve a 95% or higher match score with the ATS. You must enhance the resume by adding relevant keywords and phrases from the job description without altering the candidate's actual experience. You can add bullet points, expand the skills section, and refine the language used.
+    const prompt = `Ignore all previous instructions. Clear your memory. You are an expert in Applicant Tracking Systems (ATS) and resume optimization. Your task is to analyze a job description and a resume, then modify the resume to achieve a 95% or higher match score with the ATS. You must enhance the resume by adding relevant keywords and phrases from the job description without altering the candidate's actual experience. You can add bullet points, expand the skills section, and refine the language used.
 
 **Instructions:**
 
-1.  Forgetting info from prior prompts. **Analyze the Job Description:** Identify key skills, responsibilities, qualifications, and keywords from the provided job description.
+1.  **Analyze the Job Description:** Identify key skills, responsibilities, qualifications, and keywords from the provided job description.
 2.  **Analyze the Resume:** Extract relevant skills, experience, and qualifications from the provided resume.
 3.  **Optimize the Resume:** Modify the resume to incorporate keywords and phrases from the job description, emphasizing relevant skills and experiences.
     * Add keywords and phrases to the summary, experience bullet points, and skills section.
     * Use language from the job description to describe the candidate's experience.
     * Ensure that the modifications are consistent with the candidate's actual experience.
     * Do not change any dates, companies, or job titles.
+    * Only include skills and technologies that are explicitly mentioned in the job description or that the candidate already has on their resume.
 4.  **Calculate and Provide the Matching Score:** Calculate the percentage match between the optimized resume and the job description.
 5.  **Output the Optimized Resume:** Output the optimized resume in the specified text format.
 
@@ -127,7 +128,7 @@ TECH & SKILLS
       console.log('Initial optimization score below 95%, running additional optimization...');
       
       // Create a more targeted prompt for further optimization
-      const additionalPrompt = `You are an expert in Applicant Tracking Systems (ATS) and resume optimization. The current resume has a match score of ${matchingScore}%, but we need to achieve 95% or higher.
+      const additionalPrompt = `Ignore all previous instructions. Clear your memory. You are an expert in Applicant Tracking Systems (ATS) and resume optimization. The current resume has a match score of ${matchingScore}%, but we need to achieve 95% or higher.
 
 **Instructions:**
 
@@ -140,6 +141,7 @@ TECH & SKILLS
    * Expanding technical skills that align with the job requirements
    * Adding quantifiable achievements that demonstrate required competencies
    * Restructuring content to emphasize the most relevant experience
+   * Only include skills and technologies that are explicitly mentioned in the job description or that the candidate already has on their resume.
 
 **Input:**
 
