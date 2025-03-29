@@ -185,7 +185,7 @@ export default function ResumeAnalysis() {
   return (
     <>
       <Head>
-        <title>Resume Analysis | ResumeAI - ATS Resume Optimizer</title>
+        <title>Resume Analysis | Resume Rocket Match AI - ATS Resume Optimizer</title>
         <meta name="description" content="Analyze and optimize your resume for ATS systems" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -422,6 +422,23 @@ export default function ResumeAnalysis() {
                           <CardDescription>Copy and use this optimized version for your application</CardDescription>
                         </CardHeader>
                         <CardContent>
+                          {optimizedScore && optimizedScore < 95 ? (
+                            <Alert className="mb-4 bg-amber-500/10 border-amber-500/50">
+                              <AlertCircle className="h-4 w-4 mr-2 text-amber-500" />
+                              <AlertDescription className="text-sm">
+                                We've performed additional optimization to maximize your resume's match score. 
+                                The resume below includes extra keywords and skills to better align with this job description.
+                              </AlertDescription>
+                            </Alert>
+                          ) : optimizedScore && optimizedScore >= 95 ? (
+                            <Alert className="mb-4 bg-green-500/10 border-green-500/50">
+                              <CheckCircle className="h-4 w-4 mr-2 text-green-500" />
+                              <AlertDescription className="text-sm">
+                                Your resume has achieved an excellent match score of {optimizedScore}% with this job description!
+                              </AlertDescription>
+                            </Alert>
+                          ) : null}
+                          
                           <div className="relative">
                             <Textarea 
                               ref={optimizedResumeRef}
@@ -470,7 +487,7 @@ export default function ResumeAnalysis() {
         
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} ResumeAI, an Agile Rant product. All rights reserved.</p>
+            <p>© {new Date().getFullYear()} Resume Rocket Match AI, an Agile Rant product. All rights reserved.</p>
           </div>
         </footer>
       </div>

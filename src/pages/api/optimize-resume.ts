@@ -119,8 +119,76 @@ TECH & SKILLS
       });
     }
 
-    const matchingScore = parseInt(scoreMatch[1], 10);
-    const optimizedResume = optimizedResumeMatch[1].trim();
+    let matchingScore = parseInt(scoreMatch[1], 10);
+    let optimizedResume = optimizedResumeMatch[1].trim();
+
+    // If the matching score is less than 95%, run an additional optimization
+    if (matchingScore < 95) {
+      console.log('Initial optimization score below 95%, running additional optimization...');
+      
+      // Create a more targeted prompt for further optimization
+      const additionalPrompt = `You are an expert in Applicant Tracking Systems (ATS) and resume optimization. The current resume has a match score of ${matchingScore}%, but we need to achieve 95% or higher.
+
+**Instructions:**
+
+1. Analyze the job description thoroughly to identify ALL key requirements, skills, and qualifications.
+2. Analyze the current resume to identify gaps and missing keywords.
+3. Find additional keyword phrases, skills, or experience bullet points that should be added to achieve a 95%+ match.
+4. Create a new optimized version that incorporates these additional elements while maintaining truthfulness.
+5. Focus specifically on:
+   * Adding more industry-specific terminology from the job description
+   * Expanding technical skills that align with the job requirements
+   * Adding quantifiable achievements that demonstrate required competencies
+   * Restructuring content to emphasize the most relevant experience
+
+**Input:**
+
+**Job Description:**
+${jobDescription}
+
+**Current Resume:**
+${optimizedResume}
+
+**Output:**
+
+Matching Score: [Percentage]%
+
+Optimized Resume:
+
+SUMMARY
+[Further Optimized Summary Here]
+
+EXPERIENCE
+[Further Optimized Experience Section Here]
+
+CERTS
+[Further Optimized Certs section here]
+
+EDUCATION
+[Further Optimized Education section here]
+
+TECH & SKILLS
+[Further Optimized Tech & Skills section here]`;
+
+      // Call the Gemini API again with the additional prompt
+      const additionalResponse = await queryGeminiAPI(apiKey, additionalPrompt);
+
+      if (!additionalResponse.error) {
+        // Parse the response to extract the new matching score and optimized resume
+        const newScoreMatch = additionalResponse.text.match(/Matching Score:\s*(\d+)%/i);
+        const newOptimizedResumeMatch = additionalResponse.text.match(/Optimized Resume:\s*([\s\S]+)/i);
+
+        if (newScoreMatch && newOptimizedResumeMatch) {
+          matchingScore = parseInt(newScoreMatch[1], 10);
+          optimizedResume = newOptimizedResumeMatch[1].trim();
+          console.log(`Further optimization complete. New score: ${matchingScore}%`);
+        } else {
+          console.error('Could not parse additional optimization response:', additionalResponse.text);
+        }
+      } else {
+        console.error('Error from Gemini API during additional optimization:', additionalResponse.error);
+      }
+    }
 
     // Return the optimized resume and matching score
     return res.status(200).json({ optimizedResume, matchingScore });
