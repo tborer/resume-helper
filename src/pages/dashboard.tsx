@@ -525,7 +525,20 @@ export default function Dashboard() {
                     </div>
                     
                     <div>
-                      <Label htmlFor="gemini-api-key">Google Gemini API Key</Label>
+                      <div className="flex items-center space-x-2 mb-1">
+                        <Label htmlFor="gemini-api-key">Google Gemini API Key</Label>
+                        <div className="relative group">
+                          <div className="cursor-help text-muted-foreground">
+                            <AlertCircle className="h-4 w-4" />
+                          </div>
+                          <div className="absolute z-10 invisible group-hover:visible bg-popover text-popover-foreground p-3 rounded-md shadow-md text-sm w-64 -translate-x-1/2 left-1/2 mt-2">
+                            <p>
+                              Without your own API key, you'll use the Master API key with a limit of 10 resume analyses per day.
+                              Add your own API key for unlimited requests (subject only to Gemini's rate limits).
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                       <div className="flex space-x-2">
                         <Input 
                           id="gemini-api-key" 
@@ -550,7 +563,7 @@ export default function Dashboard() {
                       <p className="text-xs text-muted-foreground mt-1">
                         Your API key is stored securely and used to power AI features.{" "}
                         <a 
-                          href="https://ai.google.dev/tutorials/setup" 
+                          href="https://aistudio.google.com/apikey" 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="underline hover:text-primary"

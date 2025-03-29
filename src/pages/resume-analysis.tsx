@@ -30,12 +30,20 @@ export default function ResumeAnalysis() {
   const [optimizedResume, setOptimizedResume] = useState("");
   const [optimizedScore, setOptimizedScore] = useState<number | null>(null);
   
-  // Get the API key from localStorage
-  const getApiKey = () => {
+  // Get the API key to use (user's key or master key)
+  const getApiKeyToUse = () => {
     const userEmail = localStorage.getItem("userEmail");
-    if (!userEmail) return "";
+    if (!userEmail) return { key: "", isMasterKey: false };
     
-    return localStorage.getItem(`gemini_api_key_${userEmail}`) || "";
+    // First try to get the user's personal API key
+    const userKey = localStorage.getItem(`gemini_api_key_${userEmail}`);
+    if (userKey) {
+      return { key: userKey, isMasterKey: false };
+    }
+    
+    // If no user key, try to get the master key
+    const masterKey = localStorage.getItem('master_gemini_api_key');
+    return { key: masterKey || "", isMasterKey: true };
   };
 
   const handleAnalyze = async () => {
@@ -44,11 +52,13 @@ export default function ResumeAnalysis() {
       return;
     }
     
-    const apiKey = getApiKey();
+    const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
-      alert("Please add your Google Gemini API key in the Account tab");
+      alert("No API key available. Please add your Google Gemini API key in the Account tab");
       return;
     }
+    
+    const userEmail = localStorage.getItem("userEmail");
 
     setIsAnalyzing(true);
     setTopKeywords([]);
@@ -62,14 +72,25 @@ export default function ResumeAnalysis() {
         fetch('/api/analyze-keywords', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ jobDescription, apiKey })
+          body: JSON.stringify({ 
+            jobDescription, 
+            apiKey, 
+            userEmail, 
+            isMasterKey 
+          })
         }).then(res => res.json()),
           
         // Calculate match score
         fetch('/api/calculate-match', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ jobDescription, resume: resumeText, apiKey })
+          body: JSON.stringify({ 
+            jobDescription, 
+            resume: resumeText, 
+            apiKey, 
+            userEmail, 
+            isMasterKey 
+          })
         }).then(res => res.json())
       ]);
       
@@ -103,11 +124,13 @@ export default function ResumeAnalysis() {
       return;
     }
     
-    const apiKey = getApiKey();
+    const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
-      alert("Please add your Google Gemini API key in the Account tab");
+      alert("No API key available. Please add your Google Gemini API key in the Account tab");
       return;
     }
+    
+    const userEmail = localStorage.getItem("userEmail");
 
     setIsOptimizing(true);
     setOptimizedResume("");
@@ -121,7 +144,9 @@ export default function ResumeAnalysis() {
         body: JSON.stringify({ 
           jobDescription, 
           resume: resumeText, 
-          apiKey 
+          apiKey,
+          userEmail,
+          isMasterKey
         })
       });
       
@@ -168,6 +193,21 @@ export default function ResumeAnalysis() {
         <Header />
         <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
           <h1 className="text-3xl font-bold mb-6">Resume Analysis</h1>
+          
+          <Alert className="mb-6">
+            <AlertCircle className="h-4 w-4 mr-2" />
+            <AlertDescription>
+              Get unlimited resume analyses by adding your own Gemini API key in your account settings.
+              <a 
+                href="https://aistudio.google.com/apikey" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="underline ml-1 hover:text-primary"
+              >
+                Get your free API key here
+              </a>
+            </AlertDescription>
+          </Alert>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <Card>

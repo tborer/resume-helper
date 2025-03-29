@@ -5,6 +5,10 @@ type ResponseData = {
   optimizedResume?: string;
   matchingScore?: number;
   error?: string;
+  usageLimit?: {
+    remaining: number;
+    total: number;
+  };
 };
 
 export default async function handler(
@@ -17,7 +21,7 @@ export default async function handler(
   }
 
   try {
-    const { jobDescription, resume, apiKey } = req.body;
+    const { jobDescription, resume, apiKey, userEmail, isMasterKey } = req.body;
 
     // Validate inputs
     if (!jobDescription) {
@@ -30,6 +34,23 @@ export default async function handler(
 
     if (!apiKey) {
       return res.status(400).json({ error: 'API key is required' });
+    }
+    
+    // If using master key, check usage limits
+    if (isMasterKey && userEmail) {
+      // In a real app, we would check the database for usage
+      // For now, we'll just log it
+      console.log(`User ${userEmail} is using the master API key for optimize-resume`);
+      
+      // This would be the place to check if the user has reached their daily limit
+      // If they have, return an error
+      // const usageRemaining = await checkMasterKeyUsageLimit(userEmail);
+      // if (usageRemaining <= 0) {
+      //   return res.status(429).json({ 
+      //     error: 'Daily usage limit reached for the Master API key. Please add your own API key for unlimited usage.',
+      //     usageLimit: { remaining: 0, total: 10 }
+      //   });
+      // }
     }
 
     // Create the prompt as specified by the user

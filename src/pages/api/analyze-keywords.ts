@@ -16,7 +16,7 @@ export default async function handler(
   }
 
   try {
-    const { jobDescription, apiKey } = req.body;
+    const { jobDescription, apiKey, userEmail, isMasterKey } = req.body;
 
     // Validate inputs
     if (!jobDescription) {
@@ -25,6 +25,13 @@ export default async function handler(
 
     if (!apiKey) {
       return res.status(400).json({ error: 'API key is required' });
+    }
+    
+    // If using master key, check usage limits
+    if (isMasterKey && userEmail) {
+      // In a real app, we would check the database for usage
+      // For now, we'll just log it
+      console.log(`User ${userEmail} is using the master API key for analyze-keywords`);
     }
 
     // Create the prompt as specified by the user

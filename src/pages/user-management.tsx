@@ -69,6 +69,12 @@ export default function UserManagement() {
     details?: any;
   } | null>(null);
   
+  // Master API Key states
+  const [masterApiKey, setMasterApiKey] = useState("");
+  const [isSavingMasterApiKey, setIsSavingMasterApiKey] = useState(false);
+  const [masterApiKeySaveMessage, setMasterApiKeySaveMessage] = useState("");
+  const [masterApiKeySaveSuccess, setMasterApiKeySaveSuccess] = useState(false);
+  
   useEffect(() => {
     // Get email from localStorage
     const storedEmail = localStorage.getItem("userEmail");
@@ -79,6 +85,12 @@ export default function UserManagement() {
       const currentUser = mockUsers.find(user => user.email === storedEmail);
       if (currentUser?.isAdmin) {
         setIsAdmin(true);
+        
+        // Load master API key
+        const savedMasterApiKey = localStorage.getItem('master_gemini_api_key');
+        if (savedMasterApiKey) {
+          setMasterApiKey(savedMasterApiKey);
+        }
       } else {
         // Redirect non-admin users to dashboard
         router.push("/dashboard");
@@ -88,6 +100,42 @@ export default function UserManagement() {
       router.push("/");
     }
   }, [router]);
+  
+  // Save the Master Gemini API key
+  const saveMasterApiKey = async () => {
+    if (!masterApiKey) {
+      setMasterApiKeySaveMessage("Please enter an API key");
+      setMasterApiKeySaveSuccess(false);
+      return;
+    }
+    
+    setIsSavingMasterApiKey(true);
+    setMasterApiKeySaveMessage("");
+    
+    try {
+      // In a real app, we would save this to a database via an API call
+      // For now, we'll just save it to localStorage
+      localStorage.setItem('master_gemini_api_key', masterApiKey);
+      
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      console.log("Saved Master Gemini API key");
+      setMasterApiKeySaveMessage("Master API key saved successfully");
+      setMasterApiKeySaveSuccess(true);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setMasterApiKeySaveMessage("");
+      }, 3000);
+    } catch (error) {
+      console.error("Error saving Master API key:", error);
+      setMasterApiKeySaveMessage("Error saving Master API key");
+      setMasterApiKeySaveSuccess(false);
+    } finally {
+      setIsSavingMasterApiKey(false);
+    }
+  };
 
   // Toggle user active status
   const toggleUserStatus = (userId: number) => {
@@ -237,6 +285,7 @@ export default function UserManagement() {
               <TabsTrigger value="users">User Management</TabsTrigger>
               <TabsTrigger value="logs">API Logs</TabsTrigger>
               <TabsTrigger value="stripe-testing">Stripe Testing</TabsTrigger>
+              <TabsTrigger value="master-api-key">Master API Key</TabsTrigger>
               <TabsTrigger value="back" onClick={() => router.push("/dashboard")}>
                 Back to Dashboard
               </TabsTrigger>
@@ -480,6 +529,77 @@ export default function UserManagement() {
                   </Card>
                 </div>
               )}
+            </TabsContent>
+            
+            <TabsContent value="master-api-key">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Master API Key Management</CardTitle>
+                  <CardDescription>Configure a shared Gemini API key for all users</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    <div className="p-4 bg-muted rounded-lg">
+                      <h4 className="font-semibold mb-2">About Master API Key</h4>
+                      <p className="text-sm text-muted-foreground">
+                        The Master API Key is a shared Google Gemini API key that will be used by all users who don't have their own API key.
+                        Users with the Master API key are limited to 10 resume analysis completions per day, while users with their own API key
+                        have unlimited requests (subject only to Gemini's rate limits).
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <Label htmlFor="master-gemini-api-key">Google Gemini API Key</Label>
+                      <div className="flex space-x-2">
+                        <Input 
+                          id="master-gemini-api-key" 
+                          type="password" 
+                          placeholder="Enter the Master Gemini API key" 
+                          value={masterApiKey}
+                          onChange={(e) => setMasterApiKey(e.target.value)}
+                        />
+                        <Button 
+                          onClick={saveMasterApiKey} 
+                          disabled={isSavingMasterApiKey}
+                          size="sm"
+                        >
+                          {isSavingMasterApiKey ? "Saving..." : "Save"}
+                        </Button>
+                      </div>
+                      {masterApiKeySaveMessage && (
+                        <p className={`text-sm mt-1 ${masterApiKeySaveSuccess ? "text-green-500" : "text-red-500"}`}>
+                          {masterApiKeySaveMessage}
+                        </p>
+                      )}
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Get a Gemini API key from{" "}
+                        <a 
+                          href="https://aistudio.google.com/apikey" 
+                          target="_blank" 
+                          rel="noopener noreferrer"
+                          className="underline hover:text-primary"
+                        >
+                          Google AI Studio
+                        </a>
+                      </p>
+                    </div>
+                    
+                    <Alert>
+                      <AlertTitle>Usage Policy</AlertTitle>
+                      <AlertDescription>
+                        <p className="mb-2">
+                          When users utilize the Master API key, they are limited to 10 resume analysis completions per day.
+                          This helps manage costs and prevents abuse of the shared API key.
+                        </p>
+                        <p>
+                          Users can add their own Gemini API key in their account settings to get unlimited requests,
+                          subject only to Google's rate limits for their personal API key.
+                        </p>
+                      </AlertDescription>
+                    </Alert>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
           </Tabs>
         </main>
