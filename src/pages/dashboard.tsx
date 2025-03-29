@@ -322,6 +322,9 @@ export default function Dashboard() {
           <Tabs defaultValue="analyze" className="w-full">
             <TabsList className="mb-6">
               <TabsTrigger value="analyze">Analyze & Optimize</TabsTrigger>
+              <TabsTrigger value="resume-analysis" onClick={() => router.push("/resume-analysis")}>
+                Resume Analysis
+              </TabsTrigger>
               <TabsTrigger value="history">History</TabsTrigger>
               <TabsTrigger value="account">Account</TabsTrigger>
               {isAdmin && (
