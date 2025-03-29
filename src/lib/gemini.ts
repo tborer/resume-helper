@@ -20,12 +20,12 @@ export interface GeminiResponse {
  * Makes a request to the Gemini API
  * @param apiKey - The Gemini API key
  * @param prompt - The prompt to send to the API
- * @param model - The model to use (defaults to gemini-pro)
+ * @param model - The model to use (defaults to gemini-2.0-flash)
  */
 export const queryGeminiAPI = async (
   apiKey: string,
   prompt: string,
-  model: string = "gemini-pro"
+  model: string = "gemini-2.0-flash"
 ): Promise<GeminiResponse> => {
   if (!apiKey) {
     return {
@@ -42,8 +42,8 @@ export const queryGeminiAPI = async (
   }
 
   try {
-    // The URL for the Gemini API
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+    // The URL for the Gemini API (using v1 instead of v1beta)
+    const url = `https://generativelanguage.googleapis.com/v1/models/${model}:generateContent?key=${apiKey}`;
     
     // The request body
     const requestBody = {
