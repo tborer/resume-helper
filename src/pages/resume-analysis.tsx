@@ -6,7 +6,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Copy, CheckCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, Copy, CheckCircle, AlertCircle } from "lucide-react";
 import { useRouter } from "next/router";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
