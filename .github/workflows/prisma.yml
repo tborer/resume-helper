@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        uses: ./install-deps
+        uses: ./.github/workflows/install-deps
       - name: Run Prisma migration
         run: npx prisma migrate dev --name init
       - name: Run sample query
