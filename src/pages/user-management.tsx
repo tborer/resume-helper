@@ -90,16 +90,18 @@ export default function UserManagement() {
   
   // Fetch users from the API
   const fetchUsers = async () => {
-    try {
-      const response = await fetch('/api/users');
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data.length > 0 ? data : mockUsers);
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error);
+  try {
+    const response = await fetch('/api/users');
+    if (response.ok) {
+      const data = await response.json();
+      setUsers(data);
+    } else {
+      console.error('Error fetching users:', response.status);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+};
   
   // Fetch feature requests from the API
   const fetchFeatureRequests = async () => {
