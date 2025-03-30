@@ -1,0 +1,19 @@
+name: Test Database Connection
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test-connection:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install
+      - name: Test database connection
+        env:
+          DATABASE_URL: ${{ DATABASE_URL }}
+        run: npx prisma migrate dev --name test-connection
