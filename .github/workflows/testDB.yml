@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Install dependencies
-        uses: ./install-deps
+        uses: ./.github/workflows/install-deps
       - name: Test database connection
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
