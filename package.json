@@ -12,7 +12,8 @@
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "audit": "pnpm audit --fix"
+    "audit": "pnpm audit --fix",
+    "test": "your-test-command"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
