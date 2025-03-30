@@ -25,23 +25,19 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 //];
 
 //Fetch users from real database
-const [users, setUsers] = useState([]);
-
-// Fetch users from database
-useEffect(() => {
-  const fetchUsers = async () => {
-    try {
-      const response = await fetch('/api/users');
-      if (response.ok) {
-        const data = await response.json();
-        setUsers(data);
-      }
-    } catch (error) {
-      console.error('Error fetching users:', error);
+const fetchUsers = async () => {
+  try {
+    const response = await fetch('/api/users');
+    if (response.ok) {
+      const data = await response.json();
+      setUsers(data);
+    } else {
+      console.error('Error fetching users:', response.status);
     }
-  };
-  fetchUsers();
-}, []);
+  } catch (error) {
+    console.error('Error fetching users:', error);
+  }
+};
 
 // Mock API logs - in a real app, these would be fetched from a database or log service
 const mockApiLogs = [
