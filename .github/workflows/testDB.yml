@@ -16,4 +16,4 @@ jobs:
       - name: Test database connection
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-        run: npx prisma migrate dev --name test-connection
+        run: npx prisma db push
