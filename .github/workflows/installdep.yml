@@ -1,0 +1,13 @@
+name: Install Dependencies
+
+on:
+  workflow_call:
+
+jobs:
+  install-deps:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install dependencies
+        run: npm install --force
