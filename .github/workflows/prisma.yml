@@ -9,8 +9,10 @@ jobs:
   prisma-setup:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Install dependencies
-        uses: ./.github/workflows/install-deps
+        run: npm install --force
       - name: Run Prisma migration
         run: npx prisma migrate dev --name init
       - name: Run sample query
