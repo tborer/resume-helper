@@ -128,6 +128,7 @@ const UserManagement = () => {
       setAddUserMessage("Error adding user");
     } finally {
   setIsAddingUser(false);
+    }
 };
 
 useEffect(() => {
