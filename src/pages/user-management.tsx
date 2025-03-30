@@ -15,19 +15,43 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertCircle, CheckCircle, Loader2, PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-// Mock user data - in a real app, this would come from a database
-//const mockUsers = [
-  //{ id: 1, email: "admin@example.com", isActive: true, isAdmin: true, historyAccess: true, accountAccess: true },
-  //{ id: 2, email: "tray14@hotmail.com", isActive: true, isAdmin: true, historyAccess: true, accountAccess: true },
-  //{ id: 3, email: "user1@example.com", isActive: true, isAdmin: false, historyAccess: true, accountAccess: false },
-  //{ id: 4, email: "user2@example.com", isActive: false, isAdmin: false, historyAccess: false, accountAccess: false },
-  //{ id: 5, email: "user3@example.com", isActive: true, isAdmin: false, historyAccess: true, accountAccess: true },
-//];
-
-//Fetch users from real database
 const UserManagement = () => {
+  const router = useRouter();
   const [users, setUsers] = useState([]);
+  const [apiLogs, setApiLogs] = useState([]);
+  const [userEmail, setUserEmail] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  // Stripe Testing states
+  const [testEmail, setTestEmail] = useState("");
+  const [isTestingSubscription, setIsTestingSubscription] = useState(false);
+  const [isTestingPurchase, setIsTestingPurchase] = useState(false);
+  const [testResult, setTestResult] = useState<{
+    success: boolean;
+    message: string;
+    details?: any;
+  } | null>(null);
+
+  // Master API Key states
+  const [masterApiKey, setMasterApiKey] = useState("");
+  const [isSavingMasterApiKey, setIsSavingMasterApiKey] = useState(false);
+  const [masterApiKeySaveMessage, setMasterApiKeySaveMessage] = useState("");
+  const [masterApiKeySaveSuccess, setMasterApiKeySaveSuccess] = useState(false);
+
+  // Add User states
+  const [newUserEmail, setNewUserEmail] = useState("");
+  const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
+  const [isAddingUser, setIsAddingUser] = useState(false);
+  const [addUserMessage, setAddUserMessage] = useState("");
+  const [addUserSuccess, setAddUserSuccess] = useState(false);
+  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
+
+  // Feature Requests states
+  const [featureRequests, setFeatureRequests] = useState<any[]>([]);
+  const [isLoadingFeatureRequests, setIsLoadingFeatureRequests] = useState(false);
+
+  // Fetch users from the API
   const fetchUsers = async () => {
     try {
       const response = await fetch('/api/users');
@@ -42,89 +66,6 @@ const UserManagement = () => {
     }
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, []);
-
-// Mock API logs - in a real app, these would be fetched from a database or log service
-const mockApiLogs = [
-  { 
-    id: 1, 
-    timestamp: "2025-03-28T21:45:12Z", 
-    endpoint: "/api/check-subscription", 
-    requestBody: JSON.stringify({ email: "user1@example.com" }, null, 2),
-    responseBody: JSON.stringify({ hasSubscription: true }, null, 2),
-    status: 200
-  },
-  { 
-    id: 2, 
-    timestamp: "2025-03-28T21:30:05Z", 
-    endpoint: "/api/check-subscription", 
-    requestBody: JSON.stringify({ email: "user2@example.com" }, null, 2),
-    responseBody: JSON.stringify({ hasSubscription: false }, null, 2),
-    status: 200
-  },
-  { 
-    id: 3, 
-    timestamp: "2025-03-28T20:15:33Z", 
-    endpoint: "/api/check-subscription", 
-    requestBody: JSON.stringify({ email: "nonexistent@example.com" }, null, 2),
-    responseBody: JSON.stringify({ hasSubscription: false }, null, 2),
-    status: 200
-  },
-];
-
-export default function UserManagement() {
-  const router = useRouter();
-  const [users, setUsers] = useState(mockUsers);
-  const [apiLogs, setApiLogs] = useState(mockApiLogs);
-  const [userEmail, setUserEmail] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  
-  // Stripe Testing states
-  const [testEmail, setTestEmail] = useState("");
-  const [isTestingSubscription, setIsTestingSubscription] = useState(false);
-  const [isTestingPurchase, setIsTestingPurchase] = useState(false);
-  const [testResult, setTestResult] = useState<{
-    success: boolean;
-    message: string;
-    details?: any;
-  } | null>(null);
-  
-  // Master API Key states
-  const [masterApiKey, setMasterApiKey] = useState("");
-  const [isSavingMasterApiKey, setIsSavingMasterApiKey] = useState(false);
-  const [masterApiKeySaveMessage, setMasterApiKeySaveMessage] = useState("");
-  const [masterApiKeySaveSuccess, setMasterApiKeySaveSuccess] = useState(false);
-  
-  // Add User states
-  const [newUserEmail, setNewUserEmail] = useState("");
-  const [newUserIsAdmin, setNewUserIsAdmin] = useState(false);
-  const [isAddingUser, setIsAddingUser] = useState(false);
-  const [addUserMessage, setAddUserMessage] = useState("");
-  const [addUserSuccess, setAddUserSuccess] = useState(false);
-  const [showAddUserDialog, setShowAddUserDialog] = useState(false);
-  
-  // Feature Requests states
-  const [featureRequests, setFeatureRequests] = useState<any[]>([]);
-  const [isLoadingFeatureRequests, setIsLoadingFeatureRequests] = useState(false);
-  
-  // Fetch users from the API
-  const fetchUsers = async () => {
-  try {
-    const response = await fetch('/api/users');
-    if (response.ok) {
-      const data = await response.json();
-      setUsers(data);
-    } else {
-      console.error('Error fetching users:', response.status);
-    }
-  } catch (error) {
-    console.error('Error fetching users:', error);
-  }
-};
-  
   // Fetch feature requests from the API
   const fetchFeatureRequests = async () => {
     setIsLoadingFeatureRequests(true);
@@ -140,20 +81,20 @@ export default function UserManagement() {
       setIsLoadingFeatureRequests(false);
     }
   };
-  
+
   // Add a new user
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!newUserEmail) {
       setAddUserMessage("Please enter an email address");
       setAddUserSuccess(false);
       return;
     }
-    
+
     setIsAddingUser(true);
     setAddUserMessage("");
-    
+
     try {
       const response = await fetch('/api/users/create', {
         method: 'POST',
@@ -165,16 +106,16 @@ export default function UserManagement() {
           isAdmin: newUserIsAdmin,
         }),
       });
-      
+
       const data = await response.json();
-      
+
       if (response.ok) {
         setAddUserSuccess(true);
         setAddUserMessage("User added successfully");
         setNewUserEmail("");
         setNewUserIsAdmin(false);
         setShowAddUserDialog(false);
-        
+
         // Refresh the user list
         fetchUsers();
       } else {
@@ -186,75 +127,82 @@ export default function UserManagement() {
       setAddUserSuccess(false);
       setAddUserMessage("Error adding user");
     } finally {
-      setIsAddingUser(false);
-    }
-  };
-  
-  useEffect(() => {
-    // Get email from localStorage
-    const storedEmail = localStorage.getItem("userEmail");
-    if (storedEmail) {
-      setUserEmail(storedEmail);
-      
-      // Check if current user is admin (in a real app, this would be verified server-side)
-      const currentUser = mockUsers.find(user => user.email === storedEmail);
-      if (currentUser?.isAdmin) {
-        setIsAdmin(true);
-        
-        // Load master API key
-        const savedMasterApiKey = localStorage.getItem('master_gemini_api_key');
-        if (savedMasterApiKey) {
-          setMasterApiKey(savedMasterApiKey);
+  setIsAddingUser(false);
+};
+
+useEffect(() => {
+  // Get email from localStorage
+  const storedEmail = localStorage.getItem("userEmail");
+  if (storedEmail) {
+    setUserEmail(storedEmail);
+
+    // Verify admin status server-side
+    const verifyAdmin = async () => {
+      try {
+        const response = await fetch('/api/users/me');
+        if (response.ok) {
+          const data = await response.json();
+          setIsAdmin(data.isAdmin);
         }
-        
-        // Fetch users and feature requests
-        fetchUsers();
-        fetchFeatureRequests();
-      } else {
-        // Redirect non-admin users to dashboard
-        router.push("/dashboard");
+      } catch (error) {
+        console.error('Error verifying admin:', error);
       }
-    } else {
-      // If no email is found, redirect to home page
-      router.push("/");
+    };
+    verifyAdmin();
+
+    // Load master API key
+    const savedMasterApiKey = localStorage.getItem('master_gemini_api_key');
+    if (savedMasterApiKey) {
+      setMasterApiKey(savedMasterApiKey);
     }
-  }, [router]);
-  
-  // Save the Master Gemini API key
-  const saveMasterApiKey = async () => {
-    if (!masterApiKey) {
-      setMasterApiKeySaveMessage("Please enter an API key");
-      setMasterApiKeySaveSuccess(false);
-      return;
-    }
-    
-    setIsSavingMasterApiKey(true);
-    setMasterApiKeySaveMessage("");
-    
-    try {
-      // In a real app, we would save this to a database via an API call
-      // For now, we'll just save it to localStorage
-      localStorage.setItem('master_gemini_api_key', masterApiKey);
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+
+    // Fetch users and feature requests
+    fetchUsers();
+    fetchFeatureRequests();
+  } else {
+    // If no email is found, redirect to home page
+    router.push("/");
+  }
+}, [router]);
+
+// Save the Master Gemini API key
+const saveMasterApiKey = async () => {
+  if (!masterApiKey) {
+    setMasterApiKeySaveMessage("Please enter an API key");
+    setMasterApiKeySaveSuccess(false);
+    return;
+  }
+
+  setIsSavingMasterApiKey(true);
+  setMasterApiKeySaveMessage("");
+
+  try {
+    // Save API key to database via API call
+    const response = await fetch('/api/master-api-key', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ apiKey: masterApiKey }),
+    });
+
+    if (response.ok) {
       console.log("Saved Master Gemini API key");
       setMasterApiKeySaveMessage("Master API key saved successfully");
       setMasterApiKeySaveSuccess(true);
-      
-      // Clear success message after 3 seconds
-      setTimeout(() => {
-        setMasterApiKeySaveMessage("");
-      }, 3000);
-    } catch (error) {
-      console.error("Error saving Master API key:", error);
+    } else {
+      console.error("Error saving Master API key:", response.status);
       setMasterApiKeySaveMessage("Error saving Master API key");
       setMasterApiKeySaveSuccess(false);
-    } finally {
-      setIsSavingMasterApiKey(false);
     }
-  };
+  } catch (error) {
+    console.error("Error saving Master API key:", error);
+    setMasterApiKeySaveMessage("Error saving Master API key");
+    setMasterApiKeySaveSuccess(false);
+  } finally {
+    setIsSavingMasterApiKey(false);
+  }
+};
 
   // Toggle user active status
   const toggleUserStatus = (userId: number) => {
