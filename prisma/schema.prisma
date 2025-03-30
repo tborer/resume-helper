@@ -18,8 +18,8 @@ generator client {
 // Updated to prisma instead of the documented AWS changes
 //*******************************************************
 datasource db {
-  provider = "prisma"
-  url      = "prisma+postgres://accelerate.prisma-data.net"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model User {
