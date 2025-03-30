@@ -1,0 +1,29 @@
+name: Build and Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: |
+          pnpm install
+
+      - name: Audit dependencies
+        run: |
+          pnpm run audit
+
+      - name: Run tests
+        run: |
+          pnpm run test
+
+      - name: Build and deploy
+        run: |
+          pnpm run build
