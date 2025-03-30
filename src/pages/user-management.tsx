@@ -16,13 +16,32 @@ import { AlertCircle, CheckCircle, Loader2, PlusCircle } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 // Mock user data - in a real app, this would come from a database
-const mockUsers = [
-  { id: 1, email: "admin@example.com", isActive: true, isAdmin: true, historyAccess: true, accountAccess: true },
-  { id: 2, email: "tray14@hotmail.com", isActive: true, isAdmin: true, historyAccess: true, accountAccess: true },
-  { id: 3, email: "user1@example.com", isActive: true, isAdmin: false, historyAccess: true, accountAccess: false },
-  { id: 4, email: "user2@example.com", isActive: false, isAdmin: false, historyAccess: false, accountAccess: false },
-  { id: 5, email: "user3@example.com", isActive: true, isAdmin: false, historyAccess: true, accountAccess: true },
-];
+//const mockUsers = [
+  //{ id: 1, email: "admin@example.com", isActive: true, isAdmin: true, historyAccess: true, accountAccess: true },
+  //{ id: 2, email: "tray14@hotmail.com", isActive: true, isAdmin: true, historyAccess: true, accountAccess: true },
+  //{ id: 3, email: "user1@example.com", isActive: true, isAdmin: false, historyAccess: true, accountAccess: false },
+  //{ id: 4, email: "user2@example.com", isActive: false, isAdmin: false, historyAccess: false, accountAccess: false },
+  //{ id: 5, email: "user3@example.com", isActive: true, isAdmin: false, historyAccess: true, accountAccess: true },
+//];
+
+//Fetch users from real database
+const [users, setUsers] = useState([]);
+
+// Fetch users from database
+useEffect(() => {
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch('/api/users');
+      if (response.ok) {
+        const data = await response.json();
+        setUsers(data);
+      }
+    } catch (error) {
+      console.error('Error fetching users:', error);
+    }
+  };
+  fetchUsers();
+}, []);
 
 // Mock API logs - in a real app, these would be fetched from a database or log service
 const mockApiLogs = [
