@@ -13,7 +13,7 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "audit": "pnpm audit --fix",
-    "test": "your-test-command"
+    "test": "jest"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
