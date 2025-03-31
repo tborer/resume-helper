@@ -140,7 +140,8 @@ useEffect(() => {
     // Verify admin status server-side
     const verifyAdmin = async () => {
       try {
-        const response = await fetch('/api/users/me');
+        const storedEmail = localStorage.getItem("userEmail");
+        const response = await fetch(`/api/users/me?email=${storedEmail}`);
         if (response.ok) {
           const data = await response.json();
           setIsAdmin(data.isAdmin);
