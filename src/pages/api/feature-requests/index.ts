@@ -9,9 +9,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const featureRequests = await prisma.featureRequest.findMany({
       include: {
-        user: true,
-       
-
+        user: true, // Fetch the entire user object
       },
       orderBy: { createdAt: 'desc' },
     });
