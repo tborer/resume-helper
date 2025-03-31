@@ -19,7 +19,7 @@ generator client {
 //*******************************************************
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = "prisma+postgres://tborer:coding2025@accelerate.prisma-data.net:5432/resumeDB?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiMTJiMTcyMjAtZWRlMS00NTQzLWFlM2ItNmEwNGM4MDI1MmQ2IiwidGVuYW50X2lkIjoiOWU0MDg3NWQxMGMxZTgyZDI5MjU3YTkxZGY3OWQzM2VjZGQ2NzM3NTc2YjRlNDQ1MDZjNGRjMTAwMzNhNjAxMCIsImludGVybmFsX3NlY3JldCI6IjU0Y2NhMTA5LTMyMzItNGRjMC1hODE5LTM1MTRjNzc1NzQxYSJ9.zPLu5re4Ur9TnMMRD3N5672cM3VwAzsFVTItx5d5y18"
 }
 
 model User {
