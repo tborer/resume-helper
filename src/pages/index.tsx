@@ -209,7 +209,7 @@ export default function Home() {
               <StepCard 
                 number="3" 
                 title="Get Optimized Resume" 
-                description="Download your ATS-optimized resume tailored specifically for the job you're applying to."
+                description="Get an ATS-optimized resume tailored specifically for the job you're applying to."
               />
             </div>
           </div>
