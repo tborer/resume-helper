@@ -33,6 +33,8 @@ const UserManagement = () => {
     details?: any;
   } | null>(null);
 
+  export default UserManagement;
+
   // Master API Key states
   const [masterApiKey, setMasterApiKey] = useState("");
   const [isSavingMasterApiKey, setIsSavingMasterApiKey] = useState(false);
