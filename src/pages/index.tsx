@@ -155,22 +155,22 @@ export default function Home() {
                   </form>
                 )}
                 
-                {/* Temporary direct dashboard link */}
-                <div className="pt-4 border-t border-border mt-4">
-                  <Button 
-                    variant="outline" 
-                    className="w-full" 
-                    onClick={() => {
-                      localStorage.setItem("userEmail", "tray14@hotmail.com");
-                      window.location.href = "/dashboard?email=tray14%40hotmail.com";
-                    }}
-                  >
-                    Temporary Dashboard Access
-                  </Button>
-                  <p className="text-xs text-muted-foreground text-center mt-2">
-                    (This link will be removed later)
-                  </p>
-                </div>
+                <!--{/* Temporary direct dashboard link */}  -->
+                <!--#<div className="pt-4 border-t border-border mt-4">  -->
+                  <!--<Button -->
+                    <!--variant="outline" -->
+                    <!--className="w-full" -->
+                    <!--onClick={() => {  -->
+                      <!--localStorage.setItem("userEmail", "tray14@hotmail.com");  -->
+                      <!--window.location.href = "/dashboard?email=tray14%40hotmail.com";  -->
+                    <!--}}  -->
+                  <!-->  -->
+                    <!--Temporary Dashboard Access  -->
+                  <!--</Button>  -->
+                  <!--<p className="text-xs text-muted-foreground text-center mt-2">  -->
+                    <!--(This link will be removed later)  -->
+                  <!--</p>  -->
+                <!--</div>  -->
               </div>
             </CardContent>
           </Card>
