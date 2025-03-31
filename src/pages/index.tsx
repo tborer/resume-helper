@@ -114,11 +114,10 @@ export default function Home() {
                     }
                   }}
                 >
-                <a href="https://buy.stripe.com/5kAcP0dXHgZTf3q6oy" target="_blank" rel="noopener noreferrer">
-                <Button className="w-full">
+                
                 Get It Now
                 </Button>
-                </a>
+               
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-border" />
