@@ -83,10 +83,12 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <div className="flex flex-col space-y-4">
+                <a href="https://buy.stripe.com/5kAcP0dXHgZTf3q6oy" target="_blank" rel="noopener noreferrer">
                 <Button 
                   className="w-full" 
                   onClick={async () => {
                     // Get the email from the input field if available
+
                     const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
                     const email = emailInput?.value || '';
                     
@@ -114,7 +116,9 @@ export default function Home() {
                     }
                   }}
                 >
+
                 
+
                 Get It Now
                 </Button>
                
@@ -175,6 +179,7 @@ export default function Home() {
                 <!--</div>  -->
                       */}
               </div>
+                </a>
             </CardContent>
           </Card>
 
