@@ -1,4 +1,4 @@
-    name: Prisma Setup
+name: Prisma Setup
 
 on:
   push:
