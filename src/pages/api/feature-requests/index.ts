@@ -9,11 +9,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   try {
     const featureRequests = await prisma.featureRequest.findMany({
       include: {
-        user: {
-          select: {
-            email: true,
-          },
-        },
+        user: true,
+       
+
       },
       orderBy: { createdAt: 'desc' },
     });
