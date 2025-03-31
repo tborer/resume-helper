@@ -19,7 +19,7 @@ jobs:
         run: npx prisma migrate deploy
       - name: Upgrade Prisma
         run: |
-          npm i --save-dev prisma@latest
-          npm i @prisma/client@latest
+          npm i --save-dev prisma@latest --legacy-peer-deps
+          npm i @prisma/client@latest --legacy-peer-deps
       - name: Run sample query
         run: npm run queries
