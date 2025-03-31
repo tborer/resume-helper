@@ -155,8 +155,8 @@ export default function Home() {
                   </form>
                 )}
                 
-                {/* <!--{/* Temporary direct dashboard link */}  -->
-                <!--#<div className="pt-4 border-t border-border mt-4">  -->
+                {/* Temporary direct dashboard link */}
+                {/* <!--#<div className="pt-4 border-t border-border mt-4">  -->
                   <!--<Button -->
                     <!--variant="outline" -->
                     <!--className="w-full" -->
