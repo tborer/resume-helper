@@ -79,7 +79,7 @@ export default function Home() {
           <Card className="w-full max-w-md mb-16">
             <CardHeader>
               <CardTitle>Start Optimizing Your Resume</CardTitle>
-              <CardDescription>Enter your email to check your subscription or get started</CardDescription>
+              <CardDescription>Get it now, or access your existing subscription</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col space-y-4">
@@ -114,8 +114,11 @@ export default function Home() {
                     }
                   }}
                 >
-                  Get It Now
+                <a href="https://buy.stripe.com/5kAcP0dXHgZTf3q6oy" target="_blank" rel="noopener noreferrer">
+                <Button className="w-full">
+                Get It Now
                 </Button>
+                </a>
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
                     <span className="w-full border-t border-border" />
