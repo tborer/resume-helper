@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, FormEvent } from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -45,6 +45,11 @@ export default function Dashboard() {
   const [testResult, setTestResult] = useState<{
     success: boolean;
     message: string;
+    details?: any;
+  } | null>(null);
+    // new state for magic link
+  const [magicLinkSent, setMagicLinkSent] = useState<{
+    success: boolean;
     details?: any;
   } | null>(null);
   
@@ -177,7 +182,7 @@ export default function Dashboard() {
     }
   };
 
-  const handleAnalyze = async () => {
+    const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
@@ -242,51 +247,36 @@ export default function Dashboard() {
       setAnalysisComplete(true);
     }
   };
-  
-  /*
-  // Test subscription status for a given email
-  const handleTestSubscription = async (e: React.FormEvent) => {
+
+  // Handle sending magic link
+  const handleSendMagicLink = async (e: FormEvent) => {
     e.preventDefault();
-    if (!testEmail) {
-      alert("Please enter an email to test");
+    if (!userEmail) {
+      alert("Please enter an email to continue");
       return;
     }
-    
-    setIsTestingSubscription(true);
-    setTestResult(null);
-    
+
+    setMagicLinkSent(null);
+
     try {
-      // Call our API to check subscription status
-      const response = await fetch('/api/check-subscription', {
+      const response = await fetch("/api/send-magic-link", {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email: testEmail }),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: userEmail }),
       });
-      
       const data = await response.json();
-      console.log("Subscription test response:", data);
-      
-      setTestResult({
-        success: true,
-        message: data.hasSubscription 
-          ? `✅ User ${testEmail} has an active subscription` 
-          : `❌ User ${testEmail} does not have an active subscription`,
-        details: data
-      });
+
+      if (response.ok) {
+        setMagicLinkSent({ success: true, details: data });
+      } else {
+        setMagicLinkSent({ success: false, details: data });
+      }
     } catch (error) {
-      console.error('Error testing subscription:', error);
-      setTestResult({
-        success: false,
-        message: "Error testing subscription status",
-        details: error
-      });
-    } finally {
-      setIsTestingSubscription(false);
+      console.error("Error sending magic link:", error);
+      setMagicLinkSent({ success: false, details: error });
     }
   };
-  */
+
   
   // Test purchase link
   const handleTestPurchase = async () => {
@@ -340,7 +330,7 @@ export default function Dashboard() {
         <meta name="description" content="Optimize your resume for ATS systems" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
-      </Head>
+                    </Head>
       <div className="bg-background min-h-screen flex flex-col">
         <Header />
         <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
@@ -467,7 +457,7 @@ export default function Dashboard() {
                 >
                   {isAnalyzing ? "Analyzing..." : "Analyze & Optimize Resume"}
                 </Button>
-              </div>
+                        </div>
               
               {analysisComplete && (
                 <div className="mt-8 space-y-6">
