@@ -13,7 +13,8 @@
     "queries": "npx prisma studio",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "audit": "pnpm audit --fix"
+    "audit": "pnpm audit --fix",
+    "test": "echo 'No tests yet'"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
