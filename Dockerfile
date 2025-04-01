@@ -1,6 +1,6 @@
 Docker
 # Use an official Node.js 18 image
-FROM node:18
+FROM node:20.x
 
 # Set the working directory to /app
 WORKDIR /app
