@@ -3,6 +3,7 @@ import { queryGeminiAPI } from '@/lib/gemini';
 
 type ResponseData = {
   score?: number;
+  missingSkills?: string[];
   justification?: string;
   error?: string;
 };
@@ -82,11 +83,18 @@ Missing Skills: [Comma-separated list of missing skills]`;
     // Parse the response to extract the score and justification
     const scoreMatch = response.text.match(/Matching Score:\s*(\d+)%/i);
     const justificationMatch = response.text.match(/Justification:\s*([\s\S]+)/i);
+    const missingSkillsMatch = response.text.match(/Missing Skills:\s*([^\n]+)/i);
 
     if (!scoreMatch) {
       console.error('Could not parse score from response:', response.text);
       return res.status(500).json({ error: 'Failed to parse matching score from response' });
     }
+    
+    const missingSkills = missingSkillsMatch 
+    ? missingSkillsMatch[1].split(',').map((skill) => skill.trim()) 
+    : [];
+
+
 
     const score = parseInt(scoreMatch[1], 10);
     const justification = justificationMatch ? justificationMatch[1].trim() : '';
@@ -94,7 +102,7 @@ Missing Skills: [Comma-separated list of missing skills]`;
     // Return the score and justification
     return res.status(200).json({ score, justification });
   } catch (error) {
-    console.error('Error in calculate-match API:', error);
+      console.error('Error in calculate-match API:', error);
     return res.status(500).json({ error: 'Failed to calculate match score' });
   }
 }
