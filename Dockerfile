@@ -1,4 +1,3 @@
-Docker
 # Use an official Node.js 18 image
 FROM node:20
 
