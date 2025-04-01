@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Head from "next/head";
+import Stripe from 'stripe';
 import { useRouter } from "next/router";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -24,6 +25,12 @@ const UserManagement = () => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   // Stripe Testing states
+  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+    apiVersion: '2023-10-16',
+  });
+
+  const productId = process.env.STRIPE_PRODUCT_ID;
+  
   const [testEmail, setTestEmail] = useState("");
   const [isTestingSubscription, setIsTestingSubscription] = useState(false);
   const [isTestingPurchase, setIsTestingPurchase] = useState(false);
@@ -50,6 +57,82 @@ const UserManagement = () => {
   // Feature Requests states
   const [featureRequests, setFeatureRequests] = useState<any[]>([]);
   const [isLoadingFeatureRequests, setIsLoadingFeatureRequests] = useState(false);
+
+  const checkSubscriptionsAndInactivate = async () => {
+    try {
+      console.log(`Checking for active users with inactive subscriptions`);
+
+      // Query the database for all active users.
+      const activeUsersResponse = await fetch('/api/users'); // You'll need to create this API endpoint
+      if (!activeUsersResponse.ok) {
+        throw new Error(`Failed to fetch active users: ${activeUsersResponse.statusText}`);
+      }
+      const activeUsers = await activeUsersResponse.json();
+
+
+      // List all active subscriptions from Stripe
+      const subscriptions = await stripe.subscriptions.list({
+        limit: 100,
+        status: 'active',
+      });
+
+      console.log(`Found ${subscriptions.data.length} active subscriptions`);
+
+      console.log(`Stripe subscriptions response:`, JSON.stringify({
+        count: subscriptions.data.length,
+        has_more: subscriptions.has_more,
+        subscription_ids: subscriptions.data.map(sub => sub.id)
+      }, null, 2));
+
+      // Filter subscriptions by customer email and product ID
+      for (const subscription of subscriptions.data) {
+        if (subscription.customer) {
+          const customer = await stripe.customers.retrieve(subscription.customer as string);
+
+          if ('email' in customer && activeUsers.some((user: { email: any; }) => user.email === customer.email)) {
+            console.log(`Found customer with matching email: ${customer.email}`);
+
+            console.log(`Customer details:`, JSON.stringify({
+              id: customer.id,
+              email: customer.email,
+              name: customer.name,
+              created: customer.created,
+              subscriptions: subscription.id
+            }, null, 2));
+
+            const items = await stripe.subscriptionItems.list({
+              subscription: subscription.id,
+            });
+
+            console.log(`Found ${items.data.length} subscription items for customer`);
+
+            for (const item of items.data) {
+              const price = await stripe.prices.retrieve(item.price.id);
+
+              console.log(`Price details:`, JSON.stringify({
+                price_id: item.price.id,
+                product_id: price.product,
+                matches_target_product: price.product === productId
+              }, null, 2));
+
+              if (price.product === productId) {
+                console.log(`Found matching product subscription for email: ${customer.email}`);
+                break;
+              }
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error('Error checking subscriptions and inactivating users:', error);
+    }
+  };
+
+  useEffect(() => {
+    const intervalId = setInterval(checkSubscriptionsAndInactivate, 24 * 60 * 60 * 1000); // Run every 24 hours
+    return () => clearInterval(intervalId); // Cleanup interval on component unmount
+  }, []);
 
   // Fetch users from the API
   const fetchUsers = async () => {
@@ -320,7 +403,7 @@ const saveMasterApiKey = async () => {
       }
     } catch (error) {
       console.error('Error testing purchase link:', error);
-      setTestResult({
+       setTestResult({
         success: false,
         message: "Error testing purchase link",
         details: error
