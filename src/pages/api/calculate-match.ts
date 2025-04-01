@@ -67,8 +67,9 @@ ${resume}
 **Output:**
 
 Matching Score: [Percentage]%
+Justification: [Brief explanation of how the score was calculated, highlighting key matches and mismatches.]
 
-Justification: [Brief explanation of how the score was calculated, highlighting key matches and mismatches.]`;
+Missing Skills: [Comma-separated list of missing skills]`;
 
     // Call the Gemini API
     const response = await queryGeminiAPI(apiKey, prompt);
