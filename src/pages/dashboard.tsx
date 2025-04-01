@@ -243,7 +243,7 @@ export default function Dashboard() {
     }
   };
 
-  /*
+  
   // Test subscription status 
   const handleTestSubscription = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -286,7 +286,7 @@ export default function Dashboard() {
       setIsTestingSubscription(false);
     }
   };
-  */
+  
 
   
   // Test purchase link
