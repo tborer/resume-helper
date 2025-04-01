@@ -515,10 +515,24 @@ export default function Dashboard() {
                           <Progress value={atsScore + 15} className="h-2" />
                         </div>
                         
-                        <div className="mt-6 p-4 bg-muted rounded-lg">
-                          <h4 className="font-semibold mb-2">Key Findings</h4>
-                          <p className="text-sm">
-                            {atsFeedback}
+                        <div className="mt-6">
+                          <h4 className="font-semibold mb-2">Missing Skills</h4>
+                          <p className="text-sm p-4 bg-muted rounded-lg">
+                            {(() => {
+                              const missingSkillsIndex = atsFeedback.indexOf(
+                                "Missing Skills:"
+                              );
+                              if (missingSkillsIndex !== -1) {
+                                return atsFeedback.substring(missingSkillsIndex).trim();
+                              }
+                              const keySkillsMissingIndex = atsFeedback.indexOf(
+                                "Key Skills Missing:"
+                              );
+                              if (keySkillsMissingIndex !== -1) {
+                                return atsFeedback.substring(keySkillsMissingIndex).trim();
+                              }
+                              return "No Missing Skills found.";
+                            })()}
                           </p>
                         </div>
                       </CardContent>
