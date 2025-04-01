@@ -530,9 +530,7 @@ export default function Dashboard() {
                             ) : (
                               <p className="text-sm">No missing skills identified.</p>
                             )}
-                              return "No Missing Skills found.";
-                            })()}
-                          </p>
+                          </div>
                         </div>
                       </CardContent>
                     </Card>
