@@ -1,4 +1,4 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState } from "react";
 import Head from "next/head";
 import Header from "@/components/Header";
 import { Button } from "@/components/ui/button";
@@ -45,11 +45,6 @@ export default function Dashboard() {
   const [testResult, setTestResult] = useState<{
     success: boolean;
     message: string;
-    details?: any;
-  } | null>(null);
-    // new state for magic link
-  const [magicLinkSent, setMagicLinkSent] = useState<{
-    success: boolean;
     details?: any;
   } | null>(null);
   
@@ -182,7 +177,7 @@ export default function Dashboard() {
     }
   };
 
-    const handleAnalyze = async () => {
+  const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
@@ -248,34 +243,50 @@ export default function Dashboard() {
     }
   };
 
-  // Handle sending magic link
-  const handleSendMagicLink = async (e: FormEvent) => {
+  /*
+  // Test subscription status 
+  const handleTestSubscription = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!userEmail) {
-      alert("Please enter an email to continue");
+    if (!testEmail) {
+      alert("Please enter an email to test");
       return;
     }
 
-    setMagicLinkSent(null);
+    setIsTestingSubscription(true);
+    setTestResult(null);
 
     try {
-      const response = await fetch("/api/send-magic-link", {
+    //call our API to check subscription
+    const response = await fetch('/api/check-subscription', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: userEmail }),
+        headers: { 
+          'Content-Type': 'application/json' 
+        },
+        body: JSON.stringify({ email: testEmail }),
       });
       const data = await response.json();
+      console.log("Subscription test response:", data);
 
-      if (response.ok) {
-        setMagicLinkSent({ success: true, details: data });
-      } else {
-        setMagicLinkSent({ success: false, details: data });
-      }
+      setTestResult({
+        success: true,
+        message: data.hasSubscription
+          ? "✅ User has an active subscription"
+          : "❌ User does not have an active subscription",
+        details: data
+          })
+
     } catch (error) {
-      console.error("Error sending magic link:", error);
-      setMagicLinkSent({ success: false, details: error });
+      console.error("Error testing subscription:", error);
+      setTestResult({
+        success: false,
+        message: "Error testing subscription status",
+        details: error
+      });
+    } finally {
+      setIsTestingSubscription(false);
     }
   };
+  */
 
   
   // Test purchase link
