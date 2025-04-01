@@ -517,11 +517,6 @@ export default function Dashboard() {
                         
                         <div className="mt-6 p-4 bg-muted rounded-lg">
                           <h4 className="font-semibold mb-2">Key Findings</h4>
-                          <ul className="list-disc pl-5 space-y-1">
-                            <li>Missing key skills: React, TypeScript, Node.js</li>
-                            <li>Experience section needs more quantifiable results</li>
-                            <li>Education section formatting can be improved</li>
-                          </ul>
                         </div>
                       </CardContent>
                     </Card>
