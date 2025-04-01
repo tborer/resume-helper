@@ -251,6 +251,9 @@ const saveMasterApiKey = async () => {
     setTestResult(null);
     
     try {
+      // Log the data being sent to the API
+      console.log("Subscription test request body:", JSON.stringify({ email: testEmail }));
+
       // Call our API to check subscription status
       const response = await fetch('/api/check-subscription', {
         method: 'POST',
