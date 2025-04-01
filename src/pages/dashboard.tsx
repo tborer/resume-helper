@@ -30,6 +30,7 @@ export default function Dashboard() {
   // New states for enhanced analysis
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
   const [atsFeedback, setAtsFeedback] = useState("");
+  const [missingSkills, setMissingSkills] = useState<string[]>([]);
   
   // API Key management states
   const [geminiApiKey, setGeminiApiKey] = useState("");
@@ -190,6 +191,7 @@ export default function Dashboard() {
     setIsAnalyzing(true);
     setTopKeywords([]);
     setAtsFeedback("");
+    setMissingSkills([]);
     
     try {
       // Import the Gemini utility functions
@@ -224,6 +226,7 @@ export default function Dashboard() {
       ]);
       
       setTopKeywords(keywords.length > 0 ? keywords : []);
+      setMissingSkills(matchResult.missingSkills || []);
       setAtsScore(matchResult.score || 0);
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
@@ -517,20 +520,16 @@ export default function Dashboard() {
                         
                         <div className="mt-6">
                           <h4 className="font-semibold mb-2">Missing Skills</h4>
-                          <p className="text-sm p-4 bg-muted rounded-lg">
-                            {(() => {
-                              const missingSkillsIndex = atsFeedback.indexOf(
-                                "Missing Skills:"
-                              );
-                              if (missingSkillsIndex !== -1) {
-                                return atsFeedback.substring(missingSkillsIndex).trim();
-                              }
-                              const keySkillsMissingIndex = atsFeedback.indexOf(
-                                "Key Skills Missing:"
-                              );
-                              if (keySkillsMissingIndex !== -1) {
-                                return atsFeedback.substring(keySkillsMissingIndex).trim();
-                              }
+                          <div className="p-4 bg-muted rounded-lg">
+                            {missingSkills.length > 0 ? (
+                              <ul className="list-disc pl-5 space-y-1">
+                                {missingSkills.map((skill, index) => (
+                                  <li key={index}>{skill}</li>
+                                ))}
+                              </ul>
+                            ) : (
+                              <p className="text-sm">No missing skills identified.</p>
+                            )}
                               return "No Missing Skills found.";
                             })()}
                           </p>
