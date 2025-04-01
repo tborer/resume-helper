@@ -223,32 +223,15 @@ export default function Dashboard() {
           })
       ]);
       
-      // Update state with results
-      setTopKeywords(keywords.length > 0 ? keywords : [
-        "JavaScript", "React", "TypeScript", "Node.js", "API Development",
-        "Frontend", "Backend", "Full Stack", "Agile", "Problem Solving"
-      ]);
-      
-      setAtsScore(matchResult.score || Math.floor(Math.random() * 40) + 40);
-      setAtsFeedback(matchResult.feedback || "Your resume has some relevant keywords but could be better optimized for this job description.");
+      setTopKeywords(keywords.length > 0 ? keywords : []);
+      setAtsScore(matchResult.score || 0);
+      setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
       
     } catch (error) {
       console.error("Error during analysis:", error);
       
-      // Fallback to mock data if API fails
-      setTopKeywords([
-        "JavaScript", "React", "TypeScript", "Node.js", "API Development",
-        "Frontend", "Backend", "Full Stack", "Agile", "Problem Solving"
-      ]);
       
-      const score = Math.floor(Math.random() * 40) + 40;
-      setAtsScore(score);
-      
-      setAtsFeedback("Your resume has some relevant keywords but could be better optimized for this job description.");
-      
-      const optimized = resumeText + "\n\n/* Optimized with keywords from job description */";
-      setOptimizedResume(optimized);
       
       alert("There was an error analyzing your resume. Please check your API key and try again.");
     } finally {
