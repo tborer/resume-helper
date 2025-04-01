@@ -517,6 +517,9 @@ export default function Dashboard() {
                         
                         <div className="mt-6 p-4 bg-muted rounded-lg">
                           <h4 className="font-semibold mb-2">Key Findings</h4>
+                          <p className="text-sm">
+                            {atsFeedback}
+                          </p>
                         </div>
                       </CardContent>
                     </Card>
