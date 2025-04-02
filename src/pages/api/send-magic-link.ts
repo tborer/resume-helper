@@ -1,11 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-// import Stripe from 'stripe';
+import { PrismaClient } from '@prisma/client';
+import { v4 as uuidv4 } from 'uuid';
+
+const prisma = new PrismaClient();
 
 /* // Initialize Stripe with the secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2023-10-16', // Use the latest API version
 });
- */
+*/
 
 
 type ResponseData = {
@@ -63,91 +66,72 @@ export default async function handler(
       });
     }
 
-   /*  console.log(`[${requestId}] Checking subscription for email: ${email}`);
-
-     // Get the product ID from environment variable
-    const productId = process.env.STRIPE_PRODUCT_ID; 
+    /* console.log(`[${requestId}] Checking subscription for email: ${email}`); */
+    /* // Get the product ID from environment variable */
+    /* const productId = process.env.STRIPE_PRODUCT_ID; */
+    /* if (!productId) { */
+    /*   console.error(`[${requestId}] STRIPE_PRODUCT_ID environment variable is not set`); */
+    /*   return res.status(500).json({ */
+    /*     success: false, */
+    /*     message: 'Server configuration error', */
+    /*     requestId */
+    /*   }); */
+    /* } */
     
-    
-    
-    if (!productId) {
-      console.error(`[${requestId}] STRIPE_PRODUCT_ID environment variable is not set`);
-      return res.status(500).json({ 
-        success: false, 
-        message: 'Server configuration error',
-        requestId 
-      });
-    } */
-
-    /* // 1. List all subscriptions
-    const subscriptions = await stripe.subscriptions.list({
-      limit: 100, // Adjust limit as needed
-      status: 'active',
-    }); */
-
-   /*  console.log(`[${requestId}] Found ${subscriptions.data.length} active subscriptions`);
-    
-    // Log the Stripe API response for troubleshooting
-    console.log(`[${requestId}] Stripe subscriptions response:`, JSON.stringify({
-
-      
-      count: subscriptions.data.length,
-      has_more: subscriptions.has_more,
-      subscription_ids: subscriptions.data.map(sub => sub.id)
-    }, null, 2));
-
-    // 2. Filter subscriptions by customer email and product ID
-    let hasSubscription = false;
-    
-    for (const subscription of subscriptions.data) {
-      if (subscription.customer) {
-        // Get customer details
-        const customer = await stripe.customers.retrieve(subscription.customer as string);
-        
-        // Check if this is the customer we're looking for
-        if ('email' in customer && customer.email === email) {
-          console.log(`[${requestId}] Found customer with matching email: ${email}`);
-          
-          // Log customer details for troubleshooting (excluding sensitive data)
-          console.log(`[${requestId}] Customer details:`, JSON.stringify({
-            id: customer.id,
-            email: customer.email,
-            name: customer.name,
-            created: customer.created,
-            subscriptions: subscription.id
-          }, null, 2));
-          
-          // Check if any of the subscription items match our product
-          const items = await stripe.subscriptionItems.list({
-            subscription: subscription.id,
-          });
-          
-          console.log(`[${requestId}] Found ${items.data.length} subscription items for customer`);
-          
-          for (const item of items.data) {
-            // Get the price to check its product
-            const price = await stripe.prices.retrieve(item.price.id);
-            
-            // Log price details for troubleshooting
-            console.log(`[${requestId}] Price details:`, JSON.stringify({
-              price_id: item.price.id,
-              product_id: price.product,
-              matches_target_product: price.product === productId
-            }, null, 2));
-            
-            if (price.product === productId) {
-              console.log(`[${requestId}] Found matching product subscription for email: ${email}`);
-              hasSubscription = true;
-              break;
-            }
-          }
-          
-          if (hasSubscription) break;
-        }
-      } 
-    }
-
-    if (hasSubscription) {
+    /* // 1. List all subscriptions */
+    /* const subscriptions = await stripe.subscriptions.list({ */
+    /*   limit: 100, // Adjust limit as needed */
+    /*   status: 'active', */
+    /* }); */
+    /* console.log(`[${requestId}] Found ${subscriptions.data.length} active subscriptions`); */
+    /* // Log the Stripe API response for troubleshooting */
+    /* console.log(`[${requestId}] Stripe subscriptions response:`, JSON.stringify({ */
+    /*   count: subscriptions.data.length, */
+    /*   has_more: subscriptions.has_more, */
+    /*   subscription_ids: subscriptions.data.map(sub => sub.id) */
+    /* }, null, 2)); */
+    /* // 2. Filter subscriptions by customer email and product ID */
+    /* let hasSubscription = false; */
+    /* for (const subscription of subscriptions.data) { */
+    /*   if (subscription.customer) { */
+    /*     // Get customer details */
+    /*     const customer = await stripe.customers.retrieve(subscription.customer as string); */
+    /*     // Check if this is the customer we're looking for */
+    /*     if ('email' in customer && customer.email === email) { */
+    /*       console.log(`[${requestId}] Found customer with matching email: ${email}`); */
+    /*       // Log customer details for troubleshooting (excluding sensitive data) */
+    /*       console.log(`[${requestId}] Customer details:`, JSON.stringify({ */
+    /*         id: customer.id, */
+    /*         email: customer.email, */
+    /*         name: customer.name, */
+    /*         created: customer.created, */
+    /*         subscriptions: subscription.id */
+    /*       }, null, 2)); */
+    /*       // Check if any of the subscription items match our product */
+    /*       const items = await stripe.subscriptionItems.list({ */
+    /*         subscription: subscription.id, */
+    /*       }); */
+    /*       console.log(`[${requestId}] Found ${items.data.length} subscription items for customer`); */
+    /*       for (const item of items.data) { */
+    /*         // Get the price to check its product */
+    /*         const price = await stripe.prices.retrieve(item.price.id); */
+    /*         // Log price details for troubleshooting */
+    /*         console.log(`[${requestId}] Price details:`, JSON.stringify({ */
+    /*           price_id: item.price.id, */
+    /*           product_id: price.product, */
+    /*           matches_target_product: price.product === productId */
+    /*         }, null, 2)); */
+    /*         if (price.product === productId) { */
+    /*           console.log(`[${requestId}] Found matching product subscription for email: ${email}`); */
+    /*           hasSubscription = true; */
+    /*           break; */
+    /*         } */
+    /*       } */
+    /*       if (hasSubscription) break; */
+    /*     } */
+    /*   } */
+    /* } */
+    /* if (hasSubscription) { */
       // In a real application, we would generate a secure token and send an email with a magic link
       // For this demo, we'll just simulate sending a magic link
       
@@ -155,22 +139,57 @@ export default async function handler(
       
       // Simulate email sending delay
       await new Promise(resolve => setTimeout(resolve, 500));
-      
-      return res.status(200).json({ 
-        success: true,
-        message: 'Magic link sent successfully',
-        requestId
-      });
-    } else {
-      // No matching subscription found
-      console.log(`[${requestId}] No matching subscription found for email: ${email}`);
-      
-      return res.status(200).json({ 
+    /*  } else { */
+    /* // No matching subscription found */
+    /* console.log(`[${requestId}] No matching subscription found for email: ${email}`); */
+    /* return res.status(200).json({ */
+    /*   success: false, */
+    /*   message: 'No active subscription found for this email', */
+    /*   requestId */
+    /* }); */
+    /* } */
+    // Generate a unique magic link token
+    const magicLinkToken = uuidv4(); // Using uuid for token generation
+    console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
+
+    // Check if a UserAccess record exists for the user
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: 'No active subscription found for this email',
-        requestId
+        message: 'User not found',
+        requestId,
       });
-    } */
+    }
+    const existingUserAccess = await prisma.userAccess.findUnique({
+      where: { userId: user.id },
+    });
+
+    if (existingUserAccess) {
+      // If a record exists, update its magicLinkToken
+      await prisma.userAccess.update({
+        where: { userId: user.id },
+        data: { magicLinkToken },
+      });
+      console.log(`[${requestId}] Updated magic link token for user: ${email}`);
+    } else {
+      // If no record exists, create a new UserAccess record
+      await prisma.userAccess.create({
+        data: { userId: user.id, magicLinkToken },
+      });
+      console.log(`[${requestId}] Created new user access record for user: ${email}`);
+    }
+
+    // Construct the complete magic link URL
+    const magicLinkUrl = `http://localhost:3000/auth/magic-link?token=${magicLinkToken}`;
+    console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
+      
+      // TODO: Implement actual email sending
+    return res.status(200).json({
+      success: true,
+      message: 'Magic link sent successfully',
+      requestId,
+    });
   } catch (error) {
     console.error(`[${requestId}] Error sending magic link:`, error);
     
