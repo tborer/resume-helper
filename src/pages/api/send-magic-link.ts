@@ -1,10 +1,12 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import Stripe from 'stripe';
+// import Stripe from 'stripe';
 
-// Initialize Stripe with the secret key
+/* // Initialize Stripe with the secret key
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: '2023-10-16', // Use the latest API version
 });
+ */
+
 
 type ResponseData = {
   success: boolean;
@@ -61,10 +63,12 @@ export default async function handler(
       });
     }
 
-    console.log(`[${requestId}] Checking subscription for email: ${email}`);
+   /*  console.log(`[${requestId}] Checking subscription for email: ${email}`);
 
-    // Get the product ID from environment variable
-    const productId = process.env.STRIPE_PRODUCT_ID;
+     // Get the product ID from environment variable
+    const productId = process.env.STRIPE_PRODUCT_ID; 
+    
+    
     
     if (!productId) {
       console.error(`[${requestId}] STRIPE_PRODUCT_ID environment variable is not set`);
@@ -73,18 +77,20 @@ export default async function handler(
         message: 'Server configuration error',
         requestId 
       });
-    }
+    } */
 
-    // 1. List all subscriptions
+    /* // 1. List all subscriptions
     const subscriptions = await stripe.subscriptions.list({
       limit: 100, // Adjust limit as needed
       status: 'active',
-    });
+    }); */
 
-    console.log(`[${requestId}] Found ${subscriptions.data.length} active subscriptions`);
+   /*  console.log(`[${requestId}] Found ${subscriptions.data.length} active subscriptions`);
     
     // Log the Stripe API response for troubleshooting
     console.log(`[${requestId}] Stripe subscriptions response:`, JSON.stringify({
+
+      
       count: subscriptions.data.length,
       has_more: subscriptions.has_more,
       subscription_ids: subscriptions.data.map(sub => sub.id)
@@ -138,7 +144,7 @@ export default async function handler(
           
           if (hasSubscription) break;
         }
-      }
+      } 
     }
 
     if (hasSubscription) {
@@ -164,7 +170,7 @@ export default async function handler(
         message: 'No active subscription found for this email',
         requestId
       });
-    }
+    } */
   } catch (error) {
     console.error(`[${requestId}] Error sending magic link:`, error);
     
