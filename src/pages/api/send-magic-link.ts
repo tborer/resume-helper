@@ -78,6 +78,15 @@ export default async function handler(
       },
     });
 
+    // Construct mail options
+    const mailOptions = {
+      from: 'ar@agilerant.info',
+      to: email,
+      subject: 'Here is your ResumeRocketMatchAI magic link!',
+      html: `<p>Hello,</p><p>Here is the magic link you have requested:</p><p><a href="${magicLinkUrl}">${magicLinkUrl}</a></p><p>Best regards,<br/>ResumeRocketMatchAI</p>`,
+    };
+
+
     /* console.log(`[${requestId}] Checking subscription for email: ${email}`); */
     /* // Get the product ID from environment variable */
     /* const productId = process.env.STRIPE_PRODUCT_ID; */
@@ -196,7 +205,6 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
       
-    // TODO: Construct and send email with Nodemailer
     return res.status(200).json({
       success: true,
       message: 'Magic link sent successfully',
