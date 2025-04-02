@@ -35,6 +35,15 @@ model User {
   featureRequests FeatureRequest[]
 }
 
+model UserAccess {
+  id                  String  @id @default(uuid())
+  userId              String  @unique
+  user                User    @relation(fields: [userId], references: [id])
+  magicLinkToken      String?
+  dailyAnalysisCount  Int     @default(0)
+}
+
+
 model FeatureRequest {
   id        String   @id @default(uuid())
   content   String
