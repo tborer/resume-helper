@@ -87,12 +87,16 @@ export default async function handler(
     };
 
     // Send email
-    transporter.sendMail(mailOptions, (error, info) => {
+        console.log(`[${requestId}] Sending email with options:`, mailOptions);
+
+        transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         console.error(`[${requestId}] Error sending email:`, error);
+        console.error(`[${requestId}] Error details:`, JSON.stringify(error, null, 2));
+
       } else {
         console.log(`[${requestId}] Email sent:`, info.response);
-      }
+        }
     });
 
     // Construct mail options
