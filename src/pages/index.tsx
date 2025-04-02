@@ -10,6 +10,7 @@ export default function Home() {
   const [email, setEmail] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [magicLinkSent, setMagicLinkSent] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // [ADDED] State for error messages
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +28,8 @@ export default function Home() {
         return;
       }
       
-      // Call our API to check subscription and send magic link
+      // [REMOVED] Call our API to check subscription and send magic link
+      /*
       const response = await fetch('/api/send-magic-link', {
         method: 'POST',
         headers: {
@@ -35,16 +37,29 @@ export default function Home() {
         },
         body: JSON.stringify({ email }),
       });
-      
+
       const data = await response.json();
       console.log("Magic link response:", data);
-      
+
       if (data.success) {
         // Show success message that magic link was sent
         setMagicLinkSent(true);
       } else {
         // Redirect to subscription required page if no subscription
         window.location.href = `/subscription-required?email=${encodeURIComponent(email)}`;
+      }
+      */
+      // [ADDED] Call the /api/check-user endpoint
+      const response = await fetch('/api/check-user', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      if (data.isActive) {
+        setMagicLinkSent(true);
+      } else {
+        setErrorMessage("No email match in the system."); // [ADDED] Show error message
       }
     } catch (error) {
       console.error('Error sending magic link:', error);
@@ -154,6 +169,9 @@ export default function Home() {
                         onChange={(e) => setEmail(e.target.value)}
                         required
                       />
+                      {/* [ADDED] Display error message if any */}
+                      {errorMessage && <p className="text-red-500 text-sm mt-1">{errorMessage}</p>}
+
                       <Button type="submit" disabled={isSubmitting}>
                         {isSubmitting ? "Checking..." : "Continue"}
                       </Button>
