@@ -86,7 +86,18 @@ export default async function handler(
       html: `<p>Hello,</p><p>Here is the magic link you have requested:</p><p><a href="${magicLinkUrl}">${magicLinkUrl}</a></p><p>Best regards,<br/>ResumeRocketMatchAI</p>`,
     };
 
+    // Send email
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.error(`[${requestId}] Error sending email:`, error);
+      } else {
+        console.log(`[${requestId}] Email sent:`, info.response);
+      }
+    });
 
+    // Construct mail options
+    
+    
     /* console.log(`[${requestId}] Checking subscription for email: ${email}`); */
     /* // Get the product ID from environment variable */
     /* const productId = process.env.STRIPE_PRODUCT_ID; */
@@ -162,7 +173,7 @@ export default async function handler(
       await new Promise(resolve => setTimeout(resolve, 500));
     /*  } else { */
     /* // No matching subscription found */
-    /* console.log(`[${requestId}] No matching subscription found for email: ${email}`); */
+    
     /* return res.status(200).json({ */
     /*   success: false, */
     /*   message: 'No active subscription found for this email', */
@@ -207,7 +218,7 @@ export default async function handler(
       
     return res.status(200).json({
       success: true,
-      message: 'Magic link sent successfully',
+      message: 'Magic link email sent successfully',
       requestId,
     });
   } catch (error) {
