@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
+import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
@@ -65,6 +66,17 @@ export default async function handler(
         requestId
       });
     }
+
+    // Configure Nodemailer transporter
+    const transporter = nodemailer.createTransport({
+      host: 'mail.agilerant.info',
+      port: 465,
+      secure: true, // Use SSL/TLS
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+    });
 
     /* console.log(`[${requestId}] Checking subscription for email: ${email}`); */
     /* // Get the product ID from environment variable */
@@ -184,7 +196,7 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
       
-      // TODO: Implement actual email sending
+    // TODO: Construct and send email with Nodemailer
     return res.status(200).json({
       success: true,
       message: 'Magic link sent successfully',
