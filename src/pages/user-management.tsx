@@ -58,6 +58,11 @@ const UserManagement = () => {
   const [featureRequests, setFeatureRequests] = useState<any[]>([]);
   const [isLoadingFeatureRequests, setIsLoadingFeatureRequests] = useState(false);
 
+  // <!-- New code - Start: Subscription Lookup States -->
+  const [lookupEmail, setLookupEmail] = useState("");
+  const [subscriptionStatus, setSubscriptionStatus] = useState<boolean | null>(null);
+  const [lookupError, setLookupError] = useState<string | null>(null);
+  // <!-- New code - End -->
   const checkSubscriptionsAndInactivate = async () => {
     try {
       console.log(`Checking for active users with inactive subscriptions`);
@@ -130,12 +135,14 @@ const UserManagement = () => {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(checkSubscriptionsAndInactivate, 24 * 60 * 60 * 1000); // Run every 24 hours
-    return () => clearInterval(intervalId); // Cleanup interval on component unmount
-  }, []);
+    //  <!-- Deleted code - Start: checkSubscriptionsAndInactivate removal -->
+    // const intervalId = setInterval(checkSubscriptionsAndInactivate, 24 * 60 * 60 * 1000); // Run every 24 hours
+    // return () => clearInterval(intervalId); // Cleanup interval on component unmount
+    //  <!-- Deleted code - End -->
+  }, []); // <-- empty array to remove warning
 
   // Fetch users from the API
-  const fetchUsers = async () => {
+  const fetchUsers = async () => { // Fetches user info
     try {
       const response = await fetch('/api/users');
       if (response.ok) {
@@ -165,7 +172,7 @@ const UserManagement = () => {
     }
   };
 
-  // Add a new user
+  // Add a new user, add a new user function
   const handleAddUser = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -321,7 +328,7 @@ const saveMasterApiKey = async () => {
   const filteredUsers = users.filter(user => 
     user.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
-  
+  // Test subscription status for a given email
   // Test subscription status for a given email
   const handleTestSubscription = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -409,6 +416,37 @@ const saveMasterApiKey = async () => {
         details: error
       });
     } finally {
+      setIsTestingPurchase(false);
+    }
+  };
+
+  //  <!-- New code - Start: Subscription check by single email -->
+  const checkSubscriptionForEmail = async () => {
+    try {
+      setSubscriptionStatus(null); // Clear previous status
+      setLookupError(null); // Clear previous error
+
+      const response = await fetch('/api/check-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: lookupEmail }), // Send single email
+      });
+
+      if (!response.ok) {
+        throw new Error(`Subscription check failed: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setSubscriptionStatus(data.hasSubscription);
+    } catch (error: any) {
+      console.error('Error checking subscription:', error);
+      setLookupError(error.message || 'Error checking subscription');
+    } finally {
+      // Remove finally
+      //setIsTestingPurchase(false);
+        
       setIsTestingPurchase(false);
     }
   };
@@ -609,6 +647,32 @@ const saveMasterApiKey = async () => {
                   </div>
                 </CardContent>
               </Card>
+               {/*  <!-- New code - Start: Subscription Lookup by Email --> */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Check Subscription by Email</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      placeholder="Email"
+                      value={lookupEmail}
+                      onChange={(e) => setLookupEmail(e.target.value)}
+                    />
+                  </div>
+                  <Button onClick={checkSubscriptionForEmail} className="mt-4">
+                    Check Subscription
+                  </Button>
+                  {subscriptionStatus !== null && (
+                    <p className="mt-2">Subscription Status: {subscriptionStatus ? "Active" : "Inactive"}</p>
+                  )}
+                  {lookupError && <p className="mt-2 text-red-500">Error: {lookupError}</p>}
+                </CardContent>
+              </Card>
+              {/*  <!-- New code - End --> */}
             </TabsContent>
             
             <TabsContent value="feature-requests">
