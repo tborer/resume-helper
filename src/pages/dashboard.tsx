@@ -13,6 +13,7 @@ import { AlertCircle, CheckCircle, Copy, MessageSquarePlus } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
+import React from "react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
@@ -244,48 +245,48 @@ export default function Dashboard() {
   };
 
   
-//   // Test subscription status 
-//   const handleTestSubscription = async (e: React.FormEvent) => {
-//     e.preventDefault();
-//     if (!testEmail) {
-//       alert("Please enter an email to test");
-//       return;
-//     }
+  // Test subscription status
+  const handleTestSubscription = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!testEmail) {
+      alert("Please enter an email to test");
+      return;
+    }
 
-//     setIsTestingSubscription(true);
-//     setTestResult(null);
+    setIsTestingSubscription(true);
+    setTestResult(null);
 
-//     try {
-//     //call our API to check subscription
-//     const response = await fetch('/api/check-subscription', {
-//         method: 'POST',
-//         headers: { 
-//           'Content-Type': 'application/json' 
-//         },
-//         body: JSON.stringify({ email: testEmail }),
-//       });
-//       const data = await response.json();
-//       console.log("Subscription test response:", data);
+    try {
+      //call our API to check subscription
+      const response = await fetch('/api/check-subscription', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json' 
+          },
+          body: JSON.stringify({ email: testEmail }),
+        });
+        const data = await response.json();
+        console.log("Subscription test response:", data);
 
-//       setTestResult({
-//         success: true,
-//         message: data.hasSubscription
-//           ? "✅ User has an active subscription"
-//           : "❌ User does not have an active subscription",
-//         details: data
-//           })
+        setTestResult({
+          success: true,
+          message: data.hasSubscription
+            ? "✅ User has an active subscription"
+            : "❌ User does not have an active subscription",
+          details: data
+            })
 
-//     } catch (error) {
-//       console.error("Error testing subscription:", error);
-//       setTestResult({
-//         success: false,
-//         message: "Error testing subscription status",
-//         details: error
-//       });
-//     } finally {
-//       setIsTestingSubscription(false);
-//     }
-//   };
+    } catch (error) {
+      console.error("Error testing subscription:", error);
+      setTestResult({
+        success: false,
+        message: "Error testing subscription status",
+        details: error
+      });
+    } finally {
+      setIsTestingSubscription(false);
+    }
+  };
   
 
   
