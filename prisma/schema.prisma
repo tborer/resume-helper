@@ -30,10 +30,10 @@ model User {
   historyAccess Boolean        @default(true)
   accountAccess Boolean        @default(true)
   geminiApiKey  String?        // Added for the users api key
-  magicLinkToken String?       // Added for magic link authentication
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   featureRequests FeatureRequest[]
+  magicLinkToken String?       // Added for magic link authentication
 }
 
 model FeatureRequest {
