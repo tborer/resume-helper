@@ -68,6 +68,7 @@ export default async function handler(
     }
 
     // Configure Nodemailer transporter
+    console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
       host: 'mail.agilerant.info',
       port: 465,
@@ -76,6 +77,7 @@ export default async function handler(
         user: process.env.EMAIL_USERNAME,
         pass: process.env.EMAIL_PASSWORD,
       },
+    }, {logger: true});
     });
 
     // Construct mail options
@@ -87,15 +89,21 @@ export default async function handler(
     };
 
     // Send email
-        console.log(`[${requestId}] Sending email with options:`, mailOptions);
+    console.log(`[${requestId}] Sending email with options:`, mailOptions);
 
-        transporter.sendMail(mailOptions, (error, info) => {
+    transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
-        console.error(`[${requestId}] Error sending email:`, error);
-        console.error(`[${requestId}] Error details:`, JSON.stringify(error, null, 2));
-
+         console.error(`[${requestId}] Error sending email:`, error);
+          const errorDetails = error instanceof Error ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+          } : error;
+        console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
       } else {
-        console.log(`[${requestId}] Email sent:`, info.response);
+        console.log(`[${requestId}] Email sent successfully!`);
+        console.log(`[${requestId}] Full info object:`, info);
+        console.log(`[${requestId}] Email response:`, info.response);
         }
     });
 
