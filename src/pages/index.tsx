@@ -28,10 +28,10 @@ export default function Home() {
         return;
       }
       
-      // [REMOVED] Call our API to check subscription and send magic link
-      /*
-      const response = await fetch('/api/send-magic-link', {
+      const checkUserResponse = await fetch('/api/check-user', {
         method: 'POST',
+        
+        headers: { 'Content-Type': 'application/json' },
         headers: {
           'Content-Type': 'application/json',
         },
@@ -39,25 +39,26 @@ export default function Home() {
       });
 
       const data = await response.json();
-      console.log("Magic link response:", data);
-
-      if (data.success) {
-        // Show success message that magic link was sent
-        setMagicLinkSent(true);
-      } else {
-        // Redirect to subscription required page if no subscription
-        window.location.href = `/subscription-required?email=${encodeURIComponent(email)}`;
-      }
-      */
-      // [ADDED] Call the /api/check-user endpoint
-      const response = await fetch('/api/check-user', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json();
+      
       if (data.isActive) {
-        setMagicLinkSent(true);
+        // send the magic link now
+         const sendMagicLinkResponse = await fetch('/api/send-magic-link', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+        const sendMagicLinkData = await sendMagicLinkResponse.json();
+        if (sendMagicLinkData.success) {
+          // Show success message that magic link was sent
+          setMagicLinkSent(true);
+        } else {
+          console.error('Error sending magic link:', sendMagicLinkData.message);
+          alert('There was an error sending the magic link. Please try again.');
+        }
+        
+        
       } else {
         setErrorMessage("No email match in the system."); // [ADDED] Show error message
       }
@@ -179,7 +180,7 @@ export default function Home() {
                   </form>
                 )}
                 
-                {/* Temporary direct dashboard link */}
+                {/* Temporary direct dashboard link 
                 {/* <!--#<div className="pt-4 border-t border-border mt-4">  -->
                   <!--<Button -->
                     <!--variant="outline" -->
