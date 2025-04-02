@@ -78,7 +78,6 @@ export default async function handler(
         pass: process.env.EMAIL_PASSWORD,
       },
     }, {logger: true});
-    });
 
     // Construct mail options
     const mailOptions = {
