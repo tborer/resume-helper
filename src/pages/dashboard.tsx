@@ -13,7 +13,7 @@ import { AlertCircle, CheckCircle, Copy, MessageSquarePlus } from "lucide-react"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-import React from "react";
+//import React from "react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
