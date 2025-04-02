@@ -28,12 +28,17 @@ model User {
   isActive      Boolean        @default(true)
   isAdmin       Boolean        @default(false)
   historyAccess Boolean        @default(true)
-  accountAccess Boolean        @default(true)
+    accountAccess Boolean        @default(true)
   geminiApiKey  String?        // Added for the users api key
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
+<<<<<<< HEAD
   featureRequests FeatureRequest[]
   magicLinkToken String?       // Added for magic link authentication
+=======
+    featureRequests FeatureRequest[]
+    magicLinkToken String?       // Added for magic link authentication
+>>>>>>> e3518c2 (moved magic link to end of schema)
 }
 
 model FeatureRequest {
