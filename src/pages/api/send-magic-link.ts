@@ -180,8 +180,8 @@ export default async function handler(
       console.log(`[${requestId}] Created new user access record for user: ${email}`);
     }
 
-    // Construct the complete magic link URL
-    const magicLinkUrl = `http://localhost:3000/auth/magic-link?token=${magicLinkToken}`;
+    // Construct the complete magic link URL using the production domain
+    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
       
       // TODO: Implement actual email sending
