@@ -90,11 +90,22 @@ export default async function handler(
       port: 465,
       secure: true, 
       auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
+        user: ar@agilerant.info,
+        pass: $Nov2022,
+        // user: process.env.EMAIL_USERNAME,
+        // pass: process.env.EMAIL_PASSWORD,
       },
       debug: true, // Enable debug mode
     }, {logger: true});
+
+    // Verify Nodemailer authentication
+    transporter.verify((error, success) => {
+      if (error) {
+        console.error(`[${requestId}] Nodemailer authentication error:`, error);
+      } else {
+        console.log(`[${requestId}] Nodemailer authentication successful`);
+      }
+    });
 
     // Add event listeners for more logging
     transporter.on('idle', () => {
