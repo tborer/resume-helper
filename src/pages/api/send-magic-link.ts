@@ -48,19 +48,6 @@ export default async function handler(
       });
     }
 
-    /*
-    // TEMPORARY ACCESS: Remove this block once database is connected
-    // This provides temporary access for development/testing
-    // DATABASE UPDATE REQUIRED: Replace with actual database check for user and subscription status
-    if (email === "tray14@hotmail.com") {
-      console.log(`[${requestId}] Hard-coded access granted for email: ${email}`);
-      return res.status(200).json({
-        success: true,
-        message: 'Magic link sent successfully',
-        requestId
-      });
-    }*/
-
     // Generate a unique magic link token
     const magicLinkToken = uuidv4(); // Using uuid for token generation
     console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
@@ -69,22 +56,6 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
-    /*
-    // Configure Nodemailer transporter
-    console.log(`[${requestId}] Creating Nodemailer transporter...`);
-    const transporter = nodemailer.createTransport({
-      host: 'mail.agilerant.info',
-      port: 465,
-      secure: true, // Use SSL/TLS
-      auth: {
-        user: process.env.EMAIL_USERNAME,
-        pass: process.env.EMAIL_PASSWORD,
-      },
-    }, {logger: true});
-    */
-
-    //Trying expanded nodemailer
-    // Configure Nodemailer transporter
     console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
       host: 'mail.agilerant.info',
@@ -97,7 +68,6 @@ export default async function handler(
       debug: true, // Enable debug mode
     }, {logger: true});
 
-    
     console.log('EMAIL_USERNAME:', process.env.EMAIL_USERNAME);
     console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
     
