@@ -101,51 +101,6 @@ export default async function handler(
       html: `<p>Hello,</p><p>Here is the magic link you have requested:</p><p><a href="${magicLinkUrl}">${magicLinkUrl}</a></p><p>Best regards,<br/>ResumeRocketMatchAI</p>`,
     };
 
-    //replacing full comment out
-    /*
-    // Send email
-    console.log(`[${requestId}] Sending email with options:`, mailOptions);
-
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-         console.error(`[${requestId}] Error sending email:`, error);
-          const errorDetails = error instanceof Error ? {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
-          } : error;
-        console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
-      } else {
-        console.log(`[${requestId}] Email sent successfully!`);
-        console.log(`[${requestId}] Full info object:`, info);
-        console.log(`[${requestId}] Email response:`, info.response);
-        }
-    });
-
-    return res.status(200).json({
-      success: true,
-      message: 'Magic link email sent successfully',
-      requestId,
-    });
-  } catch (error) {
-    console.error(`[${requestId}] Error sending magic link:`, error);
-    
-    // Log the error details for troubleshooting
-    const errorDetails = error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    } : error;
-    
-    console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
-    
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error sending magic link',
-      requestId
-    });
-  }
-}*/
     // Send email
     console.log(`[${requestId}] Sending email with options:`, mailOptions);
 
