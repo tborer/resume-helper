@@ -28,44 +28,45 @@ export default function Home() {
         return;
       }
       
-      try {
-        const checkUserResponse = await fetch('/api/check-user', {
+      const checkUserResponse = await fetch('/api/check-user', {
+        method: 'POST',
+        
+        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await checkUserResponse.json();
+      
+      if (data.isActive) {
+        // send the magic link now
+         const sendMagicLinkResponse = await fetch('/api/send-magic-link', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: {
+            'Content-Type': 'application/json',
+          },
           body: JSON.stringify({ email }),
         });
-      
-        if (!checkUserResponse.ok) {
-          throw new Error(`Error checking user: ${checkUserResponse.statusText}`);
-        }
-      
-        const data = await checkUserResponse.json();
-      
-        if (data.isActive) {
-          // Send magic link
-          const sendMagicLinkResponse = await fetch('/api/send-magic-link', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email }),
-          });
-      
-          const sendMagicLinkData = await sendMagicLinkResponse.json();
-      
-          if (sendMagicLinkData.success) {
-            // Show success message
-            setMagicLinkSent(true);
-          } else {
-            console.error('Error sending magic link:', sendMagicLinkData.message);
-            alert('Error sending magic link. Please try again.');
-          }
+        const sendMagicLinkData = await sendMagicLinkResponse.json();
+        if (sendMagicLinkData.success) {
+          // Show success message that magic link was sent
+          setMagicLinkSent(true);
         } else {
-          setErrorMessage('No email match in the system.');
+          console.error('Error sending magic link:', sendMagicLinkData.message);
+          alert('There was an error sending the magic link. Please try again.');
         }
-      } catch (error) {
-        console.error('Error checking user:', error);
-        alert('Error checking user. Please try again.');
-        setIsSubmitting(false);
+        
+        
+      } else {
+        setErrorMessage("No email match in the system."); // [ADDED] Show error message
       }
+    } catch (error) {
+      console.error('Error sending magic link:', error);
+      alert('There was an error processing your request. Please try again.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
