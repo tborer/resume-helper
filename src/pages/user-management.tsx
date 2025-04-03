@@ -480,7 +480,8 @@ const saveMasterApiKey = async () => {
               <TabsTrigger value="logs">API Logs</TabsTrigger>
               <TabsTrigger value="stripe-testing">Stripe Testing</TabsTrigger>
               <TabsTrigger value="master-api-key">Master API Key</TabsTrigger>
-              <TabsTrigger value="back" onClick={() => router.push("/dashboard")}>
+              {/* Delete This Line <TabsTrigger value="master-api-key">Master API Key</TabsTrigger> */}
+              <TabsTrigger value="back" onClick={() => router.push('/dashboard')}>
                 Back to Dashboard
               </TabsTrigger>
             </TabsList>
@@ -874,7 +875,8 @@ const saveMasterApiKey = async () => {
               )}
             </TabsContent>
             
-            <TabsContent value="master-api-key">
+            {/* <TabsContent value="master-api-key">
+
               <Card>
                 <CardHeader>
                   <CardTitle>Master API Key Management</CardTitle>
@@ -943,7 +945,8 @@ const saveMasterApiKey = async () => {
                   </div>
                 </CardContent>
               </Card>
-            </TabsContent>
+            </TabsContent> */}
+            {/* Delete this line and above line including content */}
           </Tabs>
         </main>
         
