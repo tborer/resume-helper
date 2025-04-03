@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
   const requestId = req.headers['x-request-id'];
