@@ -90,10 +90,8 @@ export default async function handler(
       port: 465,
       secure: true, 
       auth: {
-        user: ar@agilerant.info,
-        pass: $Nov2022,
-        // user: process.env.EMAIL_USERNAME,
-        // pass: process.env.EMAIL_PASSWORD,
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
       },
       debug: true, // Enable debug mode
     }, {logger: true});
