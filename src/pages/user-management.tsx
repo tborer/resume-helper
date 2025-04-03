@@ -876,78 +876,7 @@ const saveMasterApiKey = async () => {
               )}
             </TabsContent>
             
-            {/* <TabsContent value="master-api-key">
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Master API Key Management</CardTitle>
-                  <CardDescription>Configure a shared Gemini API key for all users</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="p-4 bg-muted rounded-lg">
-                      <h4 className="font-semibold mb-2">About Master API Key</h4>
-                      <p className="text-sm text-muted-foreground">
-                        The Master API Key is a shared Google Gemini API key that will be used by all users who don't have their own API key.
-                        Users with the Master API key are limited to 10 resume analysis completions per day, while users with their own API key
-                        have unlimited requests (subject only to Gemini's rate limits).
-                      </p>
-                    </div>
-                    
-                    <div>
-                      <Label htmlFor="master-gemini-api-key">Google Gemini API Key</Label>
-                      <div className="flex space-x-2">
-                        <Input 
-                          id="master-gemini-api-key" 
-                          type="password" 
-                          placeholder="Enter the Master Gemini API key" 
-                          value={masterApiKey}
-                          onChange={(e) => setMasterApiKey(e.target.value)}
-                        />
-                        <Button 
-                          onClick={saveMasterApiKey} 
-                          disabled={isSavingMasterApiKey}
-                          size="sm"
-                        >
-                          {isSavingMasterApiKey ? "Saving..." : "Save"}
-                        </Button>
-                      </div>
-                      {masterApiKeySaveMessage && (
-                        <p className={`text-sm mt-1 ${masterApiKeySaveSuccess ? "text-green-500" : "text-red-500"}`}>
-                          {masterApiKeySaveMessage}
-                        </p>
-                      )}
-                      <p className="text-xs text-muted-foreground mt-1">
-                        Get a Gemini API key from{" "}
-                        <a 
-                          href="https://aistudio.google.com/apikey" 
-                          target="_blank" 
-                          rel="noopener noreferrer"
-                          className="underline hover:text-primary"
-                        >
-                          Google AI Studio
-                        </a>
-                      </p>
-                    </div>
-                    
-                    <Alert>
-                      <AlertTitle>Usage Policy</AlertTitle>
-                      <AlertDescription>
-                        <p className="mb-2">
-                          When users utilize the Master API key, they are limited to 10 resume analysis completions per day.
-                          This helps manage costs and prevents abuse of the shared API key.
-                        </p>
-                        <p>
-                          Users can add their own Gemini API key in their account settings to get unlimited requests,
-                          subject only to Google's rate limits for their personal API key.
-                        </p>
-                      </AlertDescription>
-                    </Alert>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent> */}
-            {/* Delete this line and above line including content */}
+            
           </Tabs>
         </main>
         
