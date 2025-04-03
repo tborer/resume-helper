@@ -4,6 +4,7 @@ import { PrismaClient } from '@prisma/client';
 
 const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
   const requestId = req.headers['x-request-id'];
+  const prisma = new PrismaClient();
 
   try {
     // Validate email address
