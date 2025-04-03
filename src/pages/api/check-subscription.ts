@@ -63,6 +63,10 @@ export default async function handler(
     console.log(`[${requestId}] Checking subscription for email: ${email}`);
 
     // Get the product ID from environment variable
+    console.log(`[${requestId}] STRIPE_PRODUCT_ID:`, process.env.STRIPE_PRODUCT_ID);
+    console.log(`[${requestId}] STRIPE_SECRET_KEY:`, process.env.STRIPE_SECRET_KEY);
+
+
     const productId = process.env.STRIPE_PRODUCT_ID;
     
     if (!productId) {
