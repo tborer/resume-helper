@@ -710,7 +710,7 @@ const saveMasterApiKey = async () => {
                   </Button>
                   {token && (
                     <p className="mt-2">
-                      Magic Token: <code>{token}</code>
+                      Magic Token Link: <code>https://resume-rocket-match-ai.vercel.app/dashboard?token={token}</code>
                     </p>
                   )}
                   {error && <p className="mt-2 text-red-500">Error: {error}</p>}
