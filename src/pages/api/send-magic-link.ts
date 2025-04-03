@@ -107,24 +107,6 @@ export default async function handler(
         }
     });
 
-    /*
-    // Construct mail options
-      console.log(`[${requestId}] Sending magic link to: ${email}`);
-      // Simulate email sending delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-*/
-
-//moving this above
-/*
-    // Generate a unique magic link token
-    const magicLinkToken = uuidv4(); // Using uuid for token generation
-    console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
-
-    // Construct the complete magic link URL using the production domain
-    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
-    console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
-    */  
-
     return res.status(200).json({
       success: true,
       message: 'Magic link email sent successfully',
