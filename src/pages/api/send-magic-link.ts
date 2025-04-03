@@ -68,6 +68,7 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
+    /*
     // Configure Nodemailer transporter
     console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
@@ -79,6 +80,34 @@ export default async function handler(
         pass: process.env.EMAIL_PASSWORD,
       },
     }, {logger: true});
+    */
+
+    //Trying expanded nodemailer
+    // Configure Nodemailer transporter
+    console.log(`[${requestId}] Creating Nodemailer transporter...`);
+    const transporter = nodemailer.createTransport({
+      host: 'mail.agilerant.info',
+      port: 465,
+      secure: true, 
+      auth: {
+        user: process.env.EMAIL_USERNAME,
+        pass: process.env.EMAIL_PASSWORD,
+      },
+      debug: true, // Enable debug mode
+    }, {logger: true});
+
+    // Add event listeners for more logging
+    transporter.on('idle', () => {
+      console.log(`[${requestId}] Nodemailer transporter idle`);
+    });
+
+    transporter.on('ready', () => {
+      console.log(`[${requestId}] Nodemailer transporter ready`);
+    });
+
+    transporter.on('error', (err) => {
+      console.error(`[${requestId}] Nodemailer transporter error:`, err);
+    });
 
     // Construct mail options
     const mailOptions = {
