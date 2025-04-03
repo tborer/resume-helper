@@ -98,6 +98,9 @@ export default async function handler(
     }, {logger: true});
 
     
+    console.log('EMAIL_USERNAME:', process.env.EMAIL_USERNAME);
+    console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD);
+    
     // Verify Nodemailer authentication
     transporter.verify((error, success) => {
       if (error) {
