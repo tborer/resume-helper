@@ -5,13 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
-/* // Initialize Stripe with the secret key
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: '2023-10-16', // Use the latest API version
-});
-*/
-
-
 type ResponseData = {
   success: boolean;
   message: string;
@@ -107,94 +100,17 @@ export default async function handler(
     });
 
     // Construct mail options
-    
-    
-    /* console.log(`[${requestId}] Checking subscription for email: ${email}`); */
-    /* // Get the product ID from environment variable */
-    /* const productId = process.env.STRIPE_PRODUCT_ID; */
-    /* if (!productId) { */
-    /*   console.error(`[${requestId}] STRIPE_PRODUCT_ID environment variable is not set`); */
-    /*   return res.status(500).json({ */
-    /*     success: false, */
-    /*     message: 'Server configuration error', */
-    /*     requestId */
-    /*   }); */
-    /* } */
-    
-    /* // 1. List all subscriptions */
-    /* const subscriptions = await stripe.subscriptions.list({ */
-    /*   limit: 100, // Adjust limit as needed */
-    /*   status: 'active', */
-    /* }); */
-    /* console.log(`[${requestId}] Found ${subscriptions.data.length} active subscriptions`); */
-    /* // Log the Stripe API response for troubleshooting */
-    /* console.log(`[${requestId}] Stripe subscriptions response:`, JSON.stringify({ */
-    /*   count: subscriptions.data.length, */
-    /*   has_more: subscriptions.has_more, */
-    /*   subscription_ids: subscriptions.data.map(sub => sub.id) */
-    /* }, null, 2)); */
-    /* // 2. Filter subscriptions by customer email and product ID */
-    /* let hasSubscription = false; */
-    /* for (const subscription of subscriptions.data) { */
-    /*   if (subscription.customer) { */
-    /*     // Get customer details */
-    /*     const customer = await stripe.customers.retrieve(subscription.customer as string); */
-    /*     // Check if this is the customer we're looking for */
-    /*     if ('email' in customer && customer.email === email) { */
-    /*       console.log(`[${requestId}] Found customer with matching email: ${email}`); */
-    /*       // Log customer details for troubleshooting (excluding sensitive data) */
-    /*       console.log(`[${requestId}] Customer details:`, JSON.stringify({ */
-    /*         id: customer.id, */
-    /*         email: customer.email, */
-    /*         name: customer.name, */
-    /*         created: customer.created, */
-    /*         subscriptions: subscription.id */
-    /*       }, null, 2)); */
-    /*       // Check if any of the subscription items match our product */
-    /*       const items = await stripe.subscriptionItems.list({ */
-    /*         subscription: subscription.id, */
-    /*       }); */
-    /*       console.log(`[${requestId}] Found ${items.data.length} subscription items for customer`); */
-    /*       for (const item of items.data) { */
-    /*         // Get the price to check its product */
-    /*         const price = await stripe.prices.retrieve(item.price.id); */
-    /*         // Log price details for troubleshooting */
-    /*         console.log(`[${requestId}] Price details:`, JSON.stringify({ */
-    /*           price_id: item.price.id, */
-    /*           product_id: price.product, */
-    /*           matches_target_product: price.product === productId */
-    /*         }, null, 2)); */
-    /*         if (price.product === productId) { */
-    /*           console.log(`[${requestId}] Found matching product subscription for email: ${email}`); */
-    /*           hasSubscription = true; */
-    /*           break; */
-    /*         } */
-    /*       } */
-    /*       if (hasSubscription) break; */
-    /*     } */
-    /*   } */
-    /* } */
-    /* if (hasSubscription) { */
-      // In a real application, we would generate a secure token and send an email with a magic link
-      // For this demo, we'll just simulate sending a magic link
       
       console.log(`[${requestId}] Sending magic link to: ${email}`);
       
       // Simulate email sending delay
       await new Promise(resolve => setTimeout(resolve, 500));
-    /*  } else { */
-    /* // No matching subscription found */
-    
-    /* return res.status(200).json({ */
-    /*   success: false, */
-    /*   message: 'No active subscription found for this email', */
-    /*   requestId */
-    /* }); */
-    /* } */
+
     // Generate a unique magic link token
     const magicLinkToken = uuidv4(); // Using uuid for token generation
     console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
 
+    /*
     // Check if a UserAccess record exists for the user
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
@@ -221,7 +137,7 @@ export default async function handler(
         data: { userId: user.id, magicLinkToken },
       });
       console.log(`[${requestId}] Created new user access record for user: ${email}`);
-    }
+    }*/
 
     // Construct the complete magic link URL using the production domain
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
