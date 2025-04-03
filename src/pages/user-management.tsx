@@ -257,6 +257,7 @@ useEffect(() => {
   }
 }, [router]);
 
+/*
 // Save the Master Gemini API key
 const saveMasterApiKey = async () => {
   if (!masterApiKey) {
@@ -294,7 +295,7 @@ const saveMasterApiKey = async () => {
   } finally {
     setIsSavingMasterApiKey(false);
   }
-};
+};*/
 
   // Toggle user active status
   const toggleUserStatus = (userId: number) => {
