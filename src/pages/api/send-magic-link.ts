@@ -63,7 +63,7 @@ export default async function handler(
       secure: true, 
       auth: {
         user: process.env.EMAIL_USERNAME,
-        pass: $Nov2022,
+        pass: '$Nov2022',
       },
       debug: true, // Enable debug mode
     }, {logger: true});
