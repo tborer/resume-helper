@@ -23,6 +23,9 @@ const UserManagement = () => {
   const [userEmail, setUserEmail] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [email, setEmail] = useState('');
+  const [token, setToken] = useState('');
+  const [error, setError] = useState('');
 
   // Stripe Testing states
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -670,6 +673,32 @@ const saveMasterApiKey = async () => {
                     <p className="mt-2">Subscription Status: {subscriptionStatus ? "Active" : "Inactive"}</p>
                   )}
                   {lookupError && <p className="mt-2 text-red-500">Error: {lookupError}</p>}
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Manually Generate Magic Token</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid w-full max-w-sm items-center gap-1.5">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      type="email"
+                      id="email"
+                      placeholder="Email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                    />
+                  </div>
+                  <Button onClick={generateToken} className="mt-4">
+                    Generate Token
+                  </Button>
+                  {token && (
+                    <p className="mt-2">
+                      Magic Token: <code>{token}</code>
+                    </p>
+                  )}
+                  {error && <p className="mt-2 text-red-500">Error: {error}</p>}
                 </CardContent>
               </Card>
               {/*  <!-- New code - End --> */}
