@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 
 const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
   const requestId = req.headers['x-request-id'];
-  //const prisma = new PrismaClient();
+  const { email } = req.body;
 
   try {
     // Find user by email
