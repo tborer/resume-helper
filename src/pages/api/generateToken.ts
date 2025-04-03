@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
+import { PrismaClient } from '@prisma/client';
 
 const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
   const requestId = req.headers['x-request-id'];
@@ -25,6 +26,13 @@ const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
     console.error(`[${requestId}] Error generating token: ${error.message}`);
     res.status(500).json({ error: 'Failed to generate token' });
   }
+
+  // Store token in UserAccess table
+  await prisma.userAccess.upsert({
+    where: { userId: user.id },
+    update: { magicLinkToken },
+    create: { userId: user.id, magicLinkToken },
+  });
 };
 
 export default generateToken;
