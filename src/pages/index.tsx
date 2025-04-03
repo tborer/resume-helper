@@ -38,7 +38,7 @@ export default function Home() {
         body: JSON.stringify({ email }),
       });
 
-      const data = await response.json();
+      const data = await checkUserResponse.json();
       
       if (data.isActive) {
         // send the magic link now
