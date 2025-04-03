@@ -98,6 +98,7 @@ export default async function handler(
       debug: true, // Enable debug mode
     }, {logger: true});
 
+    /*
     // Verify Nodemailer authentication
     transporter.verify((error, success) => {
       if (error) {
@@ -105,7 +106,7 @@ export default async function handler(
       } else {
         console.log(`[${requestId}] Nodemailer authentication successful`);
       }
-    });
+    });*/
 
     // Add event listeners for more logging
     transporter.on('idle', () => {
