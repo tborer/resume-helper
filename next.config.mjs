@@ -14,6 +14,8 @@ const nextConfig = {
   env: {
     EMAIL_USERNAME: process.env.EMAIL_USERNAME,
     EMAIL_PASSWORD: process.env.EMAIL_PASSWORD,
+    STRIPE_PRODUCT_ID: process.env.STRIPE_PRODUCT_ID,
+    STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY,
   },
 };
 
