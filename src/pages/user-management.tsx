@@ -26,6 +26,7 @@ const UserManagement = () => {
   const [email, setEmail] = useState('');
   const [token, setToken] = useState('');
   const [error, setError] = useState('');
+  const [magicLinkUrl, setMagicLinkUrl] = useState('');
 
   // Stripe Testing states
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
@@ -464,6 +465,7 @@ const saveMasterApiKey = async () => {
       });
       const data = await response.json();
       setToken(data.token);
+      setMagicLinkUrl(data.url);
     } catch (error) {
       setError(error.message);
     }
@@ -710,6 +712,9 @@ const saveMasterApiKey = async () => {
                   {token && (
                     <p className="mt-2">
                       Magic Token: <code>{token}</code>
+                    </p>
+                    <p>
+                      Magic Link: <a href={magicLinkUrl}>{magicLinkUrl}</a>
                     </p>
                   )}
                   {error && <p className="mt-2 text-red-500">Error: {error}</p>}
