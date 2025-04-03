@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { v4 as uuidv4 } from 'uuid';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
   const requestId = req.headers['x-request-id'];
