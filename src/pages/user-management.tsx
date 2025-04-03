@@ -42,9 +42,9 @@ const UserManagement = () => {
 
   // Master API Key states
   const [masterApiKey, setMasterApiKey] = useState("");
-  const [isSavingMasterApiKey, setIsSavingMasterApiKey] = useState(false);
-  const [masterApiKeySaveMessage, setMasterApiKeySaveMessage] = useState("");
-  const [masterApiKeySaveSuccess, setMasterApiKeySaveSuccess] = useState(false);
+  //const [isSavingMasterApiKey, setIsSavingMasterApiKey] = useState(false);
+  //const [masterApiKeySaveMessage, setMasterApiKeySaveMessage] = useState("");
+  //const [masterApiKeySaveSuccess, setMasterApiKeySaveSuccess] = useState(false);
 
   // Add User states
   const [newUserEmail, setNewUserEmail] = useState("");
@@ -480,8 +480,6 @@ const saveMasterApiKey = async () => {
               <TabsTrigger value="feature-requests">Feature Requests</TabsTrigger>
               <TabsTrigger value="logs">API Logs</TabsTrigger>
               <TabsTrigger value="stripe-testing">Stripe Testing</TabsTrigger>
-              <TabsTrigger value="master-api-key">Master API Key</TabsTrigger>
-              {/* Delete This Line <TabsTrigger value="master-api-key">Master API Key</TabsTrigger> */}
               <TabsTrigger value="back" onClick={() => router.push('/dashboard')}>
                 Back to Dashboard
               </TabsTrigger>
