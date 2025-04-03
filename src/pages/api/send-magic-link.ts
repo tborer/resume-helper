@@ -60,6 +60,14 @@ export default async function handler(
       });
     }
 
+    // Generate a unique magic link token
+    const magicLinkToken = uuidv4(); // Using uuid for token generation
+    console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
+    
+    // Construct the complete magic link URL using the production domain
+    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
+    console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
+
     // Configure Nodemailer transporter
     console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
@@ -99,50 +107,24 @@ export default async function handler(
         }
     });
 
+    /*
     // Construct mail options
-      
       console.log(`[${requestId}] Sending magic link to: ${email}`);
-      
       // Simulate email sending delay
       await new Promise(resolve => setTimeout(resolve, 500));
+*/
 
+//moving this above
+/*
     // Generate a unique magic link token
     const magicLinkToken = uuidv4(); // Using uuid for token generation
     console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
 
-    /*
-    // Check if a UserAccess record exists for the user
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: 'User not found',
-        requestId,
-      });
-    }
-    const existingUserAccess = await prisma.userAccess.findUnique({
-      where: { userId: user.id },
-    });
-
-    if (existingUserAccess) {
-      // If a record exists, update its magicLinkToken
-      await prisma.userAccess.update({
-        where: { userId: user.id },
-        data: { magicLinkToken },
-      });
-      console.log(`[${requestId}] Updated magic link token for user: ${email}`);
-    } else {
-      // If no record exists, create a new UserAccess record
-      await prisma.userAccess.create({
-        data: { userId: user.id, magicLinkToken },
-      });
-      console.log(`[${requestId}] Created new user access record for user: ${email}`);
-    }*/
-
     // Construct the complete magic link URL using the production domain
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
-      
+    */  
+
     return res.status(200).json({
       success: true,
       message: 'Magic link email sent successfully',
