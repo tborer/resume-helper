@@ -48,6 +48,7 @@ export default async function handler(
       });
     }
 
+    /*
     // TEMPORARY ACCESS: Remove this block once database is connected
     // This provides temporary access for development/testing
     // DATABASE UPDATE REQUIRED: Replace with actual database check for user and subscription status
@@ -58,7 +59,7 @@ export default async function handler(
         message: 'Magic link sent successfully',
         requestId
       });
-    }
+    }*/
 
     // Generate a unique magic link token
     const magicLinkToken = uuidv4(); // Using uuid for token generation
@@ -96,7 +97,7 @@ export default async function handler(
       debug: true, // Enable debug mode
     }, {logger: true});
 
-    /*
+    
     // Verify Nodemailer authentication
     transporter.verify((error, success) => {
       if (error) {
@@ -104,7 +105,7 @@ export default async function handler(
       } else {
         console.log(`[${requestId}] Nodemailer authentication successful`);
       }
-    });*/
+    });
 
     // Add event listeners for more logging
     transporter.on('idle', () => {
