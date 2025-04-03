@@ -455,6 +455,20 @@ const saveMasterApiKey = async () => {
     }
   };
 
+  const generateToken = async () => {
+    try {
+      const response = await fetch('/api/generateToken', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      setToken(data.token);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
   if (!isAdmin) {
     return null; // Don't render anything while checking admin status or redirecting
   }
