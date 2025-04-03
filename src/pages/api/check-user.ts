@@ -21,8 +21,10 @@ const checkUser = async (req: NextApiRequest, res: NextApiResponse) => {
       return res.status(404).json({ error: 'User not found' });
     }
 
+    console.log('User found:', user); // Log statement
+
     // Return user data or success message
-    return res.status(200).json({ success: true, data: user });
+    return res.status(200).json({ success: true, data: user, isActive: true });
   } catch (error) {
     console.error('Error checking user:', error);
     return res.status(500).json({ error: 'Error checking user' });

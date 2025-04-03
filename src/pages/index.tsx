@@ -58,7 +58,6 @@ export default function Home() {
           alert('There was an error sending the magic link. Please try again.');
         }
         
-        
       } else {
         setErrorMessage("No email match in the system."); // [ADDED] Show error message
       }
