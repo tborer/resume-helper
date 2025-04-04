@@ -49,7 +49,7 @@ export default function Dashboard() {
     details?: any;
   } | null>(null);
   
-  useEffect(() => {
+  /*useEffect(() => {
     // Get email from URL query or localStorage
     if (router.query.email) {
       const email = router.query.email as string;
@@ -92,6 +92,7 @@ export default function Dashboard() {
       }
     }
   }, [router.query, router]);
+  */
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to fetch the API key from the database instead of localStorage
