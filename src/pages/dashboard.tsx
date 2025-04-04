@@ -67,8 +67,8 @@ export default function Dashboard() {
       }
       
       // Load saved API key for this user
-      loadGeminiApiKey(email);
-    } else {
+      //loadGeminiApiKey(email);
+    } /*else {
       // Try to get from localStorage
       const storedEmail = localStorage.getItem("userEmail");
       console.log("Dashboard: Email from localStorage:", storedEmail);
@@ -90,7 +90,7 @@ export default function Dashboard() {
         console.log("Dashboard: No email found, redirecting to home");
         router.push("/");
       }
-    }
+    }*/
   }, [router.query, router]);
   
   
