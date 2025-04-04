@@ -58,9 +58,9 @@ export default async function handler(
 
     // Create or update UserAccess row
     const userAccess = await prisma.userAccess.upsert({
-      where: { email },
+      where: { userId: email }, // or id: email if id is the unique identifier
       update: { magicToken: magicLinkToken },
-      create: { email, magicToken: magicLinkToken },
+      create: { userId: email, magicToken: magicLinkToken }, // or id: email if id is the unique identifier
     });
     console.log(`[${requestId}] UserAccess row updated:`, userAccess);
 
