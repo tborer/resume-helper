@@ -73,7 +73,7 @@ export default function Dashboard() {
       }
     };
       validateToken();
-  }, []);
+  }, [router.query.token]);
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to fetch the API key from the database instead of localStorage

@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         where: { magicToken: token },
       });
 
-      if (userAccess) {
+      if (userAccess && userAccess.isActive) {
         return res.status(200).json({ valid: true });
       } else {
         return res.status(200).json({ valid: false });
