@@ -106,7 +106,7 @@ export default function Dashboard() {
   useEffect(() => {
     if (!isTokenValid) {
       console.log("Dashboard: Invalid token - redirecting");
-      router.push('/'); // Redirect if token is invalid
+      //router.push('/'); // Redirect if token is invalid
     }
   }, [isTokenValid, router]); // Re-run when isTokenValid changes
 
