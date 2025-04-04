@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queryGeminiAPI } from '@/lib/gemini';
+import { prisma } from '@/lib/prisma';
 
 type ResponseData = {
   optimizedResume?: string;
@@ -32,10 +33,28 @@ export default async function handler(
       return res.status(400).json({ error: 'Resume is required' });
     }
 
-    if (!apiKey) {
-      return res.status(400).json({ error: 'API key is required' });
+    let geminiApiKey = apiKey;
+
+    // Check if userEmail exists, as it's needed to find the user in the DB
+    if (userEmail) {
+      const user = await prisma.user.findUnique({ where: { email: userEmail } });
+      if (user?.geminiApiKey) {
+        geminiApiKey = user.geminiApiKey;
+        console.log(`Using user-specific Gemini API key for user: ${userEmail}`);
+      } else {
+        // Fallback to master key if user-specific key is not found
+        geminiApiKey = process.env.MASTER_API_KEY;
+        if (geminiApiKey) {
+          console.log(`User ${userEmail} does not have a custom Gemini API key. Using the master API key.`);
+        } else {
+          return res.status(500).json({ error: 'No API key available.' });
+        }
+      }
+    } else if (!geminiApiKey && process.env.MASTER_API_KEY) {
+      geminiApiKey = process.env.MASTER_API_KEY;
+    } else {
+      return res.status(400).json({ error: 'API key or user details are required' });
     }
-    
     // If using master key, check usage limits
     if (isMasterKey && userEmail) {
       // In a real app, we would check the database for usage
@@ -80,7 +99,7 @@ ${jobDescription}
 ${resume}
 
 **Output:**
-
+    
 Matching Score: [Percentage]%
 
 Optimized Resume:
@@ -101,7 +120,7 @@ TECH & SKILLS
 [Optimized Tech & Skills section here]`;
 
     // Call the Gemini API
-    const response = await queryGeminiAPI(apiKey, prompt);
+    const response = await queryGeminiAPI(geminiApiKey, prompt);
 
     if (response.error) {
       console.error('Error from Gemini API:', response.error);
@@ -173,7 +192,7 @@ TECH & SKILLS
 [Further Optimized Tech & Skills section here]`;
 
       // Call the Gemini API again with the additional prompt
-      const additionalResponse = await queryGeminiAPI(apiKey, additionalPrompt);
+      const additionalResponse = await queryGeminiAPI(geminiApiKey, additionalPrompt);
 
       if (!additionalResponse.error) {
         // Parse the response to extract the new matching score and optimized resume
