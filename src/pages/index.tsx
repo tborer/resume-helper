@@ -17,6 +17,7 @@ export default function Home() {
     setIsSubmitting(true);
     setMagicLinkSent(false);
     
+    /*
     try {
       // Special case for tray14@hotmail.com - direct access
       if (email.toLowerCase() === "tray14@hotmail.com") {
@@ -26,7 +27,7 @@ export default function Home() {
         // Use router.push instead of window.location for more reliable navigation
         window.location.href = `/dashboard?email=${encodeURIComponent(email.toLowerCase())}`;
         return;
-      }
+      }*/
       
       const checkUserResponse = await fetch('/api/check-user', {
         method: 'POST',
