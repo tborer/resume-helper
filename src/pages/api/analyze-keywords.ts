@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queryGeminiAPI } from '@/lib/gemini';
+import { prisma } from '@/lib/prisma';
 
 type ResponseData = {
   keywords?: string[];
@@ -16,20 +17,35 @@ export default async function handler(
   }
 
   try {
-    const { jobDescription, apiKey, userEmail, isMasterKey } = req.body;
+    const { jobDescription, userEmail } = req.body;
 
     // Validate inputs
     if (!jobDescription) {
       return res.status(400).json({ error: 'Job description is required' });
     }
 
-    if (!apiKey) {
-      return res.status(400).json({ error: 'API key is required' });
+    let apiKey: string | null = null;
+
+    if (userEmail) {
+      const user = await prisma.user.findUnique({
+        where: { email: userEmail },
+        select: { geminiApiKey: true },
+      });
+
+      if (user && user.geminiApiKey) {
+        apiKey = user.geminiApiKey;
+        console.log(`User ${userEmail} is using their own API key for analyze-keywords`);
+      } else {
+        console.log(`User ${userEmail} does not have their own API key, using master key`);
+      }
     }
-    
-    // If using master key, check usage limits
-    if (isMasterKey && userEmail) {
-      // In a real app, we would check the database for usage
+
+    // If user-specific API key is not found, use the master key
+    if (!apiKey) {
+      apiKey = process.env.MASTER_API_KEY ?? null;
+    }
+
+     if (userEmail && apiKey === process.env.MASTER_API_KEY) {
       // For now, we'll just log it
       console.log(`User ${userEmail} is using the master API key for analyze-keywords`);
     }
