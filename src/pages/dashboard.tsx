@@ -16,6 +16,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 //import React from "react";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import { checkToken } from "@/lib/utils";
 
 export default function Dashboard() {
   const router = useRouter();
@@ -50,6 +51,29 @@ export default function Dashboard() {
   } | null>(null);
   
   useEffect(() => {
+    const validateToken = async () => {
+      const token = router.query.token as string;
+      
+      if (!token) {
+        console.error("Dashboard: No token found, redirecting to home");
+        router.push("/");
+        return;
+      }
+
+      try {
+        const isValid = await checkToken(token);
+        if (!isValid) {
+          console.error("Dashboard: Invalid token, redirecting to home");
+          router.push("/");
+          return;
+        }
+      } catch (error) {
+        console.error("Dashboard: Error checking token, redirecting to home", error);
+        router.push("/");
+      }
+    };
+    validateToken();
+
     // Get email from URL query or localStorage
     if (router.query.email) {
       const email = router.query.email as string;
