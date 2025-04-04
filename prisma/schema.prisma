@@ -27,7 +27,7 @@ model User {
   email         String         @unique
   isActive      Boolean        @default(true)
   isAdmin       Boolean        @default(false)
-  historyAccess Boolean        @default(true)
+  historyAccess Boolean        @default(false)
   accountAccess Boolean        @default(true)
   geminiApiKey  String?        // Added for the users api key
   createdAt     DateTime       @default(now())
@@ -44,6 +44,7 @@ model UserAccess {
   dailyAnalysisCount  Int     @default(0)
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
+  tokenActive         Boolean   @default(true)
 }
 
 
