@@ -61,7 +61,7 @@ export default function Dashboard() {
     } else {
       // Handle case where email is not in the URL (e.g., redirect to home)
       console.log("No email in URL, redirecting home (or handle fallback)");
-      // router.push('/');  // Uncomment to redirect if that's desired
+      router.push('/');  // Uncomment to redirect if that's desired
     }
   }, [router.query]); // Re-run when query parameters change
 
