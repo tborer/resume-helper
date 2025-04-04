@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queryGeminiAPI } from '@/lib/gemini';
+import { prisma } from '@/lib/prisma';
 
 type ResponseData = {
   score?: number;
@@ -29,16 +30,31 @@ export default async function handler(
       return res.status(400).json({ error: 'Resume is required' });
     }
 
-    if (!apiKey) {
+    let usedApiKey = process.env.MASTER_API_KEY;
+
+    if(userEmail) {
+      const user = await prisma.user.findUnique({
+        where: {
+          email: userEmail
+        }
+      })
+
+      if(user && user.geminiApiKey) {
+        usedApiKey = user.geminiApiKey
+      }
+    }
+
+
+    if (!usedApiKey) {
       return res.status(400).json({ error: 'API key is required' });
     }
-    
-    // If using master key, check usage limits
-    if (isMasterKey && userEmail) {
-      // In a real app, we would check the database for usage
-      // For now, we'll just log it
-      console.log(`User ${userEmail} is using the master API key for calculate-match`);
-    }
+    // // If using master key, check usage limits
+    // if (isMasterKey && userEmail) {
+    //   // In a real app, we would check the database for usage
+    //   // For now, we'll just log it
+    //   console.log(`User ${userEmail} is using the master API key for calculate-match`);
+    // }
+
 
     // Create the prompt as specified by the user
     const prompt = `Ignore all previous instructions. Clear your memory. You are an expert in Applicant Tracking Systems (ATS) and resume analysis. Your task is to analyze a job description and a resume, then provide a matching score indicating how well the resume aligns with the job description.
@@ -73,7 +89,7 @@ Justification: [Brief explanation of how the score was calculated, highlighting 
 Missing Skills: [Comma-separated list of missing skills]`;
 
     // Call the Gemini API
-    const response = await queryGeminiAPI(apiKey, prompt);
+    const response = await queryGeminiAPI(usedApiKey, prompt);
 
     if (response.error) {
       console.error('Error from Gemini API:', response.error);
@@ -89,9 +105,9 @@ Missing Skills: [Comma-separated list of missing skills]`;
       console.error('Could not parse score from response:', response.text);
       return res.status(500).json({ error: 'Failed to parse matching score from response' });
     }
-    
-    const missingSkills = missingSkillsMatch 
-    ? missingSkillsMatch[1].split(',').map((skill) => skill.trim()) 
+
+    const missingSkills = missingSkillsMatch
+    ? missingSkillsMatch[1].split(',').map((skill) => skill.trim())
     : [];
 
 
