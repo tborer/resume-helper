@@ -151,18 +151,32 @@ export default async function handler(
         console.log(`[${requestId}] Full info object:`, info);
         console.log(`[${requestId}] Email response:`, info.response);
 
-        // Write to UserAccess table
-        prisma.userAccess.create({
-          data: {
-            userId: req.body.userId, // Assuming you have userId in the request body
-            magicLinkToken: magicLinkToken,
+        // Check if user exists and create UserAccess record
+        prisma.user.findUnique({
+          where: {
+            email: req.body.email,
           },
         })
-          .then((result) => {
-            console.log(`[${requestId}] UserAccess record created:`, result);
+          .then((user) => {
+            if (user) {
+              prisma.userAccess.create({
+                data: {
+                  userId: user.id,
+                  magicLinkToken: magicLinkToken,
+                },
+              })
+                .then((result) => {
+                  console.log(`[${requestId}] UserAccess record created:`, result);
+                })
+                .catch((error) => {
+                  console.error(`[${requestId}] Error creating UserAccess record:`, error);
+                });
+            } else {
+              console.log(`[${requestId}] User not found with email:`, req.body.email);
+            }
           })
           .catch((error) => {
-            console.error(`[${requestId}] Error creating UserAccess record:`, error);
+            console.error(`[${requestId}] Error finding user:`, error);
           });
 
         return res.status(200).json({
