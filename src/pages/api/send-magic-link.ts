@@ -5,13 +5,6 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
-interface UserAccess {
-  userId: string;
-  token: string;
-  createdAt: Date;
-  updatedAt: Date;
-}
-
 type ResponseData = {
   success: boolean;
   message: string;
@@ -26,7 +19,6 @@ const generateRequestId = (): string => {
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
-
 ) {
   // Generate a unique request ID for tracking
   const requestId = generateRequestId();
@@ -64,6 +56,7 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
+    console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
       host: 'mail.agilerant.info',
       port: 465,
@@ -72,7 +65,7 @@ export default async function handler(
         user: process.env.EMAIL_USERNAME,
         pass: '$Nov2022',
       },
-      debug: false, 
+      debug: true, // Enable debug mode
     }, {logger: true});
 
     console.log('EMAIL_USERNAME:', process.env.EMAIL_USERNAME);
@@ -112,60 +105,42 @@ export default async function handler(
     console.log(`[${requestId}] Sending email with options:`, mailOptions);
 
     transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error(`[${requestId}] Error sending email:`, error);
-                const errorDetails = error instanceof Error ? {
-                    name: error.name,
-                    message: error.message,
-                    stack: error.stack
-                } : error;
-                console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
-                return res.status(500).json({
-                    success: false,
-                    message: 'Error sending magic link',
-                    requestId,
-                });
-            } else {
-                console.log(`[${requestId}] Email sent successfully!`);
-                console.log(`[${requestId}] Full info object:`, info);
-                console.log(`[${requestId}] Email response:`, info.response);
-
-                // Find the user by email and write the magic link to the UserAccess table
-                prisma.user.findUnique({ where: { email } })
-                    .then(user => {
-                        if (!user) throw new Error(`User not found with email: ${email}`);
-                        return prisma.userAccess.create({ data: { userId: user.id, token: magicLinkToken } });
-                    })
-                    .then((userAccess) => {
-                        console.log(`[${requestId}] UserAccess created:`, userAccess);
-                        return res.status(200).json({
-                            success: true,
-                            message: 'Magic link email sent successfully and UserAccess created',
-                            requestId,
-                        });
-                    })
-                    .catch(dbError => {
-                        console.error(`[${requestId}] Database Error:`, dbError);
-                        return res.status(500).json({
-                            success: false,
-                            message: 'Error writing to database',
-                            requestId,
-                        });
-                    });
-            }
-        });
-    } catch (error) {
-        console.error(`[${requestId}] Error sending magic link:`, error);
+      if (error) {
+        console.error(`[${requestId}] Error sending email:`, error);
         const errorDetails = error instanceof Error ? {
-            name: error.name,
-            message: error.message,
-            stack: error.stack
+          name: error.name,
+          message: error.message,
+          stack: error.stack
         } : error;
         console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
         return res.status(500).json({
-            success: false,
-            message: 'Error sending magic link',
-            requestId
+          success: false,
+          message: 'Error sending magic link',
+          requestId,
         });
+      } else {
+        console.log(`[${requestId}] Email sent successfully!`);
+        console.log(`[${requestId}] Full info object:`, info);
+        console.log(`[${requestId}] Email response:`, info.response);
+        return res.status(200).json({
+          success: true,
+          message: 'Magic link email sent successfully',
+          requestId,
+        });
+      }
     });
-}}
+  } catch (error) {
+    console.error(`[${requestId}] Error sending magic link:`, error);
+    const errorDetails = error instanceof Error ? {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    } : error;
+    console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
+    return res.status(500).json({ 
+      success: false, 
+      message: 'Error sending magic link',
+      requestId
+    });
+  }
+}
