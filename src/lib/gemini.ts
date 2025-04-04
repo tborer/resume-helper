@@ -138,13 +138,13 @@ export const calculateATSMatchScore = async (
   resume: string,
   jobDescription: string
 ): Promise<{
-  score: number;
-  feedback: string;
+  score: number; feedback: string; missingSkills: string[];
 }> => {
   const prompt = `
     Ignore all previous instructions. Clear your memory.
     You are an ATS (Applicant Tracking System) expert. Analyze how well the following resume matches 
-    the job description. Give a percentage match score (0-100) and provide brief feedback on how to improve.
+    the job description. Give a percentage match score (0-100), provide brief feedback on how to improve, 
+    and list the key skills missing from the resume that are present in the job description.
     Only identify missing skills that are explicitly mentioned in the job description.
     
     Job Description:
@@ -152,6 +152,9 @@ export const calculateATSMatchScore = async (
     
     Resume:
     ${resume}
+    
+    Format your response exactly like this:
+    SCORE: [percentage]
     
     Format your response exactly like this:
     SCORE: [percentage]
@@ -163,22 +166,32 @@ export const calculateATSMatchScore = async (
   if (response.error || !response.text) {
     console.error("Error calculating ATS match:", response.error);
     return {
-      score: 0,
-      feedback: response.error || "Failed to calculate match score"
+      score: 0, feedback: response.error || "Failed to calculate match score", missingSkills: []
     };
   }
   
   // Parse the response
-  const scoreMatch = response.text.match(/SCORE:\s*(\d+)/i);
-  const feedbackMatch = response.text.match(/FEEDBACK:\s*([\s\S]+)/i);
-  
-  const score = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
-  const feedback = feedbackMatch ? feedbackMatch[1].trim() : "";
-  
-  return {
-    score,
-    feedback
-  };
+    const scoreMatch = response.text.match(/SCORE:\s*(\d+)/i);
+    const feedbackMatch = response.text.match(/FEEDBACK:\s*([\s\S]+?)(?=\nMISSING SKILLS:|$)/i);
+    const missingSkillsMatch = response.text.match(/MISSING SKILLS:\s*([\s\S]+)/i);
+
+    const score = scoreMatch ? parseInt(scoreMatch[1], 10) : 0;
+    const feedback = feedbackMatch ? feedbackMatch[1].trim() : "";
+
+    // Handle the parsing of missing skills
+    let missingSkills: string[] = [];
+    if (missingSkillsMatch) {
+        missingSkills = missingSkillsMatch[1]
+            .split(',')
+            .map(skill => skill.trim())
+            .filter(skill => skill.length > 0);
+    }
+
+    return {
+        score,
+        feedback,
+        missingSkills
+    };
 };
 
 /**
