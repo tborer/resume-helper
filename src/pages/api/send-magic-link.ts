@@ -56,6 +56,14 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
+    // Create or update UserAccess row
+    const userAccess = await prisma.userAccess.upsert({
+      where: { email },
+      update: { magicToken: magicLinkToken },
+      create: { email, magicToken: magicLinkToken },
+    });
+    console.log(`[${requestId}] UserAccess row updated:`, userAccess);
+
     console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
       host: 'mail.agilerant.info',
