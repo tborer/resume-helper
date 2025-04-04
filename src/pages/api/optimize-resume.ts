@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queryGeminiAPI } from '@/lib/gemini';
+import { prisma } from '@/lib/prisma';
 
 type ResponseData = {
   optimizedResume?: string;
@@ -21,23 +22,37 @@ export default async function handler(
   }
 
   try {
-    const { jobDescription, resume, apiKey, userEmail, isMasterKey } = req.body;
+    const { jobDescription, resume, userEmail } = req.body;
 
     // Validate inputs
     if (!jobDescription) {
       return res.status(400).json({ error: 'Job description is required' });
     }
-
     if (!resume) {
       return res.status(400).json({ error: 'Resume is required' });
     }
-
-    if (!apiKey) {
-      return res.status(400).json({ error: 'API key is required' });
-    }
     
-    // If using master key, check usage limits
-    if (isMasterKey && userEmail) {
+    if (!userEmail) {
+        return res.status(400).json({ error: 'User email is required' });
+      }
+
+    // Fetch the user's API key from the database
+    let apiKey: string | null = null;
+    try {
+      const user = await prisma.user.findUnique({ where: { email: userEmail } });
+      apiKey = user?.geminiApiKey || null;
+    } catch (dbError) {
+      console.error('Error fetching user API key from the database:', dbError);
+      return res.status(500).json({ error: 'Failed to retrieve user API key' });
+    }
+
+    // Fallback to master key if user's key is not present
+    if (!apiKey) {
+        apiKey = process.env.MASTER_API_KEY || null
+        if (!apiKey) {
+            return res.status(500).json({error: 'Master API Key not set'})
+        }
+        
       // In a real app, we would check the database for usage
       // For now, we'll just log it
       console.log(`User ${userEmail} is using the master API key for optimize-resume`);
@@ -123,12 +138,13 @@ TECH & SKILLS
     let matchingScore = parseInt(scoreMatch[1], 10);
     let optimizedResume = optimizedResumeMatch[1].trim();
 
+    let firstResponseError = null;
     // If the matching score is less than 95%, run an additional optimization
     if (matchingScore < 95) {
       console.log('Initial optimization score below 95%, running additional optimization...');
       
       // Create a more targeted prompt for further optimization
-      const additionalPrompt = `Ignore all previous instructions. Clear your memory. You are an expert in Applicant Tracking Systems (ATS) and resume optimization. The current resume has a match score of ${matchingScore}%, but we need to achieve 95% or higher.
+      const additionalPrompt = `Ignore all previous instructions. Clear your memory. You are an expert in Applicant Tracking Systems (ATS) and resume optimization. The current resume has a match score of ${matchingScore}%, but we need to achieve 95% or higher. Do not return any conversation besides the matching score and resume.
 
 **Instructions:**
 
@@ -175,8 +191,10 @@ TECH & SKILLS
       // Call the Gemini API again with the additional prompt
       const additionalResponse = await queryGeminiAPI(apiKey, additionalPrompt);
 
-      if (!additionalResponse.error) {
+      if (additionalResponse.error) {
+        console.error('Error from Gemini API during additional optimization:', additionalResponse.error);
         // Parse the response to extract the new matching score and optimized resume
+      } else {
         const newScoreMatch = additionalResponse.text.match(/Matching Score:\s*(\d+)%/i);
         const newOptimizedResumeMatch = additionalResponse.text.match(/Optimized Resume:\s*([\s\S]+)/i);
 
@@ -187,13 +205,14 @@ TECH & SKILLS
         } else {
           console.error('Could not parse additional optimization response:', additionalResponse.text);
         }
-      } else {
-        console.error('Error from Gemini API during additional optimization:', additionalResponse.error);
+        
       }
     }
-
+    
+    
     // Return the optimized resume and matching score
-    return res.status(200).json({ optimizedResume, matchingScore });
+    return res.status(200).json({ optimizedResume, matchingScore });    
+
   } catch (error) {
     console.error('Error in optimize-resume API:', error);
     return res.status(500).json({ error: 'Failed to optimize resume' });
