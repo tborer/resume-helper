@@ -5,6 +5,14 @@ import { v4 as uuidv4 } from 'uuid';
 
 const prisma = new PrismaClient();
 
+// Retrieve user data from database
+const user = await prisma.user.findUnique({ where: { email: email } });
+
+if (!user) {
+  // Handle the case where no user is found with the provided email
+  return res.status(404).json({ error: 'User not found' });
+}
+
 type ResponseData = {
   success: boolean;
   message: string;
