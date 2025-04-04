@@ -1,5 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queryGeminiAPI } from '@/lib/gemini';
+import { prisma } from '@/lib/prisma';
+
 
 type ResponseData = {
   score?: number;
@@ -18,26 +20,37 @@ export default async function handler(
   }
 
   try {
-    const { jobDescription, resume, apiKey, userEmail, isMasterKey } = req.body;
+    const { jobDescription, resume, userEmail } = req.body;
 
     // Validate inputs
     if (!jobDescription) {
       return res.status(400).json({ error: 'Job description is required' });
     }
-
     if (!resume) {
       return res.status(400).json({ error: 'Resume is required' });
     }
+    if (!userEmail) {
+      return res.status(400).json({ error: 'User email is required' });
+    }
+
+    // Fetch user's API key from the database
+    const user = await prisma.user.findUnique({
+      where: { email: userEmail },
+    });
+
+    let apiKey = process.env.MASTER_API_KEY; // Default to master key
+    if (user && user.geminiApiKey) {
+      apiKey = user.geminiApiKey;
+    }
 
     if (!apiKey) {
-      return res.status(400).json({ error: 'API key is required' });
+      return res.status(500).json({ error: 'API key not configured' });
     }
-    
-    // If using master key, check usage limits
-    if (isMasterKey && userEmail) {
-      // In a real app, we would check the database for usage
-      // For now, we'll just log it
-      console.log(`User ${userEmail} is using the master API key for calculate-match`);
+
+    if(!user){
+        console.log(`User ${userEmail} not found, using the master API key for calculate-match`);
+    }else if (!user.geminiApiKey) {
+        console.log(`User ${userEmail} has no API key stored, using the master API key for calculate-match`);
     }
 
     // Create the prompt as specified by the user
@@ -86,11 +99,11 @@ Missing Skills: [Comma-separated list of missing skills]`;
     const missingSkillsMatch = response.text.match(/Missing Skills:\s*([^\n]+)/i);
 
     if (!scoreMatch) {
-      console.error('Could not parse score from response:', response.text);
-      return res.status(500).json({ error: 'Failed to parse matching score from response' });
+        console.error('Could not parse score from response:', response.text);
+        return res.status(500).json({ error: 'Failed to parse matching score from response' });
     }
-    
-    const missingSkills = missingSkillsMatch 
+
+    const missingSkills = missingSkillsMatch
     ? missingSkillsMatch[1].split(',').map((skill) => skill.trim()) 
     : [];
 
@@ -102,7 +115,11 @@ Missing Skills: [Comma-separated list of missing skills]`;
     // Return the score and justification
     return res.status(200).json({ score, justification });
   } catch (error) {
-      console.error('Error in calculate-match API:', error);
-    return res.status(500).json({ error: 'Failed to calculate match score' });
+    console.error('Error in calculate-match API:', error);
+    if (error instanceof Error) {
+        return res.status(500).json({ error: error.message });
+    } else {
+        return res.status(500).json({ error: 'Failed to calculate match score' });
+    }
   }
 }
