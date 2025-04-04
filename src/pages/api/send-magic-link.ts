@@ -56,6 +56,7 @@ export default async function handler(
     const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
+    /*
     // Check if user exists and create UserAccess record
     prisma.user.findUnique({
       where: {
@@ -82,8 +83,43 @@ export default async function handler(
       })
       .catch((error) => {
         console.error(`[${requestId}] Error finding user:`, error);
-      });
+      });*/
+
+      // Check if user exists and create/update UserAccess record
+      prisma.user.findUnique({
+        where: {
+          email: req.body.email,
+        },
+      })
+        .then((user) => {
+          if (user) {
+            prisma.userAccess.upsert({
+              where: {
+                userId: user.id,
+              },
+              create: {
+                userId: user.id,
+                magicLinkToken: magicLinkToken,
+              },
+              update: {
+                magicLinkToken: magicLinkToken,
+              },
+            })
+              .then((result) => {
+                console.log(`[${requestId}] UserAccess record upserted:`, result);
+              })
+              .catch((error) => {
+                console.error(`[${requestId}] Error upserting UserAccess record:`, error);
+              });
+          } else {
+            console.log(`[${requestId}] User not found with email:`, req.body.email);
+          }
+        })
+        .catch((error) => {
+          console.error(`[${requestId}] Error finding user:`, error);
+        });
     
+    // creating nodemailer transporter
     console.log(`[${requestId}] Creating Nodemailer transporter...`);
     const transporter = nodemailer.createTransport({
       host: 'mail.agilerant.info',
