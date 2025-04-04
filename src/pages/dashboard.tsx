@@ -75,10 +75,15 @@ export default function Dashboard() {
     validateToken();
 
     // Get email from URL query or localStorage
-    if (router.query.email) {
+      if (router.query.email) {
       const email = router.query.email as string;
       console.log("Dashboard: Email from query:", email);
       setUserEmail(email);
+          
+      // Preserve the token in the URL
+      router.push({
+        query: { ...router.query, token: router.query.token }
+      }, undefined, { shallow: true });
       // Store email in localStorage for persistence
       localStorage.setItem("userEmail", email);
       
@@ -98,6 +103,15 @@ export default function Dashboard() {
       console.log("Dashboard: Email from localStorage:", storedEmail);
       if (storedEmail) {
         setUserEmail(storedEmail);
+            
+        // Preserve the token in the URL
+        if(router.query.token)
+        {
+          router.push({
+            query: { email: storedEmail, token: router.query.token }
+          }, undefined, { shallow: true });
+        }
+
         
         // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
         // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
