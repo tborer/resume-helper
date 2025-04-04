@@ -67,7 +67,7 @@ export default async function handler(
     * Qualification fulfillment
 4.  **Provide the Output:** Output the matching score as a percentage number, followed by a brief justification of the score.
 5.  **Important:** Only identify missing skills that are explicitly mentioned in the job description. Do not invent or assume skills that are not clearly stated in the job description.
-    **Provide the Output:** Output the identified missing skills that are present in the job description and are not present in the resume. In a comma separated list. 
+    **Provide the Missing Skills:** Output the identified missing skills that are present in the job description and are not present in the resume. In a comma separated list. 
 
 **Input:**
 
