@@ -81,9 +81,9 @@ export default function Dashboard() {
       setUserEmail(email);
           
       // Preserve the token in the URL
-      router.push({
+      router.replace({
         query: { ...router.query, token: router.query.token }
-      }, undefined, { shallow: true });
+      }, undefined, { shallow: true })
       // Store email in localStorage for persistence
       localStorage.setItem("userEmail", email);
       
@@ -107,10 +107,10 @@ export default function Dashboard() {
         // Preserve the token in the URL
         if(router.query.token)
         {
-          router.push({
+          router.replace({
             query: { email: storedEmail, token: router.query.token }
-          }, undefined, { shallow: true });
-        }
+          }, undefined, { shallow: true })
+        } 
 
         
         // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
