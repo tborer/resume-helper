@@ -32,6 +32,37 @@ const UserManagement = () => {
     apiVersion: '2023-10-16',
   });
 
+  useEffect(() => {
+    const { email } = router.query;
+    if (email && typeof email === 'string') { // Type check
+      const decodedEmail = decodeURIComponent(email);
+      console.log("Dashboard: Email from query:", decodedEmail);
+      setUserEmail(decodedEmail);
+      // Store email in localStorage for persistence - consider if still needed!
+      localStorage.setItem("userEmail", decodedEmail); 
+      checkAdminStatus(decodedEmail);  // Call the admin check function
+    } else {
+      // Handle case where email is not in the URL (e.g., redirect to home)
+      console.log("No email in URL, redirecting home (or handle fallback)");
+      //router.push('/');  // Uncomment to redirect if that's desired
+    }
+  }, [router.query]); // Re-run when query parameters change
+
+  const checkAdminStatus = async (email: string) => {
+    try {
+      const response = await fetch('/api/users/check-admin', {  // Your API route
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      setIsAdmin(data.isAdmin);  // Update the isAdmin state
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false); // Handle errors gracefully
+    }
+  };
+
   const productId = process.env.STRIPE_PRODUCT_ID;
   
   const [testEmail, setTestEmail] = useState("");
