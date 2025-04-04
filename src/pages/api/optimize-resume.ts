@@ -211,6 +211,16 @@ TECH & SKILLS
       }
     }
 
+    if (userEmail) {
+      const user = await prisma.user.findUnique({ where: { email: userEmail } });
+      await prisma.userAccess.upsert({
+        where: { userId: user?.id },
+        update: { dailyAnalysisCount: { increment: 1 } },
+        create: { userId: user?.id, dailyAnalysisCount: 1 },
+      });
+      console.log(`User ${userEmail} daily analysis count incremented`);
+    }
+
     // Return the optimized resume and matching score
     return res.status(200).json({ optimizedResume, matchingScore });
   } catch (error) {
