@@ -72,10 +72,10 @@ export default function Dashboard() {
         router.push("/");
       }
     };
-    validateToken();
+      validateToken();
 
-    // Get email from URL query or localStorage
-      if (router.query.email) {
+    /* Get email from URL query or localStorage
+     if (router.query.email) {
       const email = router.query.email as string;
       console.log("Dashboard: Email from query:", email);
       setUserEmail(email);
@@ -128,7 +128,7 @@ export default function Dashboard() {
         console.log("Dashboard: No email found, redirecting to home");
         router.push("/");
       }
-    }
+    } */
   }, [router.query, router]);
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
