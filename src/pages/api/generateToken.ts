@@ -18,7 +18,7 @@ const generateToken = async (req: NextApiRequest, res: NextApiResponse) => {
     console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
 
     // Construct the complete magic link URL
-    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?token=${magicLinkToken}`;
+    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?email=${encodeURIComponent(email)}&token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
     // Store token in UserAccess table
