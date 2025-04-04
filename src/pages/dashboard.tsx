@@ -50,48 +50,35 @@ export default function Dashboard() {
   } | null>(null);
   
   useEffect(() => {
-    // Get email from URL query or localStorage
-    if (router.query.email) {
-      const email = router.query.email as string;
-      console.log("Dashboard: Email from query:", email);
-      setUserEmail(email);
-      // Store email in localStorage for persistence
-      localStorage.setItem("userEmail", email);
-      
-      // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
-      // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
-      // This should be done by checking the user's isAdmin flag in the database
-      if (email.toLowerCase() === "admin@example.com" || email.toLowerCase() === "tray14@hotmail.com") {
-        console.log("Dashboard: Setting admin status to true for:", email);
-        setIsAdmin(true);
-      }
-      
-      // Load saved API key for this user
-      //loadGeminiApiKey(email);
-    } /*else {
-      // Try to get from localStorage
-      const storedEmail = localStorage.getItem("userEmail");
-      console.log("Dashboard: Email from localStorage:", storedEmail);
-      if (storedEmail) {
-        setUserEmail(storedEmail);
-        
-        // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
-        // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
-        // This should be done by checking the user's isAdmin flag in the database
-        if (storedEmail.toLowerCase() === "admin@example.com" || storedEmail.toLowerCase() === "tray14@hotmail.com") {
-          console.log("Dashboard: Setting admin status to true for stored email:", storedEmail);
-          setIsAdmin(true);
-        }
-        
-        // Load saved API key for this user
-        loadGeminiApiKey(storedEmail);
-      } else {
-        // If no email is found, redirect to home page
-        console.log("Dashboard: No email found, redirecting to home");
-        router.push("/");
-      }
-    }*/
-  }, [router.query, router]);
+    const { email } = router.query;
+    if (email && typeof email === 'string') { // Type check
+      const decodedEmail = decodeURIComponent(email);
+      console.log("Dashboard: Email from query:", decodedEmail);
+      setUserEmail(decodedEmail);
+      // Store email in localStorage for persistence - consider if still needed!
+      localStorage.setItem("userEmail", decodedEmail); 
+      checkAdminStatus(decodedEmail);  // Call the admin check function
+    } else {
+      // Handle case where email is not in the URL (e.g., redirect to home)
+      console.log("No email in URL, redirecting home (or handle fallback)");
+      // router.push('/');  // Uncomment to redirect if that's desired
+    }
+  }, [router.query]); // Re-run when query parameters change
+
+  const checkAdminStatus = async (email: string) => {
+    try {
+      const response = await fetch('/api/users/check-admin', {  // Your API route
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      setIsAdmin(data.isAdmin);  // Update the isAdmin state
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      setIsAdmin(false); // Handle errors gracefully
+    }
+  };
   
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
