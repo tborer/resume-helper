@@ -53,7 +53,7 @@ export default async function handler(
     console.log(`[${requestId}] Generated magic link token: ${magicLinkToken}`);
     
     // Construct the complete magic link URL using the production domain
-    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?${email}token=${magicLinkToken}`;
+    const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?email=${encodeURIComponent(email)}&token=${magicLinkToken}`;
     console.log(`[${requestId}] Constructed magic link URL: ${magicLinkUrl}`);
 
     /*
