@@ -100,9 +100,7 @@ export default async function handler(
       subject: 'Here is your ResumeRocketMatchAI magic link!',
       html: `<p>Hello,</p><p>Here is the magic link you have requested:</p><p><a href="${magicLinkUrl}">${magicLinkUrl}</a></p><p>Best regards,<br/>ResumeRocketMatchAI</p>`,
     };
-
-    //replacing this
-    /*
+    
     // Send email
     console.log(`[${requestId}] Sending email with options:`, mailOptions);
 
@@ -130,62 +128,8 @@ export default async function handler(
           requestId,
         });
       }
-    });*/
-    // Send email
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.error(`[${requestId}] Error sending email:`, error);
-        const errorDetails = error instanceof Error ? {
-          name: error.name,
-          message: error.message,
-          stack: error.stack
-        } : error;
-        console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
-        return res.status(500).json({
-          success: false,
-          message: 'Error sending magic link',
-          requestId,
-        });
-      } else {
-        console.log(`[${requestId}] Email sent successfully!`);
-        console.log(`[${requestId}] Full info object:`, info);
-        console.log(`[${requestId}] Email response:`, info.response);
-
-        // Check if user exists and create UserAccess record
-        prisma.user.findUnique({
-          where: {
-            email: req.body.email,
-          },
-        })
-          .then((user) => {
-            if (user) {
-              prisma.userAccess.create({
-                data: {
-                  userId: user.id,
-                  magicLinkToken: magicLinkToken,
-                },
-              })
-                .then((result) => {
-                  console.log(`[${requestId}] UserAccess record created:`, result);
-                })
-                .catch((error) => {
-                  console.error(`[${requestId}] Error creating UserAccess record:`, error);
-                });
-            } else {
-              console.log(`[${requestId}] User not found with email:`, req.body.email);
-            }
-          })
-          .catch((error) => {
-            console.error(`[${requestId}] Error finding user:`, error);
-          });
-
-        return res.status(200).json({
-          success: true,
-          message: 'Magic link email sent successfully',
-          requestId,
-        });
-      }
     });
+    
   } catch (error) {
     console.error(`[${requestId}] Error sending magic link:`, error);
     const errorDetails = error instanceof Error ? {
