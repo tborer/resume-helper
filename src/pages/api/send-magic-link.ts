@@ -129,43 +129,43 @@ export default async function handler(
                 console.log(`[${requestId}] Email sent successfully!`);
                 console.log(`[${requestId}] Full info object:`, info);
                 console.log(`[${requestId}] Email response:`, info.response);
-                
+
                 // Find the user by email and write the magic link to the UserAccess table
                 prisma.user.findUnique({ where: { email } })
                     .then(user => {
                         if (!user) throw new Error(`User not found with email: ${email}`);
                         return prisma.userAccess.create({ data: { userId: user.id, token: magicLinkToken } });
                     })
-                    .then(() => {
+                    .then((userAccess) => {
+                        console.log(`[${requestId}] UserAccess created:`, userAccess);
                         return res.status(200).json({
                             success: true,
-                            message: 'Magic link email sent successfully',
+                            message: 'Magic link email sent successfully and UserAccess created',
                             requestId,
                         });
-                    }).catch(dbError => {
-        return res.status(500).json({
-          success: false,
-          message: 'Error sending magic link',
-          requestId,
+                    })
+                    .catch(dbError => {
+                        console.error(`[${requestId}] Database Error:`, dbError);
+                        return res.status(500).json({
+                            success: false,
+                            message: 'Error writing to database',
+                            requestId,
+                        });
+                    });
+            }
         });
-      } else {
-        console.log(`[${requestId}] Email sent successfully!`);
-     
-    });
     } catch (error) {
-        console.error(`[${requestId}] Database Error:`, error);
-    }
-    console.error(`[${requestId}] Error sending magic link:`, error);
-    const errorDetails = error instanceof Error ? {
-      name: error.name,
-      message: error.message,
-      stack: error.stack
-    } : error;
-    console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
-    return res.status(500).json({ 
-      success: false, 
-      message: 'Error sending magic link',
-      requestId
+        console.error(`[${requestId}] Error sending magic link:`, error);
+        const errorDetails = error instanceof Error ? {
+            name: error.name,
+            message: error.message,
+            stack: error.stack
+        } : error;
+        console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
+        return res.status(500).json({
+            success: false,
+            message: 'Error sending magic link',
+            requestId
+        });
     });
-  }
-}
+}}
