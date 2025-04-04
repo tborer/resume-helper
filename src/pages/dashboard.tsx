@@ -56,6 +56,7 @@ export default function Dashboard() {
       
       if (!token) {
         console.error("Dashboard: No token found, redirecting to home");
+        console.log("Dashboard: No token found, redirecting to home");
         router.push("/");
         return;
       }
@@ -64,11 +65,13 @@ export default function Dashboard() {
         const isValid = await checkToken(token);
         if (!isValid) {
           console.error("Dashboard: Invalid token, redirecting to home");
+          console.log("Dashboard: Invalid token, redirecting to home");
           router.push("/");
           return;
         }
       } catch (error) {
         console.error("Dashboard: Error checking token, redirecting to home",error);
+        console.log("Dashboard: Error checking token, redirecting to home",error);
         router.push("/");
       }
     };

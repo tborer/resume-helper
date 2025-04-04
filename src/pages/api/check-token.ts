@@ -10,17 +10,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     try {
+      console.log(`Checking token: ${token}`);
       const userAccess = await prisma.userAccess.findUnique({
         where: { magicToken: token },
       });
+      console.log(`Token found: ${!!userAccess}`);
 
       if (userAccess && userAccess.isActive) {
+        console.log(`Token is active`);
         return res.status(200).json({ valid: true });
       } else {
+        console.log(`Token is not active or not found`);
         return res.status(200).json({ valid: false });
       }
     } catch (error) {
-      console.error('Error checking token:', error);
+      console.error(`Error checking token: ${error}`);
       return res.status(500).json({ error: 'Error checking token' });
     }
   } else {
