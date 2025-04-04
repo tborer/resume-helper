@@ -43,6 +43,7 @@ model UserAccess {
   magicLinkToken      String?
   dailyAnalysisCount  Int     @default(0)
   createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 }
 
 
