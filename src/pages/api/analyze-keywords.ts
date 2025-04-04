@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { queryGeminiAPI } from '@/lib/gemini';
+import { prisma } from '@/lib/prisma';
 
 type ResponseData = {
   keywords?: string[];
@@ -15,22 +16,37 @@ export default async function handler(
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  try {
-    const { jobDescription, apiKey, userEmail, isMasterKey } = req.body;
+  const { jobDescription, userEmail } = req.body;
 
-    // Validate inputs
-    if (!jobDescription) {
-      return res.status(400).json({ error: 'Job description is required' });
+  // Validate inputs
+  if (!jobDescription) {
+    return res.status(400).json({ error: 'Job description is required' });
+  }
+  if (!userEmail) {
+    return res.status(400).json({ error: 'User email is required' });
+  }
+
+  let apiKey: string | null = null;
+  let isMasterKey = false;
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { email: userEmail },
+      select: { geminiApiKey: true },
+    });
+
+    if (user) {
+      apiKey = user.geminiApiKey;
     }
 
     if (!apiKey) {
-      return res.status(400).json({ error: 'API key is required' });
+      apiKey = process.env.MASTER_API_KEY || null;
+      isMasterKey = true;
     }
-    
+
     // If using master key, check usage limits
     if (isMasterKey && userEmail) {
-      // In a real app, we would check the database for usage
-      // For now, we'll just log it
+
       console.log(`User ${userEmail} is using the master API key for analyze-keywords`);
     }
 
@@ -44,6 +60,11 @@ Output the top 10 keywords/phrases in a clear, numbered list.`;
 
     // Call the Gemini API
     const response = await queryGeminiAPI(apiKey, prompt);
+
+    if (!apiKey) {
+         console.error('No API key found for user and MASTER_API_KEY not set.');
+            return res.status(500).json({ error: 'Internal server error' });
+        }
 
     if (response.error) {
       console.error('Error from Gemini API:', response.error);
@@ -73,6 +94,10 @@ Output the top 10 keywords/phrases in a clear, numbered list.`;
     // Return the keywords
     return res.status(200).json({ keywords: keywordsList });
   } catch (error) {
+    if (error instanceof Error) {
+            console.error('Error querying the database:', error.message);
+            return res.status(500).json({ error: 'Error querying the database' });
+        }
     console.error('Error in analyze-keywords API:', error);
     return res.status(500).json({ error: 'Failed to analyze keywords' });
   }
