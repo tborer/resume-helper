@@ -17,9 +17,9 @@ export default function Home() {
     setIsSubmitting(true);
     setMagicLinkSent(false);
     
-    /*
+    
     try {
-      // Special case for tray14@hotmail.com - direct access
+      /*// Special case for tray14@hotmail.com - direct access
       if (email.toLowerCase() === "tray14@hotmail.com") {
         console.log("Direct access granted for admin user");
         // Store email in localStorage before redirecting
