@@ -79,7 +79,7 @@ export default function Dashboard() {
     } else {
       console.log("Dashboard: Missing email or token in URL");
       // Handle missing parameters (e.g., redirect)
-      // router.push('/');
+      // router.push('/'); // Redirect if missing email or token
     }
   }, [router.query]);
 
@@ -102,6 +102,13 @@ export default function Dashboard() {
       setIsTokenValid(false); // Assume invalid on error
     }
   };
+
+  useEffect(() => {
+    if (!isTokenValid) {
+      console.log("Dashboard: Invalid token - redirecting");
+      router.push('/'); // Redirect if token is invalid
+    }
+  }, [isTokenValid, router]); // Re-run when isTokenValid changes
 
   const checkAdminStatus = async (email: string) => {
     try {
