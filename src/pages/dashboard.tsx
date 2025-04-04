@@ -68,68 +68,12 @@ export default function Dashboard() {
           return;
         }
       } catch (error) {
-        console.error("Dashboard: Error checking token, redirecting to home", error);
+        console.error("Dashboard: Error checking token, redirecting to home",error);
         router.push("/");
       }
     };
       validateToken();
-
-    /* Get email from URL query or localStorage
-     if (router.query.email) {
-      const email = router.query.email as string;
-      console.log("Dashboard: Email from query:", email);
-      setUserEmail(email);
-          
-      // Preserve the token in the URL
-      router.replace({
-        query: { ...router.query, token: router.query.token }
-      }, undefined, { shallow: true })
-      // Store email in localStorage for persistence
-      localStorage.setItem("userEmail", email);
-      
-      // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
-      // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
-      // This should be done by checking the user's isAdmin flag in the database
-      if (email.toLowerCase() === "admin@example.com" || email.toLowerCase() === "tray14@hotmail.com") {
-        console.log("Dashboard: Setting admin status to true for:", email);
-        setIsAdmin(true);
-      }
-      
-      // Load saved API key for this user
-      loadGeminiApiKey(email);
-    } else {
-      // Try to get from localStorage
-      const storedEmail = localStorage.getItem("userEmail");
-      console.log("Dashboard: Email from localStorage:", storedEmail);
-      if (storedEmail) {
-        setUserEmail(storedEmail);
-            
-        // Preserve the token in the URL
-        if(router.query.token)
-        {
-          router.replace({
-            query: { email: storedEmail, token: router.query.token }
-          }, undefined, { shallow: true })
-        } 
-
-        
-        // TEMPORARY ACCESS: Remove this client-side admin check once database is connected
-        // DATABASE UPDATE REQUIRED: Replace with server-side admin verification using the database
-        // This should be done by checking the user's isAdmin flag in the database
-        if (storedEmail.toLowerCase() === "admin@example.com" || storedEmail.toLowerCase() === "tray14@hotmail.com") {
-          console.log("Dashboard: Setting admin status to true for stored email:", storedEmail);
-          setIsAdmin(true);
-        }
-        
-        // Load saved API key for this user
-        loadGeminiApiKey(storedEmail);
-      } else {
-        // If no email is found, redirect to home page
-        console.log("Dashboard: No email found, redirecting to home");
-        router.push("/");
-      }
-    } */
-  }, [router.query, router]);
+  }, []);
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to fetch the API key from the database instead of localStorage
