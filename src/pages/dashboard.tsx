@@ -72,7 +72,8 @@ export default function Dashboard() {
         console.log('Email or token is missing');
         setTokenVerified(true);
         setAccessGranted(false);
-        router.replace('/')
+        //router.replace('/')
+        setShowAccessDeniedDialog(true);
         return;
       }
 
@@ -108,7 +109,8 @@ export default function Dashboard() {
       console.log('Email or token is missing');
       setTokenVerified(true);
       setAccessGranted(false);
-      router.replace('/')
+      //router.replace('/')
+      setShowAccessDeniedDialog(true);
     }
   }, [router.query]);
   
