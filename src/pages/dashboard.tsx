@@ -69,23 +69,23 @@ export default function Dashboard() {
       const response = await fetch('/api/users/verify-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: decodedEmail, token }),
+        body: JSON.stringify({ email: decodedEmail, token })
       });
   
       console.log('Response status:', response.status);
       if (response.ok) {
         const data = await response.json();
         console.log('Response data:', data);
-        setAccessGranted(data.isValid);
         setTokenVerified(true);
-      } else {
+        setAccessGranted(data.isValid);
+      } 
+      if (!response.ok || !email || !token) {
         console.error('Error verifying token:', response.status);
-        if (!email || !token) {
-          console.log('Email or token is missing');
-          router.push('/');
-          return;
-        }
+        console.log('Email or token is missing');
+        router.push('/');
+        return;
       }
+      
     };
   
     verifyToken();
