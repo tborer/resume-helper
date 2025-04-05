@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         email,
         isAdmin: Boolean(isAdmin),
         isActive: true,
-        historyAccess: true,
+        historyAccess: false,
         accountAccess: true,
       },
     });
