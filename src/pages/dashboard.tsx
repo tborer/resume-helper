@@ -50,6 +50,51 @@ export default function Dashboard() {
     details?: any;
   } | null>(null);
   
+  const [accessGranted, setAccessGranted] = useState(false);
+  const [tokenVerified, setTokenVerified] = useState(false);
+  
+  useEffect(() => {
+    console.log('Verifying token...');
+    const verifyToken = async () => {
+      const { email, token } = router.query;
+      if (!email || !token) {
+        console.log('Email or token is missing');
+        return;
+      }
+  
+      const decodedEmail = decodeURIComponent(email);
+  
+      const response = await fetch('/api/users/verify-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: decodedEmail, token }),
+      });
+  
+      console.log('Response status:', response.status);
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Response data:', data);
+        setAccessGranted(data.isValid);
+        setTokenVerified(true);
+      } else {
+        console.error('Error verifying token:', response.status);
+      }
+    };
+  
+    verifyToken();
+  }, [router.query]);
+  
+  useEffect(() => {
+    if (tokenVerified) {
+      if (accessGranted) {
+        console.log('Access granted');
+      } else {
+        console.log('Access denied');
+        //router.push('/');
+      }
+    }
+  }, [accessGranted, tokenVerified, router]);
+
   /*useEffect(() => {
     const { email } = router.query;
     if (email && typeof email === 'string') { // Type check
@@ -111,6 +156,8 @@ export default function Dashboard() {
     }
   }, [isTokenValid, router]); // Re-run when isTokenValid changes
 */
+
+/*
 const [accessGranted, setAccessGranted] = useState(false);
 useEffect(() => {
   console.log('Verifying token...');
@@ -145,7 +192,7 @@ useEffect(() => {
 
   verifyToken();
 }, [router.query]);
-
+*/
 /*
 const [accessGranted, setAccessGranted] = useState(false);
 
@@ -178,7 +225,7 @@ useEffect(() => {
 
   verifyToken();
 }, [router.query]);
-*/
+
 
 useEffect(() => {
   if (accessGranted) {
@@ -188,7 +235,7 @@ useEffect(() => {
     //router.push('/');
   }
 }, [accessGranted, router]);
-
+*/
 
 /*
   const { email, token } = router.query;
