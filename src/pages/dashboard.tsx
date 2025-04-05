@@ -113,12 +113,15 @@ export default function Dashboard() {
 */
 
 
-useEffect(() => {
-  const { email, token } = router.query;
+const [accessGranted, setAccessGranted] = useState(false);
 
-  const decodedEmail = decodeURIComponent(email);
+useEffect(() => {
+  let isMounted = true;
 
   const verifyToken = async () => {
+    const { email, token } = router.query;
+    const decodedEmail = decodeURIComponent(email);
+
     const response = await fetch('/api/users/verify-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -127,18 +130,26 @@ useEffect(() => {
 
     const data = await response.json();
 
-    if (data.isValid) {
-      // Grant access
-      console.log("Access granted");
-    } else {
-      // Redirect to error page or login page
-      console.log("Access denied");
-      //router.push('/');
+    if (isMounted) {
+      setAccessGranted(data.isValid);
     }
   };
 
   verifyToken();
+
+  return () => {
+    isMounted = false;
+  };
 }, [router.query]);
+
+useEffect(() => {
+  if (accessGranted) {
+    console.log('Access granted');
+  } else {
+    console.log('Access denied');
+    //router.push('/');
+  }
+}, [accessGranted, router]);
 
 
 /*
