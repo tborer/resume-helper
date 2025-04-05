@@ -65,18 +65,15 @@ export default function Dashboard() {
     const verifyToken = async () => {
       const { email, token } = router.query;
       const decodedEmail = decodeURIComponent(email);
-      console.log('Email:', decodedEmail);
       console.log('Token:', token);
+      console.log('Decoded email:', decodedEmail);
 
-      /*
       if (!email || !token) {
         console.log('Email or token is missing');
         setTokenVerified(true);
         setAccessGranted(false);
         return;
-      }*/
-
-      console.log('Decoded email:', decodedEmail);
+      }
 
       const response = await fetch('/api/users/verify-token', {
         method: 'POST',
