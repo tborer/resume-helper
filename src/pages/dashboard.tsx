@@ -78,15 +78,16 @@ export default function Dashboard() {
         console.log('Response data:', data);
         setTokenVerified(true);
         setAccessGranted(data.isValid);
-      } 
-      if (!response.ok || !email || !token) {
-        console.error('Error verifying token:', response.status);
-        console.log('Email or token is missing');
-        router.push('/');
-        return;
       }
-      
+            
+      if (!response.ok || !email || !token) {
+          console.error('Error verifying token:', response.status);
+          console.log('Email or token is missing');
+          router.push('/');
+          return;
+        }
     };
+    
   
     verifyToken();
   }, [router.query]);
