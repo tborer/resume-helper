@@ -19,6 +19,7 @@ import { useRouter } from "next/router";
 import { useEffect } from "react";
 
 export default function Dashboard() {
+  
   const router = useRouter();
   const [jobDescription, setJobDescription] = useState("");
   const [resumeText, setResumeText] = useState("");
@@ -203,6 +204,26 @@ export default function Dashboard() {
     // fetchApiKey(email);
   };
   
+  //get the api key from the users table, fallback to master key
+  const getApiKeyToUse = () => {
+    const userEmail = localStorage.getItem("userEmail");
+    if (!userEmail) return { key: "", isMasterKey: false };
+    
+    // First try to get the user's personal API key from database
+    //TODO: future implementation from the database
+    // const userKey = await fetchApiKey(userEmail)
+    const userKey = localStorage.getItem(`gemini_api_key_${userEmail}`);
+    
+    if (userKey) {
+      return { key: userKey, isMasterKey: false };
+    }
+    
+    // If no user key, try to get the master key
+    //TODO: future implementation with an env variable
+    const masterKey = localStorage.getItem('master_gemini_api_key');
+    return { key: masterKey || "", isMasterKey: true };
+  };
+
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to save the API key to the database instead of localStorage
   const saveGeminiApiKey = async () => {
@@ -264,15 +285,15 @@ export default function Dashboard() {
       alert("Please enter both job description and resume");
       return;
     }
-    
-    if (!geminiApiKey) {
+    const { key: apiKey, isMasterKey } = getApiKeyToUse();
+    if (!apiKey) {
       alert("Please add your Google Gemini API key in the Account tab");
       return;
     }
-
+    
     setIsAnalyzing(true);
     setTopKeywords([]);
-    setAtsFeedback("");
+    setAtsFeedback(""); 
     setMissingSkills([]);
     
     try {
@@ -286,14 +307,14 @@ export default function Dashboard() {
       // Run analyses in parallel
       const [keywords, matchResult, optimized] = await Promise.all([
         // Extract keywords from job description
-        extractKeywords(geminiApiKey, jobDescription)
+        extractKeywords(apiKey, jobDescription)
           .catch(error => {
             console.error("Error extracting keywords:", error);
             return [];
           }),
           
         // Calculate ATS match score
-        calculateATSMatchScore(geminiApiKey, resumeText, jobDescription)
+        calculateATSMatchScore(apiKey, resumeText, jobDescription)
           .catch(error => {
             console.error("Error calculating ATS match:", error);
             return { score: Math.floor(Math.random() * 40) + 40, feedback: "" };
@@ -315,9 +336,7 @@ export default function Dashboard() {
       
     } catch (error) {
       console.error("Error during analysis:", error);
-      
-      
-      
+
       alert("There was an error analyzing your resume. Please check your API key and try again.");
     } finally {
       setIsAnalyzing(false);
