@@ -97,43 +97,42 @@ export default function Home() {
             <CardContent>
               <div className="flex flex-col space-y-4">
 
-                <Button 
-                  className="w-full" 
+                <Button
+                  className="w-full"
+                  href="https://buy.stripe.com/5kAcP0dXHgZTf3q6oy"
+                  asChild
+                >
+                    <a target="_blank">Get It Now</a>
+                </Button>
+
+                {/* <Button
+                  className="w-full"
                   onClick={async () => {
                     // Get the email from the input field if available
-
                     const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-                    const email = emailInput?.value || '';
-                    
+                    const email = emailInput?.value || "";
                     try {
-                      const response = await fetch('/api/create-checkout-session', {
-                        method: 'POST',
+                      const response = await fetch("/api/create-checkout-session", {
+                        method: "POST",
                         headers: {
-                          'Content-Type': 'application/json',
+                          "Content-Type": "application/json",
                         },
                         body: JSON.stringify({ email }),
                       });
-                      
                       const data = await response.json();
-                      
                       if (data.success && data.url) {
-                        // Open the checkout URL in a new window
-                        window.open(data.url, '_blank');
+                        window.open(data.url, "_blank");
                       } else {
-                        console.error('Error creating checkout session:', data.message);
-                        alert('There was an error processing your request. Please try again.');
+                        console.error("Error creating checkout session:", data.message);
+                        alert("There was an error processing your request. Please try again.");
                       }
                     } catch (error) {
                       console.error('Error creating checkout session:', error);
                       alert('There was an error processing your request. Please try again.');
                     }
                   }}
-                >
-
-                
-
-                Get It Now
-                </Button>
+                >Get It Now
+                </Button> */}
                
                 <div className="relative">
                   <div className="absolute inset-0 flex items-center">
@@ -261,30 +260,34 @@ export default function Home() {
                   Don't let your resume get lost in the ATS black hole. Optimize it now and stand out from the competition.
                 </p>
                 <div className="flex flex-col gap-4 max-w-md mx-auto">
-                  <Button 
+                  <Button
+                    className="w-full"
+                    href="https://buy.stripe.com/5kAcP0dXHgZTf3q6oy"
+                    asChild
+                    size="lg"
+                  >
+                    <a target="_blank">Get It Now</a>
+                  </Button>
+
+                 {/* <Button 
                     className="w-full" 
                     onClick={async () => {
-                      // Get the email from the input field if available
                       const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-                      const email = emailInput?.value || '';
-                      
+                      const email = emailInput?.value || "";
                       try {
-                        const response = await fetch('/api/create-checkout-session', {
-                          method: 'POST',
+                        const response = await fetch("/api/create-checkout-session", {
+                          method: "POST",
                           headers: {
-                            'Content-Type': 'application/json',
+                            "Content-Type": "application/json",
                           },
                           body: JSON.stringify({ email }),
                         });
-                        
                         const data = await response.json();
-                        
                         if (data.success && data.url) {
-                          // Open the checkout URL in a new window
-                          window.open(data.url, '_blank');
+                          window.open(data.url, "_blank");
                         } else {
-                          console.error('Error creating checkout session:', data.message);
-                          alert('There was an error processing your request. Please try again.');
+                          console.error("Error creating checkout session:", data.message);
+                          alert("There was an error processing your request. Please try again.");
                         }
                       } catch (error) {
                         console.error('Error creating checkout session:', error);
@@ -292,8 +295,8 @@ export default function Home() {
                       }
                     }}
                     size="lg"
-                  >
-                    Get It Now
+                  >Get It Now
+                    
                   </Button>
                   <div className="relative">
                     <div className="absolute inset-0 flex items-center">
@@ -380,7 +383,7 @@ const StepCard = ({ number, title, description }: { number: string; title: strin
 const TestimonialCard = ({ quote, author }: { quote: string; author: string }) => (
   <Card>
     <CardContent className="pt-6">
-      <div className="flex gap-4">
+      <div className="flex gap-4"> 
         <div className="mt-1 text-primary">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-quote"><path d="M3 21c3 0 7-1 7-8V5c0-1.25-.756-2.017-2-2H4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2 1 0 1 0 1 1v1c0 1-1 2-2 2s-1 .008-1 1.031V20c0 1 0 1 1 1z"/><path d="M15 21c3 0 7-1 7-8V5c0-1.25-.757-2.017-2-2h-4c-1.25 0-2 .75-2 1.972V11c0 1.25.75 2 2 2h.75c0 2.25.25 4-2.75 4v3c0 1 0 1 1 1z"/></svg>
         </div>
