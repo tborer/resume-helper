@@ -110,6 +110,15 @@ export default function Dashboard() {
       setIsAdmin(false); // Handle errors gracefully
     }
   };
+
+  useEffect(() => {
+    if (tokenVerified && accessGranted) {
+      const { email } = router.query;
+      if (email) {
+        checkAdminStatus(email);
+      }
+    }
+  }, [tokenVerified, accessGranted, router.query]);
   
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
