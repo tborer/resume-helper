@@ -11,6 +11,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { AlertCircle, CheckCircle, Copy, MessageSquarePlus } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 //import React from "react";
@@ -46,6 +47,7 @@ export default function Dashboard() {
   const [isTestingPurchase, setIsTestingPurchase] = useState(false);
   const [testResult, setTestResult] = useState<{
     success: boolean;
+    
     message: string;
     details?: any;
   } | null>(null);
@@ -56,6 +58,8 @@ export default function Dashboard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [isTokenValid, setIsTokenValid] = useState(false); // New state for token validity
   
+  const [showAccessDeniedDialog, setShowAccessDeniedDialog] = useState(false);
+
   useEffect(() => {
     console.log('Verifying token...');
     const verifyToken = async () => {
@@ -93,7 +97,7 @@ export default function Dashboard() {
         console.log('Access granted');
       } else {
         console.log('Access denied');
-        router.push('/');
+        setShowAccessDeniedDialog(true);
       }
     }
   }, [accessGranted, tokenVerified, router]);
@@ -397,6 +401,20 @@ export default function Dashboard() {
         <Header />
         <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
           <div className="flex justify-between items-center mb-6">
+          <AlertDialog open={showAccessDeniedDialog} onOpenChange={setShowAccessDeniedDialog}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Access Denied</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Your token is invalid or expired. Please log in again.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <Button onClick={() => router.push('/')}>OK</Button>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+
             <h1 className="text-3xl font-bold">Resume ATS Optimizer</h1>
             <Dialog>
               <DialogTrigger asChild>
