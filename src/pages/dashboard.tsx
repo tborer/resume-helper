@@ -64,12 +64,6 @@ export default function Dashboard() {
     console.log('Verifying token...');
     const verifyToken = async () => {
       const { email, token } = router.query;
-      if (!email || !token) {
-        console.log('Email or token is missing');
-        router.push('/');
-        return;
-      }
-  
       const decodedEmail = decodeURIComponent(email);
   
       const response = await fetch('/api/users/verify-token', {
@@ -79,9 +73,11 @@ export default function Dashboard() {
       });
   
       console.log('Response status:', response.status);
+  
       if (!response.ok) {
         console.error('Error verifying token:', response.status);
-        router.push('/');
+        setTokenVerified(true);
+        setAccessGranted(false);
         return;
       }
   
@@ -94,7 +90,6 @@ export default function Dashboard() {
       } else {
         setTokenVerified(true);
         setAccessGranted(false);
-        setShowAccessDeniedDialog(true);
       }
     };
   
@@ -105,10 +100,16 @@ export default function Dashboard() {
     if (tokenVerified && accessGranted) {
       console.log('Access granted');
     } else if (tokenVerified && !accessGranted) {
-      console.log('Access denied');
+      const { email, token } = router.query;
+      if (!email || !token) {
+        console.log('Email or token is missing');
+      } else {
+        console.log('Access denied');
+      }
       setShowAccessDeniedDialog(true);
+      router.push('/');
     }
-  }, [accessGranted, tokenVerified]);
+  }, [accessGranted, tokenVerified, router.query]);
 
   const checkAdminStatus = async (email: string) => {
     try {
