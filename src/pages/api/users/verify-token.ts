@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-// Assuming Prisma (adapt for your ORM)
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
@@ -14,11 +13,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
       const userAccess = await prisma.userAccess.findFirst({
-        where: { user: { email } }, // Assuming a relation between UserAccess and User
-        select: { token: true },
+        where: { user: { email } },
+        select: { magicLinkToken: true },
       });
 
-      if (userAccess && userAccess.token === token) {
+      if (!userAccess) {
+        return res.status(404).json({ error: 'User access not found' });
+      }
+
+      if (userAccess.magicLinkToken === token) {
         return res.status(200).json({ isValid: true });
       } else {
         return res.status(200).json({ isValid: false });
