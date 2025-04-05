@@ -127,7 +127,7 @@ export default function Home() {
                   //     alert('There was an error processing your request. Please try again.');
                   //   }
                   // }}
-                  onClick={() => window.open("https://buy.stripe.com/5kAcP0dXHgZTf3q6oy", "_blank")}
+                  onClick={() => window.open("https://buy.stripe.com/5kAcP0dXHgZTf3q6oy")}
                 >
                 Get It Now
                 </Button>
