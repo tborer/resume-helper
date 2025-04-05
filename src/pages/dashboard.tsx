@@ -114,32 +114,34 @@ export default function Dashboard() {
 
 
 
-const [accessGranted, setAccessGranted] = useState(false);
-
 useEffect(() => {
   console.log('Verifying token...');
   const verifyToken = async () => {
-    try {
-      const { email, token } = router.query;
-      console.log('Email and token:', email, token);
-      const decodedEmail = decodeURIComponent(email);
+    const { email, token } = router.query;
+    if (!email || !token) {
+      console.log('Email or token is missing');
+      return;
+    }
 
-      const response = await fetch('/api/users/verify-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: decodedEmail, token }),
-      });
+    const decodedEmail = decodeURIComponent(email);
 
-      console.log('Response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Response data:', data);
-        setAccessGranted(data.isValid);
+    const response = await fetch('/api/users/verify-token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: decodedEmail, token }),
+    });
+
+    console.log('Response status:', response.status);
+    if (response.ok) {
+      const data = await response.json();
+      console.log('Response data:', data);
+      if (data.isValid) {
+        console.log('Access granted');
       } else {
-        console.error('Error verifying token:', response.status);
+        console.log('Access denied');
       }
-    } catch (error) {
-      console.error('Error verifying token:', error);
+    } else {
+      console.error('Error verifying token:', response.status);
     }
   };
 
