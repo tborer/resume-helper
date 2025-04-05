@@ -101,7 +101,9 @@ export default function Dashboard() {
       }
     };
   
-    verifyToken();
+    if (router.query.email && router.query.token) {
+      verifyToken();
+    }
   }, [router.query]);
   
   useEffect(() => {
