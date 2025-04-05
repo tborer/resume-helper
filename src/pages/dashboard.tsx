@@ -90,7 +90,7 @@ export default function Dashboard() {
         console.log('Access granted');
       } else {
         console.log('Access denied');
-        //router.push('/');
+        router.push('/');
       }
     }
   }, [accessGranted, tokenVerified, router]);
