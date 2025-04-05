@@ -67,6 +67,7 @@ export default function Dashboard() {
   }, [router.query]); // Re-run when query parameters change
   */
 
+  /*
   useEffect(() => {
     const { email, token } = router.query;  // Capture token as well
     if (email && typeof email === 'string' && token && typeof token === 'string') {
@@ -109,6 +110,26 @@ export default function Dashboard() {
       //router.push('/'); // Redirect if token is invalid
     }
   }, [isTokenValid, router]); // Re-run when isTokenValid changes
+*/
+
+  const { email, token } = router.query;
+
+  const response = await fetch('/api/users/verify-token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, token }),
+  });
+  
+  const data = await response.json();
+  
+  if (data.isValid) {
+    // Grant access
+    console.log("Access granted");
+  } else {
+    // Redirect to error page or login page
+    console.log("Access denied");
+    router.push('/login');
+  }
 
   const checkAdminStatus = async (email: string) => {
     try {
