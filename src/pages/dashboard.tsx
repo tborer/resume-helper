@@ -131,7 +131,7 @@ export default function Dashboard() {
     } else {
       // Redirect to error page or login page
       console.log("Access denied");
-      router.push('/login');
+      //router.push('/');
     }
   };
 
