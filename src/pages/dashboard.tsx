@@ -64,33 +64,32 @@ export default function Dashboard() {
     console.log('Verifying token...');
     const verifyToken = async () => {
       const { email, token } = router.query;
-      
+      if (!email || !token) {
+        console.log('Email or token is missing');
+        router.push('/');
+        return;
+      }
+  
+      const decodedEmail = decodeURIComponent(email);
   
       const response = await fetch('/api/users/verify-token', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: (email && token) ? JSON.stringify({ email: decodeURIComponent(email), token }) : {}
+        body: JSON.stringify({ email: decodedEmail, token }),
       });
-      
-      const decodedEmail = (email && token) ? decodeURIComponent(email) : '';
-
   
       console.log('Response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Response data:', data);
-        setTokenVerified(true);
-        setAccessGranted(data.isValid);
+      if (!response.ok) {
+        console.error('Error verifying token:', response.status);
+        router.push('/');
+        return;
       }
-            
-      if (!response.ok || !email || !token) {
-          console.error('Error verifying token:', response.status);
-          console.log('Email or token is missing');
-          router.push('/');
-          return;
-        }
+  
+      const data = await response.json();
+      console.log('Response data:', data);
+      setTokenVerified(true);
+      setAccessGranted(data.isValid);
     };
-    
   
     verifyToken();
   }, [router.query]);
