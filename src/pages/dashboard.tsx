@@ -450,7 +450,7 @@ export default function Dashboard() {
           <AlertDialog open={showAccessDeniedDialog} onOpenChange={setShowAccessDeniedDialog}>
             <AlertDialogContent>
               <AlertDialogHeader>
-                <AlertDialogTitle>Access Denied</AlertDialogTitle>
+                <AlertDialogTitle>You Need Access</AlertDialogTitle>
                 <AlertDialogDescription>
                   Your token is invalid or expired. Please get a new magic link token by entering your email on the homepage.
                 </AlertDialogDescription>
