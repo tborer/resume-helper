@@ -110,10 +110,6 @@ export default function Dashboard() {
       setIsAdmin(false); // Handle errors gracefully
     }
   };
-
-  useEffect(() => {
-    checkAdminStatus(email);
-  }, [email])
   
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
