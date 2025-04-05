@@ -27,6 +27,8 @@ export default function Dashboard() {
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [userEmail, setUserEmail] = useState("");
   
+  const [userData, setUserData] = useState<any | null>(null);
+  const [hasHistoryAccess, setHasHistoryAccess] = useState(true);
   // New states for enhanced analysis
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
   const [atsFeedback, setAtsFeedback] = useState("");
@@ -117,6 +119,26 @@ export default function Dashboard() {
       if (email) {
         checkAdminStatus(email);
       }
+      const fetchUserData = async (userEmail: string) => {
+        try {
+          const response = await fetch(`/api/users?email=${userEmail}`);
+          if (response.ok) {
+            const data = await response.json();
+            if(data.length > 0) {
+              setUserData(data[0]);
+              setHasHistoryAccess(data[0].historyAccess)
+              console.log("user data fetched", data)
+            }
+            
+          } else {
+            console.error('Error fetching user data:', response.status);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+
+      fetchUserData(email as string)
     }
   }, [tokenVerified, accessGranted, router.query]);
   
@@ -447,7 +469,9 @@ export default function Dashboard() {
               <TabsTrigger value="resume-analysis" onClick={() => router.push("/resume-analysis")}>
                 Resume Analysis
               </TabsTrigger>
-              <TabsTrigger value="history">History</TabsTrigger>
+              {hasHistoryAccess && (
+                <TabsTrigger value="history">History</TabsTrigger>
+              )}
               <TabsTrigger value="account">Account</TabsTrigger>
               {isAdmin && (
                 <TabsTrigger value="admin" onClick={() => router.push("/user-management")}>
