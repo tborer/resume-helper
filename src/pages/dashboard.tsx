@@ -113,34 +113,43 @@ export default function Dashboard() {
 */
 
 
+const [verifyingToken, setVerifyingToken] = useState(false);
 const [accessGranted, setAccessGranted] = useState(false);
+const [isComponentMounted, setIsComponentMounted] = useState(true);
 
 useEffect(() => {
-  let isMounted = true;
+  if (!verifyingToken) {
+    setVerifyingToken(true);
+    const verifyToken = async () => {
+      try {
+        const { email, token } = router.query;
+        const decodedEmail = decodeURIComponent(email);
 
-  const verifyToken = async () => {
-    const { email, token } = router.query;
-    const decodedEmail = decodeURIComponent(email);
+        const response = await fetch('/api/users/verify-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: decodedEmail, token }),
+        });
 
-    const response = await fetch('/api/users/verify-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: decodedEmail, token }),
-    });
+        const data = await response.json();
 
-    const data = await response.json();
+        if (isComponentMounted) {
+          setAccessGranted(data.isValid);
+        }
+      } catch (error) {
+        console.error('Error verifying token:', error);
+      }
+    };
 
-    if (isMounted) {
-      setAccessGranted(data.isValid);
-    }
-  };
-
-  verifyToken();
-
-  return () => {
-    isMounted = false;
-  };
+    verifyToken();
+  }
 }, [router.query]);
+
+useEffect(() => {
+  return () => {
+    setIsComponentMounted(false);
+  };
+}, []);
 
 useEffect(() => {
   if (accessGranted) {
