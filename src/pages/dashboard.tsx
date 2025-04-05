@@ -104,6 +104,11 @@ export default function Dashboard() {
   
     if (router.query.email && router.query.token) {
       verifyToken();
+    } else if (router.asPath === '/dashboard') {
+      console.log('Email or token is missing');
+      setTokenVerified(true);
+      setAccessGranted(false);
+      router.replace('/')
     }
   }, [router.query]);
   
