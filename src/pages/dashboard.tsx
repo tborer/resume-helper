@@ -64,12 +64,6 @@ export default function Dashboard() {
     console.log('Verifying token...');
     const verifyToken = async () => {
       const { email, token } = router.query;
-      if (!email || !token) {
-        console.log('Email or token is missing');
-        router.push('/');
-        return;
-      }
-  
       const decodedEmail = decodeURIComponent(email);
   
       const response = await fetch('/api/users/verify-token', {
@@ -86,6 +80,11 @@ export default function Dashboard() {
         setTokenVerified(true);
       } else {
         console.error('Error verifying token:', response.status);
+        if (!email || !token) {
+          console.log('Email or token is missing');
+          router.push('/');
+          return;
+        }
       }
     };
   
