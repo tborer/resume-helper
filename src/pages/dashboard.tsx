@@ -26,9 +26,6 @@ export default function Dashboard() {
   const [optimizedResume, setOptimizedResume] = useState("");
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [isTokenValid, setIsTokenValid] = useState(false); // New state for token validity
-  const [isAdmin, setIsAdmin] = useState(false);
   
   // New states for enhanced analysis
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
@@ -51,8 +48,11 @@ export default function Dashboard() {
     details?: any;
   } | null>(null);
   
+  //Auth and admin states
   const [accessGranted, setAccessGranted] = useState(false);
   const [tokenVerified, setTokenVerified] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isTokenValid, setIsTokenValid] = useState(false); // New state for token validity
   
   useEffect(() => {
     console.log('Verifying token...');
