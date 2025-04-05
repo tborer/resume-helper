@@ -72,7 +72,7 @@ export default function Dashboard() {
         console.log('Email or token is missing');
         setTokenVerified(true);
         setAccessGranted(false);
-        router.push('/');
+        router.replace('/')
         return;
       }
 
