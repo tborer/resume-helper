@@ -125,7 +125,7 @@ export default function Dashboard() {
         console.log('Access denied');
       }
       setShowAccessDeniedDialog(true);
-      router.push('/');
+      //router.push('/');
     }
   }, [accessGranted, tokenVerified, router.query]);
 
