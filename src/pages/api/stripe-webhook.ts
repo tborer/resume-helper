@@ -1,5 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 
+// Ensure body parsing is enabled for this API route
+export const config = {
+  api: {
+    bodyParser: true, // Changed from false to true
+  },
+};
+
 async function createUser(email: string) {
   const createUserResponse = await fetch('/api/users/create', {
     method: 'POST',
@@ -37,7 +44,14 @@ async function sendMagicLink(email: string) {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
     try {
+      // Ensure req.body is properly parsed
       const event = req.body;
+
+      // Add a check to ensure event is not empty or undefined
+      if (!event || Object.keys(event).length === 0) {
+        console.error('Empty or undefined event object:', req.body);
+        return res.status(400).json({ error: 'Invalid event object' });
+      }
 
       if (event.type === 'checkout.session.completed') {
         const session = event.data.object;
@@ -73,9 +87,3 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).end('Method Not Allowed');
   }
 }
-
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
