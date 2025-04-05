@@ -68,7 +68,7 @@ export default function Dashboard() {
       console.log('Token:', token);
       console.log('Decoded email:', decodedEmail);
 
-      if (!email || !token) {
+      if (Object.keys(router.query).length === 0 || !email || !token) {
         console.log('Email or token is missing');
         setTokenVerified(true);
         setAccessGranted(false);
