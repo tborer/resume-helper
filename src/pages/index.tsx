@@ -98,40 +98,37 @@ export default function Home() {
               <div className="flex flex-col space-y-4">
 
                 <Button 
-                  className="w-full" 
-                  onClick={async () => {
-                    // Get the email from the input field if available
-
-                    const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-                    const email = emailInput?.value || '';
-                    
-                    try {
-                      const response = await fetch('/api/create-checkout-session', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ email }),
-                      });
-                      
-                      const data = await response.json();
-                      
-                      if (data.success && data.url) {
-                        // Open the checkout URL in a new window
-                        window.open(data.url, '_blank');
-                      } else {
-                        console.error('Error creating checkout session:', data.message);
-                        alert('There was an error processing your request. Please try again.');
-                      }
-                    } catch (error) {
-                      console.error('Error creating checkout session:', error);
-                      alert('There was an error processing your request. Please try again.');
-                    }
-                  }}
+                  className="w-full"
+                  // onClick={async () => {
+                  //   // Get the email from the input field if available
+                  //   const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+                  //   const email = emailInput?.value || '';
+                  //   
+                  //   try {
+                  //     const response = await fetch('/api/create-checkout-session', {
+                  //       method: 'POST',
+                  //       headers: {
+                  //         'Content-Type': 'application/json',
+                  //       },
+                  //       body: JSON.stringify({ email }),
+                  //     });
+                  //     
+                  //     const data = await response.json();
+                  //     
+                  //     if (data.success && data.url) {
+                  //       // Open the checkout URL in a new window
+                  //       window.open(data.url, '_blank');
+                  //     } else {
+                  //       console.error('Error creating checkout session:', data.message);
+                  //       alert('There was an error processing your request. Please try again.');
+                  //     }
+                  //   } catch (error) {
+                  //     console.error('Error creating checkout session:', error);
+                  //     alert('There was an error processing your request. Please try again.');
+                  //   }
+                  // }}
+                  onClick={() => window.open("https://buy.stripe.com/5kAcP0dXHgZTf3q6oy", "_blank")}
                 >
-
-                
-
                 Get It Now
                 </Button>
                
@@ -263,34 +260,35 @@ export default function Home() {
                 <div className="flex flex-col gap-4 max-w-md mx-auto">
                   <Button 
                     className="w-full" 
-                    onClick={async () => {
-                      // Get the email from the input field if available
-                      const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
-                      const email = emailInput?.value || '';
-                      
-                      try {
-                        const response = await fetch('/api/create-checkout-session', {
-                          method: 'POST',
-                          headers: {
-                            'Content-Type': 'application/json',
-                          },
-                          body: JSON.stringify({ email }),
-                        });
-                        
-                        const data = await response.json();
-                        
-                        if (data.success && data.url) {
-                          // Open the checkout URL in a new window
-                          window.open(data.url, '_blank');
-                        } else {
-                          console.error('Error creating checkout session:', data.message);
-                          alert('There was an error processing your request. Please try again.');
-                        }
-                      } catch (error) {
-                        console.error('Error creating checkout session:', error);
-                        alert('There was an error processing your request. Please try again.');
-                      }
-                    }}
+                    // onClick={async () => {
+                    //   // Get the email from the input field if available
+                    //   const emailInput = document.querySelector('input[type="email"]') as HTMLInputElement;
+                    //   const email = emailInput?.value || '';
+                    //   
+                    //   try {
+                    //     const response = await fetch('/api/create-checkout-session', {
+                    //       method: 'POST',
+                    //       headers: {
+                    //         'Content-Type': 'application/json',
+                    //       },
+                    //       body: JSON.stringify({ email }),
+                    //     });
+                    //     
+                    //     const data = await response.json();
+                    //     
+                    //     if (data.success && data.url) {
+                    //       // Open the checkout URL in a new window
+                    //       window.open(data.url, '_blank');
+                    //     } else {
+                    //       console.error('Error creating checkout session:', data.message);
+                    //       alert('There was an error processing your request. Please try again.');
+                    //     }
+                    //   } catch (error) {
+                    //     console.error('Error creating checkout session:', error);
+                    //     alert('There was an error processing your request. Please try again.');
+                    //   }
+                    // }}
+                    onClick={() => window.open("https://buy.stripe.com/5kAcP0dXHgZTf3q6oy", "_blank")}
                     size="lg"
                   >
                     Get It Now
