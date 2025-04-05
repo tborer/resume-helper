@@ -28,6 +28,7 @@ export default function Dashboard() {
   const [userEmail, setUserEmail] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
   const [isTokenValid, setIsTokenValid] = useState(false); // New state for token validity
+  const [isAdmin, setIsAdmin] = useState(false);
   
   // New states for enhanced analysis
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
@@ -95,168 +96,6 @@ export default function Dashboard() {
     }
   }, [accessGranted, tokenVerified, router]);
 
-  /*useEffect(() => {
-    const { email } = router.query;
-    if (email && typeof email === 'string') { // Type check
-      const decodedEmail = decodeURIComponent(email);
-      console.log("Dashboard: Email from query:", decodedEmail);
-      setUserEmail(decodedEmail);
-      // Store email in localStorage for persistence - consider if still needed!
-      localStorage.setItem("userEmail", decodedEmail); 
-      checkAdminStatus(decodedEmail);  // Call the admin check function
-    } else {
-      // Handle case where email is not in the URL (e.g., redirect to home)
-      console.log("No email in URL, redirecting home (or handle fallback)");
-      //router.push('/');  // Uncomment to redirect if that's desired
-    }
-  }, [router.query]); // Re-run when query parameters change
-  */
-
-  /*
-  useEffect(() => {
-    const { email, token } = router.query;  // Capture token as well
-    if (email && typeof email === 'string' && token && typeof token === 'string') {
-      const decodedEmail = decodeURIComponent(email);
-      console.log("Dashboard: Email and token from query:", decodedEmail, token);
-      setUserEmail(decodedEmail);
-      // localStorage.setItem("userEmail", decodedEmail); // Consider if still needed
-      verifyToken(decodedEmail, token as string); // Call token verification
-      checkAdminStatus(decodedEmail); // Call the admin check
-    } else {
-      console.log("Dashboard: Missing email or token in URL");
-      // Handle missing parameters (e.g., redirect)
-      // router.push('/'); // Redirect if missing email or token
-    }
-  }, [router.query]);
-
-  const verifyToken = async (email: string, token: string) => {
-    try {
-      const response = await fetch('/api/users/verify-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, token }),
-      });
-      const data = await response.json();
-      setIsTokenValid(data.isValid); // Update token validity state
-      if (!data.isValid) {
-        // Handle invalid token (e.g., redirect, display error)
-        console.log("Dashboard: Invalid token for user:", email);
-        // router.push('/some-error-page'); // Example redirect
-      }
-    } catch (error) {
-      console.error('Error verifying token:', error);
-      setIsTokenValid(false); // Assume invalid on error
-    }
-  };
-
-  useEffect(() => {
-    if (!isTokenValid) {
-      console.log("Dashboard: Invalid token - redirecting");
-      //router.push('/'); // Redirect if token is invalid
-    }
-  }, [isTokenValid, router]); // Re-run when isTokenValid changes
-*/
-
-/*
-const [accessGranted, setAccessGranted] = useState(false);
-useEffect(() => {
-  console.log('Verifying token...');
-  const verifyToken = async () => {
-    const { email, token } = router.query;
-    if (!email || !token) {
-      console.log('Email or token is missing');
-      return;
-    }
-
-    const decodedEmail = decodeURIComponent(email);
-
-    const response = await fetch('/api/users/verify-token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: decodedEmail, token }),
-    });
-
-    console.log('Response status:', response.status);
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Response data:', data);
-      if (data.isValid) {
-        console.log('Access granted');
-      } else {
-        console.log('Access denied');
-      }
-    } else {
-      console.error('Error verifying token:', response.status);
-    }
-  };
-
-  verifyToken();
-}, [router.query]);
-*/
-/*
-const [accessGranted, setAccessGranted] = useState(false);
-
-useEffect(() => {
-  console.log('Verifying token...');
-  const verifyToken = async () => {
-    try {
-      const { email, token } = router.query;
-      console.log('Email and token:', email, token);
-      const decodedEmail = decodeURIComponent(email);
-
-      const response = await fetch('/api/users/verify-token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: decodedEmail, token }),
-      });
-
-      console.log('Response status:', response.status);
-      if (response.ok) {
-        const data = await response.json();
-        console.log('Response data:', data);
-        setAccessGranted(data.isValid);
-      } else {
-        console.error('Error verifying token:', response.status);
-      }
-    } catch (error) {
-      console.error('Error verifying token:', error);
-    }
-  };
-
-  verifyToken();
-}, [router.query]);
-
-
-useEffect(() => {
-  if (accessGranted) {
-    console.log('Access granted');
-  } else {
-    console.log('Access denied');
-    //router.push('/');
-  }
-}, [accessGranted, router]);
-*/
-
-/*
-  const { email, token } = router.query;
-
-  const response = await fetch('/api/users/verify-token', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, token }),
-  });
-  
-  const data = await response.json();
-  
-  if (data.isValid) {
-    // Grant access
-    console.log("Access granted");
-  } else {
-    // Redirect to error page or login page
-    console.log("Access denied");
-    router.push('/login');
-  }*/
-
   const checkAdminStatus = async (email: string) => {
     try {
       const response = await fetch('/api/users/check-admin', {  // Your API route
@@ -271,6 +110,10 @@ useEffect(() => {
       setIsAdmin(false); // Handle errors gracefully
     }
   };
+
+  useEffect(() => {
+    checkAdminStatus(email);
+  }, [email])
   
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
