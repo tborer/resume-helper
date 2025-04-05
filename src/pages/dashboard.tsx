@@ -87,8 +87,15 @@ export default function Dashboard() {
   
       const data = await response.json();
       console.log('Response data:', data);
-      setTokenVerified(true);
-      setAccessGranted(data.isValid);
+  
+      if (data.isValid) {
+        setTokenVerified(true);
+        setAccessGranted(true);
+      } else {
+        setTokenVerified(true);
+        setAccessGranted(false);
+        setShowAccessDeniedDialog(true);
+      }
     };
   
     verifyToken();
