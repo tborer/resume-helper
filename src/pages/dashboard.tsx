@@ -68,12 +68,13 @@ export default function Dashboard() {
       console.log('Email:', decodedEmail);
       console.log('Token:', token);
 
+      /*
       if (!email || !token) {
         console.log('Email or token is missing');
         setTokenVerified(true);
         setAccessGranted(false);
         return;
-      }
+      }*/
 
       console.log('Decoded email:', decodedEmail);
 
@@ -83,7 +84,9 @@ export default function Dashboard() {
         body: JSON.stringify({ email: decodedEmail, token }),
       });
   
+      const data = await response.json();
       console.log('Response status:', response.status);
+      console.log('Response data:', data);
   
       if (!response.ok) {
         console.error('Error verifying token:', response.status);
@@ -91,9 +94,6 @@ export default function Dashboard() {
         setAccessGranted(false);
         return;
       }
-  
-      const data = await response.json();
-      console.log('Response data:', data);
   
       if (data.isValid) {
         setTokenVerified(true);
