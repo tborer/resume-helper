@@ -112,82 +112,39 @@ export default function Dashboard() {
   }, [isTokenValid, router]); // Re-run when isTokenValid changes
 */
 
-useEffect(() => {
-  if (!verifyingToken) {
-    setVerifyingToken(true);
-    const verifyToken = async () => {
-      try {
-        const { email, token } = router.query;
-        const decodedEmail = decodeURIComponent(email);
 
-        const response = await fetch('/api/users/verify-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: decodedEmail, token }),
-        });
 
-        if (response.ok) {
-          const data = await response.json();
-          setAccessGranted(data.isValid);
-        } else {
-          console.error('Error verifying token:', response.status);
-        }
-      } catch (error) {
-        console.error('Error verifying token:', error);
-      }
-    };
-
-    verifyToken();
-  }
-}, [router.query]);
-
-useEffect(() => {
-  if (accessGranted === false) {
-    console.log('Access denied');
-    //router.push('/');
-  } else if (accessGranted === true) {
-    console.log('Access granted');
-  }
-}, [accessGranted, router]);
-
-/*
-const [verifyingToken, setVerifyingToken] = useState(false);
 const [accessGranted, setAccessGranted] = useState(false);
-const [isComponentMounted, setIsComponentMounted] = useState(true);
 
 useEffect(() => {
-  if (!verifyingToken) {
-    setVerifyingToken(true);
-    const verifyToken = async () => {
-      try {
-        const { email, token } = router.query;
-        const decodedEmail = decodeURIComponent(email);
+  console.log('Verifying token...');
+  const verifyToken = async () => {
+    try {
+      const { email, token } = router.query;
+      console.log('Email and token:', email, token);
+      const decodedEmail = decodeURIComponent(email);
 
-        const response = await fetch('/api/users/verify-token', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: decodedEmail, token }),
-        });
+      const response = await fetch('/api/users/verify-token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: decodedEmail, token }),
+      });
 
+      console.log('Response status:', response.status);
+      if (response.ok) {
         const data = await response.json();
-
-        if (isComponentMounted) {
-          setAccessGranted(data.isValid);
-        }
-      } catch (error) {
-        console.error('Error verifying token:', error);
+        console.log('Response data:', data);
+        setAccessGranted(data.isValid);
+      } else {
+        console.error('Error verifying token:', response.status);
       }
-    };
-
-    verifyToken();
-  }
-}, [router.query]);
-
-useEffect(() => {
-  return () => {
-    setIsComponentMounted(false);
+    } catch (error) {
+      console.error('Error verifying token:', error);
+    }
   };
-}, []);
+
+  verifyToken();
+}, [router.query]);
 
 useEffect(() => {
   if (accessGranted) {
@@ -197,7 +154,7 @@ useEffect(() => {
     //router.push('/');
   }
 }, [accessGranted, router]);
-*/
+
 
 /*
   const { email, token } = router.query;
