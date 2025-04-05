@@ -95,15 +95,13 @@ export default function Dashboard() {
   }, [router.query]);
   
   useEffect(() => {
-    if (tokenVerified) {
-      if (accessGranted) {
-        console.log('Access granted');
-      } else {
-        console.log('Access denied');
-        setShowAccessDeniedDialog(true);
-      }
+    if (tokenVerified && accessGranted) {
+      console.log('Access granted');
+    } else if (tokenVerified && !accessGranted) {
+      console.log('Access denied');
+      setShowAccessDeniedDialog(true);
     }
-  }, [accessGranted, tokenVerified, router]);
+  }, [accessGranted, tokenVerified]);
 
   const checkAdminStatus = async (email: string) => {
     try {
