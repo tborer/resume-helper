@@ -66,6 +66,7 @@ export default function Dashboard() {
       const { email, token } = router.query;
       if (!email || !token) {
         console.log('Email or token is missing');
+        router.push('/');
         return;
       }
   
@@ -406,7 +407,7 @@ export default function Dashboard() {
               <AlertDialogHeader>
                 <AlertDialogTitle>Access Denied</AlertDialogTitle>
                 <AlertDialogDescription>
-                  Your token is invalid or expired. Please log in again.
+                  Your token is invalid or expired. Please get a new magic link token by entering your email on the homepage.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>
