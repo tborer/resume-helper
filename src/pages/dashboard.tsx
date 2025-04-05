@@ -113,14 +113,16 @@ export default function Dashboard() {
 */
 
 
-  useEffect(() => {
+useEffect(() => {
   const { email, token } = router.query;
+
+  const decodedEmail = decodeURIComponent(email);
 
   const verifyToken = async () => {
     const response = await fetch('/api/users/verify-token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, token }),
+      body: JSON.stringify({ email: decodedEmail, token }),
     });
 
     const data = await response.json();
