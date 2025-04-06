@@ -140,7 +140,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log('Email sent successfully!');
           }
         });
-        console.log('Send magic link logic goes here');
+        console.log('Send magic link completed');
 
         return res.status(200).json({ received: true });
       }
