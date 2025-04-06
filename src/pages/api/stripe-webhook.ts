@@ -52,24 +52,16 @@ async function sendMagicLink(email: string) {
   return sendMagicLinkResponse.json();
 }
 
-/*
 async function fetchCustomer(customerId: string) {
-  // Replace with your actual Stripe secret key
-  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
-
-  const response = await fetch(`https://api.stripe.com/v1/customers/${customerId}`, {
-    headers: {
-      Authorization: `Bearer ${stripeSecretKey}`,
-    },
-  });
+  const response = await fetch(`/api/get-customer?id=${customerId}`);
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(`Failed to fetch customer: ${errorData.message}`);
+    throw new Error(`Failed to fetch customer: ${errorData.error}`);
   }
 
   return response.json();
-}*/
+}
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -86,13 +78,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
       if (event.type === 'customer.subscription.created') { // Changed event type
         const subscription = event.data.object;
-        // Assuming the customer ID is available in the subscription object
-        //const customerId = subscription.customer;
+        
+        const customerId = subscription.customer;
 
         // Fetch the customer object to get the email
-        //const customer = await fetchCustomer(customerId); // You'll need to implement this function
-        //const email = customer.email;
-        const customer = subscription.customer; // Directly access the customer object
+        const customer = await fetchCustomer(customerId);
+       
+        
+        
         const email = customer.email; // Extract the email from the customer object
 
         if (!email) {
