@@ -3,54 +3,9 @@ import { NextApiRequest, NextApiResponse } from 'next';
 // Ensure body parsing is enabled for this API route
 export const config = {
   api: {
-    bodyParser: true, // Changed from false to true
+    bodyParser: true, 
   },
 };
-
-async function createUser(email: string) {
-  console.log('createUser called with email:', email);
-  
-  const createUserResponse = await fetch('/api/users/create', {
-    method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email }),
-  });
-  console.log("request body for createUser: ",JSON.stringify({ email }));
-
-    const responseText = await createUserResponse.text();
-    console.log("createUser API response: ",responseText);
-
-  if (!createUserResponse.ok) {
-      throw new Error(`Failed to create user: ${responseText}`);
-  }
-
-  return JSON.parse(responseText);
-}
-
-async function sendMagicLink(email: string) {
-  console.log('sendMagicLink called with email:', email);
-
-  const sendMagicLinkResponse = await fetch('/api/send-magic-link', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-      body: JSON.stringify({ email }),
-  });
-  console.log("request body for sendMagicLink: ",JSON.stringify({ email }));
-
-  const responseText = await sendMagicLinkResponse.text();
-  console.log("sendMagicLink API response: ",responseText);
-
-  if (!sendMagicLinkResponse.ok) {
-    const errorData = await sendMagicLinkResponse.json();
-    throw new Error(`Failed to send magic link: ${errorData.error}`);
-  }
-
-  return sendMagicLinkResponse.json();
-}
 
 async function fetchCustomer(customerId: string) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
@@ -62,7 +17,6 @@ async function fetchCustomer(customerId: string) {
   const url = `${baseUrl}/api/get-customer?id=${customerId}`;
   const response = await fetch(url);
 
-
   if (!response.ok) {
     const errorData = await response.json();
     throw new Error(`Failed to fetch customer: ${errorData.error}`);
@@ -70,7 +24,6 @@ async function fetchCustomer(customerId: string) {
 
   return response.json();
 }
-
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -84,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Invalid event object' });
       }
 
-      if (event.type === 'customer.subscription.created') { // Changed event type
+      if (event.type === 'customer.subscription.created') { 
         const subscription = event.data.object;
         
         const customerId = subscription.customer;
@@ -92,9 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Fetch the customer object to get the email
         const customer = await fetchCustomer(customerId);
        
-        
-        
-        const email = customer.email; // Extract the email from the customer object
+        const email = customer.email; 
 
         if (!email) {
           console.error('No email found in subscription event:', subscription);
@@ -103,13 +54,56 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log(`New subscription received for: ${email}`);
 
-      // Create user
-      await createUser(email);
-      console.log(`User created for email: ${email}`);
+        // Create user
+        const existingUser = await prisma.user.findUnique({
+          where: { email },
+        });
+        
+        if (existingUser) {
+          console.log('User with this email already exists');
+        } else {
+          const user = await prisma.user.create({
+            data: {
+              email,
+              isAdmin: false,
+              isActive: true,
+              historyAccess: false,
+              accountAccess: true,
+            },
+          });
+        
+          console.log(`User created from subscription: ${email}`);
+        }
 
-      // Send magic link
-      await sendMagicLink(email);
-      console.log(`Magic link sent to email: ${email}`);
+        // Send magic link
+        const magicLinkToken = uuidv4();
+        const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?email=${encodeURIComponent(email)}&token=${magicLinkToken}`;
+
+        const transporter = nodemailer.createTransport({
+          host: 'mail.agilerant.info',
+          port: 465,
+          secure: true, 
+          auth: {
+            user: process.env.EMAIL_USERNAME,
+            pass: process.env.EMAIL_PASSWORD,
+          },
+        });
+
+        const mailOptions = {
+          from: 'ar@agilerant.info',
+          to: email,
+          subject: 'Here is your ResumeRocketMatchAI magic link!',
+          html: `<p>Hello,</p><p>Here is the magic link you have requested:</p><p><a href="${magicLinkUrl}">${magicLinkUrl}</a></p><p>Best regards,<br/>ResumeRocketMatchAI</p>`,
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error('Error sending email:', error);
+          } else {
+            console.log('Email sent successfully!');
+          }
+        });
+        console.log('Send magic link logic goes here');
 
         return res.status(200).json({ received: true });
       }
