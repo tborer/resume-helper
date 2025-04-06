@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { json } from 'stream/consumers';
 
 // Ensure body parsing is enabled for this API route
 export const config = {
@@ -8,6 +9,8 @@ export const config = {
 };
 
 async function createUser(email: string) {
+  console.log('createUser called with email:', email);
+  
   const createUserResponse = await fetch('/api/users/create', {
     method: 'POST',
     headers: {
@@ -15,23 +18,32 @@ async function createUser(email: string) {
     },
     body: JSON.stringify({ email }),
   });
+    console.log("request body for createUser: ",JSON.stringify({ email }));
+    
+    const responseText = await createUserResponse.text();
+    console.log("createUser API response: ",responseText);
 
   if (!createUserResponse.ok) {
-    const errorData = await createUserResponse.json();
-    throw new Error(`Failed to create user: ${errorData.error}`);
+      throw new Error(`Failed to create user: ${responseText}`);
   }
 
-  return createUserResponse.json();
+  return JSON.parse(responseText);
 }
 
 async function sendMagicLink(email: string) {
+  console.log('sendMagicLink called with email:', email);
+
   const sendMagicLinkResponse = await fetch('/api/send-magic-link', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ email }),
-  });
+    });
+    console.log("request body for sendMagicLink: ",JSON.stringify({ email }));
+    
+    const responseText = await sendMagicLinkResponse.text();
+    console.log("sendMagicLink API response: ",responseText);
 
   if (!sendMagicLinkResponse.ok) {
     const errorData = await sendMagicLinkResponse.json();
