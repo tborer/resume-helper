@@ -339,7 +339,12 @@ export default function Home() {
         {/* Footer */}
         <footer className="py-6 border-t border-border">
           <div className="container mx-auto text-center text-sm text-muted-foreground">
-            <p>© {new Date().getFullYear()} Resume Rocket Match AI, an Agile Rant product. All rights reserved.</p>
+          <div className="flex flex-col sm:flex-row justify-between items-center">
+              <p>© {new Date().getFullYear()} Resume Rocket Match AI, an Agile Rant product. All rights reserved.</p>
+            <div className="sm:ml-auto">
+              <a href="mailto:ar@agilerant.info" className="text-blue-500 hover:underline">Contact Support</a>
+            </div>
+          </div>
           </div>
         </footer>
       </div>
