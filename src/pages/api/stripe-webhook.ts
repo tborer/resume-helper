@@ -116,6 +116,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.error('Error finding user:', error);
           });
 
+          /*
         // creating nodemailer transporter
         console.log(`[${requestId}] Creating Nodemailer transporter...`);
         const transporter = nodemailer.createTransport({
@@ -139,9 +140,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           } else {
             console.log(`[${requestId}] Nodemailer authentication successful`);
           }
-        });
+        });*/
           
-        /*
+        
         const transporter = nodemailer.createTransport({
           host: 'mail.agilerant.info',
           port: 465,
@@ -150,7 +151,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             user: process.env.EMAIL_USERNAME,
             pass: process.env.EMAIL_PASSWORD,
           },
-        });*/
+        });
 
         const mailOptions = {
           from: 'ar@agilerant.info',
@@ -159,6 +160,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           html: `<p>Hello,</p><p>Here is the magic link you have requested:</p><p><a href="${magicLinkUrl}">${magicLinkUrl}</a></p><p>Best regards,<br/>ResumeRocketMatchAI</p>`,
         };
 
+        /*
             // Send email
         console.log(`[${requestId}] Sending email with options:`, mailOptions);
 
@@ -186,9 +188,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               requestId,
             });
           }
-        });
+        });*/
         
-        /*
+        
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
             console.error('Error sending email:', error);
@@ -199,7 +201,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log('Send magic link completed');
 
         return res.status(200).json({ received: true });
-      }*/
+      }
 
       // Ignore other event types
       console.log('Received event type:', event.type);
