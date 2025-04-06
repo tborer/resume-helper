@@ -1,5 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
+import nodemailer from 'nodemailer';
+import { v4 as uuidv4 } from 'uuid';
 
 // Ensure body parsing is enabled for this API route
 export const config = {
