@@ -53,7 +53,15 @@ async function sendMagicLink(email: string) {
 }
 
 async function fetchCustomer(customerId: string) {
-  const response = await fetch(`/api/get-customer?id=${customerId}`);
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL;
+
+  if (!baseUrl) {
+    throw new Error("NEXT_PUBLIC_APP_URL environment variable not set");
+  }
+
+  const url = `${baseUrl}/api/get-customer?id=${customerId}`;
+  const response = await fetch(url);
+
 
   if (!response.ok) {
     const errorData = await response.json();
