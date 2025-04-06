@@ -52,6 +52,7 @@ async function sendMagicLink(email: string) {
   return sendMagicLinkResponse.json();
 }
 
+/*
 async function fetchCustomer(customerId: string) {
   // Replace with your actual Stripe secret key
   const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -68,7 +69,7 @@ async function fetchCustomer(customerId: string) {
   }
 
   return response.json();
-}
+}*/
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -86,18 +87,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       if (event.type === 'customer.subscription.created') { // Changed event type
         const subscription = event.data.object;
         // Assuming the customer ID is available in the subscription object
-        const customerId = subscription.customer;
+        //const customerId = subscription.customer;
 
         // Fetch the customer object to get the email
-        const customer = await fetchCustomer(customerId); // You'll need to implement this function
-        const email = customer.email;
+        //const customer = await fetchCustomer(customerId); // You'll need to implement this function
+        //const email = customer.email;
+        const customer = subscription.customer; // Directly access the customer object
+        const email = customer.email; // Extract the email from the customer object
 
         if (!email) {
-          console.error('No email found in checkout session:', session);
-          return res.status(400).json({ error: 'No email found in checkout session' });
+          console.error('No email found in subscription event:', subscription);
+          return res.status(400).json({ error: 'No email found in subscription event' });
         }
 
-        console.log(`Checkout session completed for email: ${email}`);
+        console.log(`New subscription received for: ${email}`);
 
       // Create user
       await createUser(email);
