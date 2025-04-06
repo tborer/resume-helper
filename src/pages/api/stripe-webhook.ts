@@ -57,7 +57,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log(`New subscription received for: ${email}`);
 
-        // Create user
+        // Create user and save to table
         const existingUser = await prisma.user.findUnique({
           where: { email },
         });
@@ -74,11 +74,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               accountAccess: true,
             },
           });
-        
           console.log(`User created from subscription: ${email}`);
         }
 
-        // Send magic link
+        // create magic link
         const magicLinkToken = uuidv4();
         const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?email=${encodeURIComponent(email)}&token=${magicLinkToken}`;
 
@@ -142,15 +141,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         });*/
           
-        
+        //creating nodemailer transporter
         const transporter = nodemailer.createTransport({
           host: 'mail.agilerant.info',
           port: 465,
           secure: true, 
           auth: {
             user: process.env.EMAIL_USERNAME,
-            pass: process.env.EMAIL_PASSWORD,
+            pass: '$Nov2022',
           },
+          debug: true, // Enable debug mode
         });
 
         const mailOptions = {
@@ -190,10 +190,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           }
         });*/
         
-        
+        //send email
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
-            console.error('Error sending email:', error);
+            console.error(`[${requestId}] Error sending email:`, error);
           } else {
             console.log('Email sent successfully!');
           }
