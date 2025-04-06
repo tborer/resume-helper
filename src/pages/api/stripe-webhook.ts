@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import prisma from '@/lib/prisma';
 
 // Ensure body parsing is enabled for this API route
 export const config = {
