@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { json } from 'stream/consumers';
 
 // Ensure body parsing is enabled for this API route
 export const config = {
@@ -13,13 +12,13 @@ async function createUser(email: string) {
   
   const createUserResponse = await fetch('/api/users/create', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
   });
-    console.log("request body for createUser: ",JSON.stringify({ email }));
-    
+  console.log("request body for createUser: ",JSON.stringify({ email }));
+
     const responseText = await createUserResponse.text();
     console.log("createUser API response: ",responseText);
 
@@ -38,12 +37,12 @@ async function sendMagicLink(email: string) {
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ email }),
-    });
-    console.log("request body for sendMagicLink: ",JSON.stringify({ email }));
-    
-    const responseText = await sendMagicLinkResponse.text();
-    console.log("sendMagicLink API response: ",responseText);
+      body: JSON.stringify({ email }),
+  });
+  console.log("request body for sendMagicLink: ",JSON.stringify({ email }));
+
+  const responseText = await sendMagicLinkResponse.text();
+  console.log("sendMagicLink API response: ",responseText);
 
   if (!sendMagicLinkResponse.ok) {
     const errorData = await sendMagicLinkResponse.json();
@@ -52,6 +51,25 @@ async function sendMagicLink(email: string) {
 
   return sendMagicLinkResponse.json();
 }
+
+async function fetchCustomer(customerId: string) {
+  // Replace with your actual Stripe secret key
+  const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
+
+  const response = await fetch(`https://api.stripe.com/v1/customers/${customerId}`, {
+    headers: {
+      Authorization: `Bearer ${stripeSecretKey}`,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(`Failed to fetch customer: ${errorData.message}`);
+  }
+
+  return response.json();
+}
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -65,9 +83,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         return res.status(400).json({ error: 'Invalid event object' });
       }
 
-      if (event.type === 'checkout.session.completed') {
-        const session = event.data.object;
-        const email = session.customer_details?.email;
+      if (event.type === 'customer.subscription.created') { // Changed event type
+        const subscription = event.data.object;
+        // Assuming the customer ID is available in the subscription object
+        const customerId = subscription.customer;
+
+        // Fetch the customer object to get the email
+        const customer = await fetchCustomer(customerId); // You'll need to implement this function
+        const email = customer.email;
 
         if (!email) {
           console.error('No email found in checkout session:', session);
@@ -76,13 +99,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log(`Checkout session completed for email: ${email}`);
 
-        // Create user
-        await createUser(email);
-        console.log(`User created for email: ${email}`);
+      // Create user
+      await createUser(email);
+      console.log(`User created for email: ${email}`);
 
-        // Send magic link
-        await sendMagicLink(email);
-        console.log(`Magic link sent to email: ${email}`);
+      // Send magic link
+      await sendMagicLink(email);
+      console.log(`Magic link sent to email: ${email}`);
 
         return res.status(200).json({ received: true });
       }
