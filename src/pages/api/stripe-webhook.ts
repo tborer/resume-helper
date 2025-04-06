@@ -80,6 +80,40 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const magicLinkToken = uuidv4();
         const magicLinkUrl = `https://resume-rocket-match-ai.vercel.app/dashboard?email=${encodeURIComponent(email)}&token=${magicLinkToken}`;
 
+        //finds user and saves the magic link
+        prisma.user.findUnique({
+          where: {
+            email: email,
+          },
+        })
+          .then((user) => {
+            if (user) {
+              prisma.userAccess.upsert({
+                where: {
+                  userId: user.id,
+                },
+                create: {
+                  userId: user.id,
+                  magicLinkToken: magicLinkToken,
+                },
+                update: {
+                  magicLinkToken: magicLinkToken,
+                },
+              })
+                .then((result) => {
+                  console.log('UserAccess record upserted:', result);
+                })
+                .catch((error) => {
+                  console.error('Error upserting UserAccess record:', error);
+                });
+            } else {
+              console.log('User not found with email:', email);
+            }
+          })
+          .catch((error) => {
+            console.error('Error finding user:', error);
+          });
+
         const transporter = nodemailer.createTransport({
           host: 'mail.agilerant.info',
           port: 465,
