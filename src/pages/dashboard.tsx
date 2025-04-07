@@ -378,8 +378,10 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ email: userData.email }),
       });
-
       if (!response.ok) {
+        console.error('Error incrementing dailyAnalysisCount:', await response.json());
+        console.log(`Successfully incremented dailyAnalysisCount for user: ${userData.email}`);
+      } else {
         console.error('Error incrementing dailyAnalysisCount:', await response.json());
       }
       
@@ -389,6 +391,7 @@ export default function Dashboard() {
     } finally {
       setIsAnalyzing(false);
       setAnalysisComplete(true);
+      console.log(`Successfully completed analsis for user: ${userData.email}`);
     }
   };
 
