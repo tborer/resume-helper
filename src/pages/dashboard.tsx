@@ -307,9 +307,9 @@ export default function Dashboard() {
         alert("There was an error, please refresh and try again.");
         return;
       }
-    } else {
+    } /*else {
       return; // Allow user to continue if geminiApiKey is not null
-    }
+    }*/
         
     // Extracted function to increment daily analysis count
     const incrementDailyAnalysisCount = async (email) => {
