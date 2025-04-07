@@ -287,6 +287,17 @@ export default function Dashboard() {
       return;
     }
 
+    // Extracted function to increment daily analysis count
+    const incrementDailyAnalysisCount = async (email) => {
+      return await fetch('/api/users/increment-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+    };
+
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
