@@ -304,11 +304,12 @@ export default function Dashboard() {
       return; // Allow user to continue if geminiApiKey is not null
     }*/
     
+      /*
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
       alert("using the master key");
       return;
-    }
+    }*/
     
     setIsAnalyzing(true);
     setTopKeywords([]);
