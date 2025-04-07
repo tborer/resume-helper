@@ -184,52 +184,43 @@ export default function Dashboard() {
     }
   }, [tokenVerified, accessGranted, router.query]);
   
-  // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
-  // This function should be updated to fetch the API key from the database instead of localStorage
-  const loadGeminiApiKey = (email: string) => {
-    // TEMPORARY IMPLEMENTATION: Using localStorage for development
-    const key = localStorage.getItem(`gemini_api_key_${email}`);
-    if (key) {
-      setGeminiApiKey(key);
-      console.log("Dashboard: Loaded Gemini API key for user:", email);
-    }
-    
-    // Future implementation with database:
-    // const fetchApiKey = async (email) => {
-    //   try {
-    //     const response = await fetch('/api/users/get-api-key', {
-    //       method: 'POST',
-    //       headers: { 'Content-Type': 'application/json' },
-    //       body: JSON.stringify({ email })
-    //     });
-    //     const data = await response.json();
-    //     if (data.apiKey) {
-    //       setGeminiApiKey(data.apiKey);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching API key:', error);
-    //   }
-    // };
-    // fetchApiKey(email);
-  };
   
-  //get the api key from the users table, fallback to master key
-  const getApiKeyToUse = () => {
+  // DATABASE UPDATE: Fetch API key from database
+  const loadGeminiApiKey = async (email: string) => {
+    try {
+      const response = await fetch('/api/users/get-api-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await response.json();
+      if (data.apiKey) {
+        setGeminiApiKey(data.apiKey);
+        console.log("Dashboard: Loaded Gemini API key for user:", email);
+      }
+    } catch (error) {
+      console.error('Error fetching API key:', error);
+    }
+  };
+
+  // Get the API key from the users table, fallback to master key
+  const getApiKeyToUse = async () => {
     const userEmail = localStorage.getItem("userEmail");
     if (!userEmail) return { key: "", isMasterKey: false };
-    
+
     // First try to get the user's personal API key from database
-    //TODO: future implementation from the database
-    // const userKey = await fetchApiKey(userEmail)
-    const userKey = localStorage.getItem(`gemini_api_key_${userEmail}`);
-    
-    if (userKey) {
-      return { key: userKey, isMasterKey: false };
+    const response = await fetch('/api/users/get-api-key', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: userEmail })
+    });
+    const data = await response.json();
+    if (data.apiKey) {
+      return { key: data.apiKey, isMasterKey: false };
     }
-    
-    // If no user key, try to get the master key
-    //TODO: future implementation with an env variable
-    const masterKey = localStorage.getItem('master_gemini_api_key');
+
+    // If no user key, try to get the master key from environment variable
+    const masterKey = process.env.MASTER_API_KEY;
     return { key: masterKey || "", isMasterKey: true };
   };
   
