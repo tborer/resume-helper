@@ -281,6 +281,12 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
+    // Check if userData is available
+    if (!userData) {
+      console.error('User data is not available');
+      return;
+    }
+
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
