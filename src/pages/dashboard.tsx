@@ -184,7 +184,21 @@ export default function Dashboard() {
     }
   }, [tokenVerified, accessGranted, router.query]);
   
-  
+  // Get the API key from the users table, fallback to master key
+  const getApiKeyToUse = () => {
+    if (!userData) return { key: "", isMasterKey: false };
+
+    const apiKey = userData.geminiApiKey;
+    if (apiKey) {
+      return { key: apiKey, isMasterKey: false };
+    }
+
+    // If no user key, try to get the master key from environment variable
+    const masterKey = process.env.MASTER_API_KEY;
+    return { key: masterKey || "", isMasterKey: true };
+  };
+
+  /*
   // DATABASE UPDATE: Fetch API key from database
   const loadGeminiApiKey = async (email: string) => {
     try {
@@ -222,7 +236,7 @@ export default function Dashboard() {
     // If no user key, try to get the master key from environment variable
     const masterKey = process.env.MASTER_API_KEY;
     return { key: masterKey || "", isMasterKey: true };
-  };
+  };*/
   
   // DATABASE UPDATE: Save API key to database
   const saveGeminiApiKey = async () => {
@@ -304,12 +318,12 @@ export default function Dashboard() {
       return; // Allow user to continue if geminiApiKey is not null
     }*/
     
-      /*
+    
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
       alert("using the master key");
-      return;
-    }*/
+      //return;
+    }
     
     setIsAnalyzing(true);
     setTopKeywords([]);
