@@ -155,8 +155,10 @@ export default function Dashboard() {
       const fetchUserData = async (userEmail: string) => {
         try {
           const response = await fetch(`/api/users/thisUser?email=${userEmail}`);
+          console.log(response);
           if (response.ok) {
             const data = await response.json();
+            console.log(data);
             if(data.length > 0) {
               setUserData(data[0]);
               //setHasHistoryAccess(data[0].historyAccess)
