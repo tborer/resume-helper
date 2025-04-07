@@ -288,7 +288,7 @@ export default function Dashboard() {
       }
 
       // Check if Gemini API key is populated or daily analysis count is less than 10
-      f (userData.geminiApiKey || userData.dailyAnalysisCount < 10) {
+      if (userData.geminiApiKey || userData.dailyAnalysisCount < 10) {
         // If Gemini API key is blank, increment daily analysis count
         if (!userData.geminiApiKey) {
           try {
@@ -324,7 +324,7 @@ export default function Dashboard() {
         body: JSON.stringify({ email }),
       });
     };
-    
+
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
