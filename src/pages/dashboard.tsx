@@ -288,29 +288,26 @@ export default function Dashboard() {
     }
 
       // Check if Gemini API key is populated or daily analysis count is less than 10
-      if (userData.geminiApiKey || userData.dailyAnalysisCount < 10) {
-        // If Gemini API key is blank, increment daily analysis count
-        if (!userData.geminiApiKey) {
-          try {
-            const incrementResponse = await incrementDailyAnalysisCount(userData.email);
-            if (incrementResponse.ok) {
-              const incrementedData = await incrementResponse.json();
-              setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
-            } else {
-              const errorData = await incrementResponse.json();
-              console.error('Error incrementing dailyAnalysisCount:', errorData);
-              alert("Error incrementing daily analysis count.");
-              return;
-            }
-          } catch (error) {
-            console.error("Error incrementing dailyAnalysisCount:", error);
+      if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
+        alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
+        return;
+      } else if (userData.geminiApiKey === null) {
+        try {
+          const incrementResponse = await incrementDailyAnalysisCount(userData.email);
+          if (incrementResponse.ok) {
+            const incrementedData = await incrementResponse.json();
+            setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
+          } else {
+            const errorData = await incrementResponse.json();
+            console.error('Error incrementing dailyAnalysisCount:', errorData);
             alert("Error incrementing daily analysis count.");
             return;
           }
+        } catch (error) {
+          console.error("Error incrementing dailyAnalysisCount:", error);
+          alert("Error incrementing daily analysis count.");
+          return;
         }
-      } else {
-        alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-        return;
       }
 
     // Extracted function to increment daily analysis count
