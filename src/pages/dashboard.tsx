@@ -251,6 +251,7 @@ export default function Dashboard() {
     setIsSavingApiKey(true);
     setApiKeySaveMessage("");
     
+    /*
     try {
       // TEMPORARY IMPLEMENTATION: Using localStorage for development
       localStorage.setItem(`gemini_api_key_${userEmail}`, geminiApiKey);
@@ -269,7 +270,7 @@ export default function Dashboard() {
       //   throw new Error(data.message || 'Failed to save API key');
       // }
       
-      /*
+      
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
@@ -287,8 +288,8 @@ export default function Dashboard() {
       setApiKeySaveSuccess(false);
     } finally {
       setIsSavingApiKey(false);
-    }*/
-  };
+    }
+  };*/
 
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
