@@ -197,46 +197,6 @@ export default function Dashboard() {
     const masterKey = process.env.MASTER_API_KEY;
     return { key: masterKey || "", isMasterKey: true };
   };
-
-  /*
-  // DATABASE UPDATE: Fetch API key from database
-  const loadGeminiApiKey = async (email: string) => {
-    try {
-      const response = await fetch('/api/users/get-api-key', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email })
-      });
-      const data = await response.json();
-      if (data.apiKey) {
-        setGeminiApiKey(data.apiKey);
-        console.log("Dashboard: Loaded Gemini API key for user:", email);
-      }
-    } catch (error) {
-      console.error('Error fetching API key:', error);
-    }
-  };
-
-  // Get the API key from the users table, fallback to master key
-  const getApiKeyToUse = async () => {
-    const userEmail = localStorage.getItem("userEmail");
-    if (!userEmail) return { key: "", isMasterKey: false };
-
-    // First try to get the user's personal API key from database
-    const response = await fetch('/api/users/get-api-key', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: userEmail })
-    });
-    const data = await response.json();
-    if (data.apiKey) {
-      return { key: data.apiKey, isMasterKey: false };
-    }
-
-    // If no user key, try to get the master key from environment variable
-    const masterKey = process.env.MASTER_API_KEY;
-    return { key: masterKey || "", isMasterKey: true };
-  };*/
   
   // DATABASE UPDATE: Save API key to database
   const saveGeminiApiKey = async () => {
@@ -291,6 +251,13 @@ export default function Dashboard() {
       alert("Please enter both job description and resume");
       return;
     }
+
+    const { key: apiKey, isMasterKey } = getApiKeyToUse();
+    if (!apiKey) {
+      alert("No API key found. Please add your own API key in the Account tab.");
+      return;
+    }
+
     /*
     //code to check key and count
     if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
@@ -318,12 +285,12 @@ export default function Dashboard() {
       return; // Allow user to continue if geminiApiKey is not null
     }*/
     
-    
+    /*
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
       alert("using the master key");
       //return;
-    }
+    }*/
     
     setIsAnalyzing(true);
     setTopKeywords([]);
