@@ -298,7 +298,8 @@ export default function Dashboard() {
             console.log("user data fetched", data)
           }
         }  
-      }  
+      }
+    }    
 
     if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
       alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
