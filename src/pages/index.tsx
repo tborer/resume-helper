@@ -224,7 +224,7 @@ export default function Home() {
               <StepCard 
                 number="2" 
                 title="AI Analysis" 
-                description="Our AI analyzes both documents to identify keyword matches and improvement opportunities."
+                description="Our AI analyzes both documents to identify keyword matches and improvement opportunities. For only $11.99! Unlimited use with your own free Google Gemini API key, or 10 per day without."
               />
               <StepCard 
                 number="3" 
