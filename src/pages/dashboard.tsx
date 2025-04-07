@@ -803,7 +803,7 @@ export default function Dashboard() {
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        Get your own free Google Gemini key for unlimited requests. Your API key is stored securely and used to power AI features.{" "}
+                        Get your own free Google Gemini key for <b>unlimited</b> requests. Your API key is stored securely and used to power AI features.{" "}
                         <a 
                           href="https://aistudio.google.com/apikey" 
                           target="_blank" 
