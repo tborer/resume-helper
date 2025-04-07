@@ -18,6 +18,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
+
 export default function Dashboard() {
   
   const router = useRouter();
@@ -32,6 +33,7 @@ export default function Dashboard() {
   const [userData, setUserData] = useState<any | null>(null);
   const [hasHistoryAccess, setHasHistoryAccess] = useState(true);
   // New states for enhanced analysis
+
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
   const [atsFeedback, setAtsFeedback] = useState("");
   const [missingSkills, setMissingSkills] = useState<string[]>([]);
@@ -281,6 +283,46 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
+    // Check if userData is available and geminiApiKey is blank, then check dailyAnalysisCount
+    if (userData && !userData.geminiApiKey) {
+      if (userData.dailyAnalysisCount >= 10) {
+        alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
+        return;
+      } else {
+        // Increment dailyAnalysisCount
+        try {
+          const incrementResponse = await fetch('/api/users/increment-analysis', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: userData.email }),
+          });
+
+          if (incrementResponse.ok) {
+            const incrementedData = await incrementResponse.json();
+            // Update the local state with the new count
+            setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
+          } else {
+            const errorData = await incrementResponse.json();
+            console.error('Error incrementing dailyAnalysisCount:', errorData);
+            alert("Error incrementing daily analysis count.");
+            return;
+          }
+        } catch (error) {
+          console.error("Error incrementing dailyAnalysisCount:", error);
+          alert("Error incrementing daily analysis count.");
+          return;
+        }
+      }
+    }
+
+    // User has their own API key or daily analysis count is below limit, proceed with analysis
+    
+    if(userData.geminiApiKey)
+    {
+      setGeminiApiKey(userData.geminiApiKey);
+    }
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
@@ -584,6 +626,7 @@ export default function Dashboard() {
                 </Button>
                         </div>
               
+
               {analysisComplete && (
                 <div className="mt-8 space-y-6">
                   {/* Job Description Analysis Section */}
