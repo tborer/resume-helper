@@ -19,6 +19,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ message: 'Email is required' });
   }
 
+  const decodedEmail = decodeURIComponent(thisUser);
+  console.log('Decoded email:', decodedEmail);
+
   try {
     console.log('Searching for user with email:', thisUser);
     const user = await prisma.user.findUnique({
