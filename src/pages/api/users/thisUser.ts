@@ -11,21 +11,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(405).json({ message: 'Method not allowed' });
   }
 
-  const { thisUser } = req.query;
-  console.log('thisUser:', thisUser);
+  const { email } = req.query;
+  console.log('email:', email);
 
-  if (!thisUser || typeof thisUser !== 'string') {
+  if (!email || typeof email !== 'string') {
     console.log('Email is required');
     return res.status(400).json({ message: 'Email is required' });
   }
 
-  const decodedEmail = decodeURIComponent(thisUser);
+  const decodedEmail = decodeURIComponent(email);
   console.log('Decoded email:', decodedEmail);
 
   try {
-    console.log('Searching for user with email:', thisUser);
+    console.log('Searching for user with email:', decodedEmail);
     const user = await prisma.user.findUnique({
-      where: { email: thisUser },
+      where: { email: decodedEmail },
     });
     console.log('User found:', user);
 
@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ message: 'User not found' });
     }
 
-    console.log(`Retrieved user with email ${thisUser}`);
+    console.log(`Retrieved user with email ${decodedEmail}`);
     return res.status(200).json(user);
   } catch (error) {
     console.error('Error fetching user:', error);
