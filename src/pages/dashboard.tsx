@@ -145,7 +145,7 @@ export default function Dashboard() {
     }
   };
 
-  
+  /*
   useEffect(() => {
     if (tokenVerified && accessGranted) {
       const { email } = router.query;
@@ -176,7 +176,7 @@ export default function Dashboard() {
       fetchUserData(email as string)
     }
   }, [tokenVerified, accessGranted, router.query]);
-  
+  */
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to fetch the API key from the database instead of localStorage
@@ -285,10 +285,20 @@ export default function Dashboard() {
 
   const handleAnalyze = async () => {
     // Check if userData is available
-    if (!userData) {
-      console.error('User data is not available');
-      return;
-    }
+    const fetchUserData = async (userEmail: string) => {
+      try {
+        const response = await fetch(`/api/users/thisUser?email=${userEmail}`);
+        console.log(response);
+        if (response.ok) {
+          const data = await response.json();
+          console.log(data);
+          if(data.length > 0) {
+            setUserData(data[0]);
+            //setHasHistoryAccess(data[0].historyAccess)
+            console.log("user data fetched", data)
+          }
+        }  
+      }  
 
     if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
       alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
