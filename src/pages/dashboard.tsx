@@ -307,23 +307,25 @@ export default function Dashboard() {
     setAtsFeedback(""); 
     setMissingSkills([]);
     
-    setIsAnalyzing(true);
-    setTopKeywords([]);
-    setAtsFeedback(""); 
-    setMissingSkills([]);
-    
     try {
       // Import the Gemini utility functions
+      console.log('Importing Gemini utility functions...');
       const { 
         extractKeywords, 
         calculateATSMatchScore, 
         generateOptimizedResume 
       } = await import('@/lib/gemini');
+      console.log('Gemini utility functions imported successfully.');
       
       // Run analyses in parallel
+      console.log('Running analyses in parallel...');
       const [keywords, matchResult, optimized] = await Promise.all([
         // Extract keywords from job description
         extractKeywords(apiKey, jobDescription)
+          .then(result => {
+            console.log('Keywords extracted successfully.');
+            return result;
+          })
           .catch(error => {
             console.error("Error extracting keywords:", error);
             return [];
