@@ -765,12 +765,7 @@ export default function Dashboard() {
                   <CardDescription>Manage your subscription and account details</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" value={userEmail || "user@example.com"} readOnly />
-                    </div>
-                    
+                  <div className="space-y-4"> 
                     <div>
                       <div className="flex items-center space-x-2 mb-1">
                         <Label htmlFor="gemini-api-key">Google Gemini API Key</Label>
@@ -808,7 +803,7 @@ export default function Dashboard() {
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        Your API key is stored securely and used to power AI features.{" "}
+                        Get your own free Google Gemini key for unlimited requests. Your API key is stored securely and used to power AI features.{" "}
                         <a 
                           href="https://aistudio.google.com/apikey" 
                           target="_blank" 
