@@ -312,6 +312,10 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
+    if (!jobDescription || !resumeText) {
+      alert("Please enter both job description and resume");
+      return;
+    }
     /*
     //code to check key and count
     if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
@@ -359,15 +363,12 @@ export default function Dashboard() {
       }
     };*/
     
-    if (!jobDescription || !resumeText) {
-      alert("Please enter both job description and resume");
-      return;
-    }
+    /*
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
       alert("Please add your Google Gemini API key in the Account tab");
       return;
-    }
+    }*/
     
     setIsAnalyzing(true);
     setTopKeywords([]);
