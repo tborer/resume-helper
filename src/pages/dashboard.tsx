@@ -283,25 +283,20 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
-    // Check if userData is available and geminiApiKey is blank, then check dailyAnalysisCount
-    if (userData && !userData.geminiApiKey) {
-      if (userData.dailyAnalysisCount >= 10) {
-        alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-        return;
-      } else {
-        // Increment dailyAnalysisCount
+    // Check if userData is available
+    if (!userData) {
+      console.error('User data is not available');
+      return;
+    }
+  
+    // Check if Gemini API key is populated or daily analysis count is less than 10
+    if (userData.geminiApiKey || userData.dailyAnalysisCount < 10) {
+      // If Gemini API key is blank, increment daily analysis count
+      if (!userData.geminiApiKey) {
         try {
-          const incrementResponse = await fetch('/api/users/increment-analysis', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ email: userData.email }),
-          });
-
+          const incrementResponse = await incrementDailyAnalysisCount(userData.email);
           if (incrementResponse.ok) {
             const incrementedData = await incrementResponse.json();
-            // Update the local state with the new count
             setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
           } else {
             const errorData = await incrementResponse.json();
@@ -315,14 +310,23 @@ export default function Dashboard() {
           return;
         }
       }
+    } else {
+      alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
+      return;
     }
+  };
+  
+  // Extracted function to increment daily analysis count
+  const incrementDailyAnalysisCount = async (email) => {
+    return await fetch('/api/users/increment-analysis', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+  };
 
-    // User has their own API key or daily analysis count is below limit, proceed with analysis
-    
-    if(userData.geminiApiKey)
-    {
-      setGeminiApiKey(userData.geminiApiKey);
-    }
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
