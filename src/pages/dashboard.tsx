@@ -145,6 +145,7 @@ export default function Dashboard() {
     }
   };
 
+  //no longer needed?
   /*
   useEffect(() => {
     if (tokenVerified && accessGranted) {
@@ -154,14 +155,12 @@ export default function Dashboard() {
       }
       const fetchUserData = async (userEmail: string) => {
         try {
-          const response = await fetch(`/api/users/thisUser?email=${userEmail}`);
-          console.log(response);
+          const response = await fetch(`/api/users?email=${userEmail}`);
           if (response.ok) {
             const data = await response.json();
-            console.log(data);
             if(data.length > 0) {
               setUserData(data[0]);
-              //setHasHistoryAccess(data[0].historyAccess)
+              setHasHistoryAccess(data[0].historyAccess)
               console.log("user data fetched", data)
             }
             
@@ -284,53 +283,6 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
-    // Check if userData is available  
-
-    //logic for api key and daily count
-    if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
-      alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-      return;
-    } else if (userData.geminiApiKey === null && userData.dailyAnalysisCount < 10) {
-      try {
-        const incrementResponse = await incrementDailyAnalysisCount(userData.email);
-        if (incrementResponse.ok) {
-          const incrementedData = await incrementResponse.json();
-          console.error('User can run analysis and incrementing count.');
-          setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
-        } else {
-          const errorData = await incrementResponse.json();
-          console.error('Error incrementing dailyAnalysisCount:', errorData);
-          alert("There was an error with your daily analysis.");
-          return;
-        }
-      } catch (error) {
-        console.error("Error incrementing dailyAnalysisCount:", error);
-        alert("There was an error, please refresh and try again.");
-        return;
-      }
-    } /*else {
-      return; // Allow user to continue if geminiApiKey is not null
-    }*/
-        
-    // Extracted function to increment daily analysis count
-    const incrementDailyAnalysisCount = async (email) => {
-      console.log(`Attempting to increment daily analysis count for email: ${email}`);
-      try {
-        const response = await fetch('/api/users/increment-analysis', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
-        console.log(`Received response from API: ${response.status} ${response.statusText}`);
-        return response;
-      } catch (error) {
-        console.error(`Error incrementing daily analysis count for email ${email}: ${error}`);
-        throw error;
-      }
-    };
-
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
@@ -783,6 +735,11 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     <div>
+                      <Label htmlFor="email">Email</Label>
+                      <Input id="email" value={userEmail || "user@example.com"} readOnly />
+                    </div>
+                    
+                    <div>
                       <div className="flex items-center space-x-2 mb-1">
                         <Label htmlFor="gemini-api-key">Google Gemini API Key</Label>
                         <div className="relative group">
@@ -819,7 +776,7 @@ export default function Dashboard() {
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        Don't forget to get your own key from Google to unlock unlimited use. It's super easy. Your API key is stored securely and used to power AI features.{" "}
+                        Your API key is stored securely and used to power AI features.{" "}
                         <a 
                           href="https://aistudio.google.com/apikey" 
                           target="_blank" 
