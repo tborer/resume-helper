@@ -313,13 +313,21 @@ export default function Dashboard() {
         
     // Extracted function to increment daily analysis count
     const incrementDailyAnalysisCount = async (email) => {
-      return await fetch('/api/users/increment-analysis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
+      console.log(`Attempting to increment daily analysis count for email: ${email}`);
+      try {
+        const response = await fetch('/api/users/increment-analysis', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email }),
+        });
+        console.log(`Received response from API: ${response.status} ${response.statusText}`);
+        return response;
+      } catch (error) {
+        console.error(`Error incrementing daily analysis count for email ${email}: ${error}`);
+        throw error;
+      }
     };
 
     if (!jobDescription || !resumeText) {
