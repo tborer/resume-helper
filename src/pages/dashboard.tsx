@@ -145,7 +145,7 @@ export default function Dashboard() {
     }
   };
 
-  /*
+  
   useEffect(() => {
     if (tokenVerified && accessGranted) {
       const { email } = router.query;
@@ -154,12 +154,12 @@ export default function Dashboard() {
       }
       const fetchUserData = async (userEmail: string) => {
         try {
-          const response = await fetch(`/api/users?email=${userEmail}`);
+          const response = await fetch(`/api/thisUser?email=${userEmail}`);
           if (response.ok) {
             const data = await response.json();
             if(data.length > 0) {
               setUserData(data[0]);
-              setHasHistoryAccess(data[0].historyAccess)
+              //setHasHistoryAccess(data[0].historyAccess)
               console.log("user data fetched", data)
             }
             
@@ -174,7 +174,7 @@ export default function Dashboard() {
       fetchUserData(email as string)
     }
   }, [tokenVerified, accessGranted, router.query]);
-  */
+  
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to fetch the API key from the database instead of localStorage
