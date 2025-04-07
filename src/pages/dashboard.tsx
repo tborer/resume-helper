@@ -154,7 +154,7 @@ export default function Dashboard() {
       }
       const fetchUserData = async (userEmail: string) => {
         try {
-          const response = await fetch(`/api/users/thisUser?email=${encodeURIComponent(userEmail)}`);
+          const response = await fetch(`/api/users/thisUser?email=${userEmail}`);
           if (response.ok) {
             const data = await response.json();
             if(data.length > 0) {
