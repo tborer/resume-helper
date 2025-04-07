@@ -287,26 +287,28 @@ export default function Dashboard() {
       return;
     }
 
-      if (userData.geminiApiKey === null) {
-      // If not, check the daily analysis count
-      if (userData.dailyAnalysisCount >= 10) {
-        alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-        return;
-      } else {
-        // Increment daily analysis count
-        try {
-          const incrementResponse = await incrementDailyAnalysisCount(userData.email);
-          if (incrementResponse.ok) {
-            const incrementedData = await incrementResponse.json();
-            setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
-          } else { const errorData = await incrementResponse.json();
+    if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
+      alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
+      return;
+    } else if (userData.geminiApiKey === null && userData.dailyAnalysisCount < 10) {
+      try {
+        const incrementResponse = await incrementDailyAnalysisCount(userData.email);
+        if (incrementResponse.ok) {
+          const incrementedData = await incrementResponse.json();
+          setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
+        } else {
+          const errorData = await incrementResponse.json();
           console.error('Error incrementing dailyAnalysisCount:', errorData);
-          alert("The analysis could not be run due to account setup.");
-          return; }
-          } catch (error) { console.error("Error incrementing dailyAnalysisCount:", error);
-          alert("There was an error incrementing daily analysis count. Please refresh and try again");
-          return;}
+          alert("There was an error with your daily analysis.");
+          return;
         }
+      } catch (error) {
+        console.error("Error incrementing dailyAnalysisCount:", error);
+        alert("There was an error, please refresh and try again.");
+        return;
+      }
+    }
+        
     // Extracted function to increment daily analysis count
     const incrementDailyAnalysisCount = async (email) => {
       return await fetch('/api/users/increment-analysis', {
