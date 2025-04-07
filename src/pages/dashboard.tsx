@@ -295,6 +295,7 @@ export default function Dashboard() {
         const incrementResponse = await incrementDailyAnalysisCount(userData.email);
         if (incrementResponse.ok) {
           const incrementedData = await incrementResponse.json();
+          console.error('User can run analysis and incrementing count.');
           setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
         } else {
           const errorData = await incrementResponse.json();
