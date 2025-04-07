@@ -145,7 +145,39 @@ export default function Dashboard() {
     }
   };
 
-  //no longer needed?
+  //fetches this user
+  
+  useEffect(() => {
+    if (tokenVerified && accessGranted) {
+      const { email } = router.query;
+      if (email) {
+        checkAdminStatus(email);
+      }
+      const fetchUserData = async (userEmail: string) => {
+        try {
+          const response = await fetch(`/api/users?thisUser=${userEmail}`);
+          if (response.ok) {
+            const data = await response.json();
+            if(data.length > 0) {
+              setUserData(data[0]);
+              setHasHistoryAccess(data[0].historyAccess)
+              console.log("user data fetched", data)
+            }
+            
+          } else {
+            console.error('Error fetching user data:', response.status);
+          }
+        } catch (error) {
+          console.error('Error fetching user data:', error);
+        }
+      };
+
+      fetchUserData(email as string)
+    }
+  }, [tokenVerified, accessGranted, router.query]);
+  
+
+  //fetches all users
   /*
   useEffect(() => {
     if (tokenVerified && accessGranted) {
