@@ -232,52 +232,42 @@ export default function Dashboard() {
     const masterKey = localStorage.getItem('master_gemini_api_key');
     return { key: masterKey || "", isMasterKey: true };
   };
-  /*
-  // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
-  // This function should be updated to save the API key to the database instead of localStorage
+  
+  // DATABASE UPDATE: Save API key to database
   const saveGeminiApiKey = async () => {
     if (!userEmail) {
       setApiKeySaveMessage("Error: User email not found");
       setApiKeySaveSuccess(false);
       return;
     }
-    
+  
     if (!geminiApiKey) {
       setApiKeySaveMessage("Please enter an API key");
       setApiKeySaveSuccess(false);
       return;
     }
-    
+  
     setIsSavingApiKey(true);
     setApiKeySaveMessage("");
-    
-    
+  
     try {
-      // TEMPORARY IMPLEMENTATION: Using localStorage for development
-      localStorage.setItem(`gemini_api_key_${userEmail}`, geminiApiKey);
-      
-      // Future implementation with database:
-      // const response = await fetch('/api/users/save-api-key', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify({ 
-      //     email: userEmail,
-      //     apiKey: geminiApiKey 
-      //   })
-      // });
-      // const data = await response.json();
-      // if (!data.success) {
-      //   throw new Error(data.message || 'Failed to save API key');
-      // }
-      
-      
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
+      const response = await fetch('/api/users/save-api-key', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          email: userEmail,
+          apiKey: geminiApiKey 
+        })
+      });
+      const data = await response.json();
+      if (!data.success) {
+        throw new Error(data.message || 'Failed to save API key');
+      }
+    
       console.log("Dashboard: Saved Gemini API key for user:", userEmail);
       setApiKeySaveMessage("API key saved successfully");
       setApiKeySaveSuccess(true);
-      
+    
       // Clear success message after 3 seconds
       setTimeout(() => {
         setApiKeySaveMessage("");
@@ -289,7 +279,7 @@ export default function Dashboard() {
     } finally {
       setIsSavingApiKey(false);
     }
-  };*/
+  };
 
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
