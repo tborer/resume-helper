@@ -287,8 +287,8 @@ export default function Dashboard() {
       setApiKeySaveSuccess(false);
     } finally {
       setIsSavingApiKey(false);
-    }
-  };*/
+    }*/
+  };
 
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
