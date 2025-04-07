@@ -269,6 +269,7 @@ export default function Dashboard() {
       //   throw new Error(data.message || 'Failed to save API key');
       // }
       
+      /*
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
@@ -287,7 +288,7 @@ export default function Dashboard() {
     } finally {
       setIsSavingApiKey(false);
     }
-  };
+  };*/
 
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
