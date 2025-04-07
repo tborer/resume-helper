@@ -284,23 +284,9 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
-    // Check if userData is available
-    const fetchUserData = async (userEmail: string) => {
-      try {
-        const response = await fetch(`/api/users/thisUser?email=${userEmail}`);
-        console.log(response);
-        if (response.ok) {
-          const data = await response.json();
-          console.log(data);
-          if(data.length > 0) {
-            setUserData(data[0]);
-            //setHasHistoryAccess(data[0].historyAccess)
-            console.log("user data fetched", data)
-          }
-        }  
-      }
-    }    
+    // Check if userData is available  
 
+    //logic for api key and daily count
     if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
       alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
       return;
