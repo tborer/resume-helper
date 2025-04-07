@@ -232,7 +232,7 @@ export default function Dashboard() {
     const masterKey = localStorage.getItem('master_gemini_api_key');
     return { key: masterKey || "", isMasterKey: true };
   };
-
+  /*
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to save the API key to the database instead of localStorage
   const saveGeminiApiKey = async () => {
@@ -289,7 +289,7 @@ export default function Dashboard() {
     } finally {
       setIsSavingApiKey(false);
     }
-  };
+  };*/
 
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
