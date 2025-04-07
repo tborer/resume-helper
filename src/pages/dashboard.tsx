@@ -146,7 +146,6 @@ export default function Dashboard() {
   };
 
   //fetches this user
-  
   useEffect(() => {
     if (tokenVerified && accessGranted) {
       const { email } = router.query;
@@ -155,7 +154,7 @@ export default function Dashboard() {
       }
       const fetchUserData = async (userEmail: string) => {
         try {
-          const response = await fetch(`/api/users?thisUser=${userEmail}`);
+          const response = await fetch(`/api/users?thisUser=${encodeURIComponent(userEmail)}`);
           if (response.ok) {
             const data = await response.json();
             if(data.length > 0) {
