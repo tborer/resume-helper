@@ -186,15 +186,25 @@ export default function Dashboard() {
   
   // Get the API key from the users table, fallback to master key
   const getApiKeyToUse = () => {
-    if (!userData) return { key: "", isMasterKey: false };
+    console.log('Getting API key to use...');
+    if (!userData) {
+      console.log('No user data found. Returning empty key.');
+      return { key: "", isMasterKey: false };
+    }
 
     const apiKey = userData.geminiApiKey;
+    console.log(`User API key: ${apiKey}`);
     if (apiKey) {
+      console.log('Using user API key.');
       return { key: apiKey, isMasterKey: false };
     }
 
     // If no user key, try to get the master key from environment variable
     const masterKey = process.env.MASTER_API_KEY;
+    console.log(`Master API key: ${masterKey}`);
+    if (!masterKey) {
+      console.error('No master API key found. Returning empty key.');
+    }
     return { key: masterKey || "", isMasterKey: true };
   };
   
@@ -298,42 +308,62 @@ export default function Dashboard() {
     setMissingSkills([]);
     
     try {
+      console.log('Importing Gemini utility functions...');
       // Import the Gemini utility functions
       const { 
         extractKeywords, 
         calculateATSMatchScore, 
         generateOptimizedResume 
       } = await import('@/lib/gemini');
+      console.log('Gemini utility functions imported successfully.');
       
       // Run analyses in parallel
+      console.log('Running analyses in parallel...');
       const [keywords, matchResult, optimized] = await Promise.all([
         // Extract keywords from job description
         extractKeywords(apiKey, jobDescription)
+          .then(result => {
+            console.log('Keywords extracted successfully.');
+            return result;
+          })
           .catch(error => {
             console.error("Error extracting keywords:", error);
             return [];
           }),
-          
+
         // Calculate ATS match score
         calculateATSMatchScore(apiKey, resumeText, jobDescription)
+          .then(result => {
+            console.log('ATS match score calculated successfully.');
+            return result;
+          })
           .catch(error => {
             console.error("Error calculating ATS match:", error);
             return { score: Math.floor(Math.random() * 40) + 40, feedback: "" };
           }),
-          
+        
         // Generate optimized resume
-        generateOptimizedResume(geminiApiKey, resumeText, jobDescription)
+        generateOptimizedResume(apiKey, resumeText, jobDescription)
+          .then(result => {
+            console.log('Optimized resume generated successfully.');
+            return result;
+          })
           .catch(error => {
             console.error("Error generating optimized resume:", error);
             return resumeText + "\n\n/* Optimized with keywords from job description */";
           })
       ]);
-      
+
+      console.log('Analyses completed. Updating state...');
       setTopKeywords(keywords.length > 0 ? keywords : []);
       setMissingSkills(matchResult.missingSkills || []);
       setAtsScore(matchResult.score || 0);
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
+      console.log('State updated successfully.');
+    } catch (error) {
+      console.error('Error during analysis:', error);
+    }
 
       // Increment dailyAnalysisCount
       const response = await fetch('/api/users/increment-analysis', {
