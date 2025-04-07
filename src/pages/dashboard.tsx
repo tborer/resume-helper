@@ -307,63 +307,48 @@ export default function Dashboard() {
     setAtsFeedback(""); 
     setMissingSkills([]);
     
+    setIsAnalyzing(true);
+    setTopKeywords([]);
+    setAtsFeedback(""); 
+    setMissingSkills([]);
+    
     try {
-      console.log('Importing Gemini utility functions...');
       // Import the Gemini utility functions
       const { 
         extractKeywords, 
         calculateATSMatchScore, 
         generateOptimizedResume 
       } = await import('@/lib/gemini');
-      console.log('Gemini utility functions imported successfully.');
       
       // Run analyses in parallel
-      console.log('Running analyses in parallel...');
       const [keywords, matchResult, optimized] = await Promise.all([
         // Extract keywords from job description
         extractKeywords(apiKey, jobDescription)
-          .then(result => {
-            console.log('Keywords extracted successfully.');
-            return result;
-          })
           .catch(error => {
             console.error("Error extracting keywords:", error);
             return [];
           }),
-
+          
         // Calculate ATS match score
         calculateATSMatchScore(apiKey, resumeText, jobDescription)
-          .then(result => {
-            console.log('ATS match score calculated successfully.');
-            return result;
-          })
           .catch(error => {
             console.error("Error calculating ATS match:", error);
             return { score: Math.floor(Math.random() * 40) + 40, feedback: "" };
           }),
-        
+          
         // Generate optimized resume
-        generateOptimizedResume(apiKey, resumeText, jobDescription)
-          .then(result => {
-            console.log('Optimized resume generated successfully.');
-            return result;
-          })
+        generateOptimizedResume(geminiApiKey, resumeText, jobDescription)
           .catch(error => {
             console.error("Error generating optimized resume:", error);
             return resumeText + "\n\n/* Optimized with keywords from job description */";
           })
       ]);
-
-      console.log('Analyses completed. Updating state...');
+      
       setTopKeywords(keywords.length > 0 ? keywords : []);
       setMissingSkills(matchResult.missingSkills || []);
       setAtsScore(matchResult.score || 0);
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
-      console.log('State updated successfully.');
-    } catch (error) {
-      console.error('Error during analysis:', error);
-    }
 
       // Increment dailyAnalysisCount
       const response = await fetch('/api/users/increment-analysis', {
