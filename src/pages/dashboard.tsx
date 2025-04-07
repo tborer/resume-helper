@@ -365,7 +365,7 @@ export default function Dashboard() {
     
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
-      alert("Please add your Google Gemini API key in the Account tab");
+      alert("using the master key");
       return;
     }
     
@@ -411,10 +411,22 @@ export default function Dashboard() {
       setAtsScore(matchResult.score || 0);
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
+
+      // Increment dailyAnalysisCount
+      const response = await fetch('/api/users/increment-analysis', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userData.email }),
+      });
+
+      if (!response.ok) {
+        console.error('Error incrementing dailyAnalysisCount:', await response.json());
+      }
       
     } catch (error) {
       console.error("Error during analysis:", error);
-
       alert("There was an error analyzing your resume. Please check your API key and try again.");
     } finally {
       setIsAnalyzing(false);
