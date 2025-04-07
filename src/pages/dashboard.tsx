@@ -300,12 +300,12 @@ export default function Dashboard() {
           } else {
             const errorData = await incrementResponse.json();
             console.error('Error incrementing dailyAnalysisCount:', errorData);
-            alert("Error incrementing daily analysis count.");
+            alert("The analysis could not be run due to account setup.");
             return;
           }
         } catch (error) {
           console.error("Error incrementing dailyAnalysisCount:", error);
-          alert("Error incrementing daily analysis count.");
+          alert("There was an error incrementing daily analysis count. Please refresh and try again");
           return;
         }
       }
