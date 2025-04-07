@@ -363,12 +363,11 @@ export default function Dashboard() {
       }
     };*/
     
-    /*
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
       alert("Please add your Google Gemini API key in the Account tab");
       return;
-    }*/
+    }
     
     setIsAnalyzing(true);
     setTopKeywords([]);
