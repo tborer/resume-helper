@@ -251,7 +251,7 @@ export default function Dashboard() {
     setIsSavingApiKey(true);
     setApiKeySaveMessage("");
     
-    /*
+    
     try {
       // TEMPORARY IMPLEMENTATION: Using localStorage for development
       localStorage.setItem(`gemini_api_key_${userEmail}`, geminiApiKey);
@@ -289,7 +289,7 @@ export default function Dashboard() {
     } finally {
       setIsSavingApiKey(false);
     }
-  };*/
+  };
 
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
