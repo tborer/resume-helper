@@ -281,50 +281,6 @@ export default function Dashboard() {
   };
 
   const handleAnalyze = async () => {
-      // Check if userData is available
-      if (!userData) {
-        console.error('User data is not available');
-        return;
-      }
-
-      // Check if Gemini API key is populated or daily analysis count is less than 10
-      if (userData.geminiApiKey || userData.dailyAnalysisCount < 10) {
-        // If Gemini API key is blank, increment daily analysis count
-        if (!userData.geminiApiKey) {
-          try {
-            const incrementResponse = await incrementDailyAnalysisCount(userData.email);
-            if (incrementResponse.ok) {
-              const incrementedData = await incrementResponse.json();
-              setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
-            } else {
-              const errorData = await incrementResponse.json();
-              console.error('Error incrementing dailyAnalysisCount:', errorData);
-              alert("Error incrementing daily analysis count.");
-              return;
-            }
-          } catch (error) {
-            console.error("Error incrementing dailyAnalysisCount:", error);
-            alert("Error incrementing daily analysis count.");
-            return;
-          }
-        }
-      } else {
-        alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-        return;
-      }
-    };
-
-    // Extracted function to increment daily analysis count
-    const incrementDailyAnalysisCount = async (email) => {
-      return await fetch('/api/users/increment-analysis', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-    };
-
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
       return;
@@ -777,11 +733,6 @@ export default function Dashboard() {
                 <CardContent>
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" value={userEmail || "user@example.com"} readOnly />
-                    </div>
-                    
-                    <div>
                       <div className="flex items-center space-x-2 mb-1">
                         <Label htmlFor="gemini-api-key">Google Gemini API Key</Label>
                         <div className="relative group">
@@ -818,7 +769,7 @@ export default function Dashboard() {
                         </p>
                       )}
                       <p className="text-xs text-muted-foreground mt-1">
-                        Your API key is stored securely and used to power AI features.{" "}
+                        Don't forget to get your own key from Google to unlock unlimited use. It's super easy. Your API key is stored securely and used to power AI features.{" "}
                         <a 
                           href="https://aistudio.google.com/apikey" 
                           target="_blank" 
