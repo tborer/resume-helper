@@ -330,20 +330,28 @@ export default function Dashboard() {
             console.error("Error extracting keywords:", error);
             return [];
           }),
-          
+        
         // Calculate ATS match score
         calculateATSMatchScore(apiKey, resumeText, jobDescription)
+          .then(result => {
+            console.log('ATS match score calculated successfully.');
+            return result;
+          })
           .catch(error => {
             console.error("Error calculating ATS match:", error);
             return { score: Math.floor(Math.random() * 40) + 40, feedback: "" };
           }),
-          
+        
         // Generate optimized resume
-        generateOptimizedResume(geminiApiKey, resumeText, jobDescription)
+        generateOptimizedResume(apiKey, resumeText, jobDescription)
+          .then(result => {
+            console.log('Optimized resume generated successfully.');
+            return result;
+          })
           .catch(error => {
             console.error("Error generating optimized resume:", error);
             return resumeText + "\n\n/* Optimized with keywords from job description */";
-          })
+          })  
       ]);
       
       setTopKeywords(keywords.length > 0 ? keywords : []);
