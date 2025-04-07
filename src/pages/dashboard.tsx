@@ -148,63 +148,41 @@ export default function Dashboard() {
   //fetches this user
   useEffect(() => {
     if (tokenVerified && accessGranted) {
+      console.log('Token verified and access granted');
       const { email } = router.query;
+      console.log('Email:', email);
       if (email) {
         checkAdminStatus(email);
-      }
-      const fetchUserData = async (userEmail: string) => {
-        try {
-          const response = await fetch(`/api/users/thisUser?email=${encodeURIComponent(userEmail)}`);
-          if (response.ok) {
-            const data = await response.json();
-            if(data.length > 0) {
-              setUserData(data[0]);
-              setHasHistoryAccess(data[0].historyAccess)
-              console.log("user data fetched", data)
+        const fetchUserData = async (userEmail: string) => {
+          try {
+            console.log('Fetching user data...');
+            const response = await fetch(`/api/users/thisUser?email=${encodeURIComponent(userEmail)}`);
+            console.log('Response:', response);
+            if (response.ok) {
+              const data = await response.json();
+              console.log('User data:', data);
+              if(data.length > 0) {
+                setUserData(data[0]);
+                setHasHistoryAccess(data[0].historyAccess)
+                console.log("user data fetched", data)
+              } else {
+                console.log('No user data found');
+              }
+            } else {
+              console.error('Error fetching user data:', response.status);
             }
-            
-          } else {
-            console.error('Error fetching user data:', response.status);
+          } catch (error) {
+            console.error('Error fetching user data:', error);
           }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-
-      fetchUserData(email as string)
+        };
+        fetchUserData(email as string)
+      } else {
+        console.log('No email found in router query');
+      }
+    } else {
+      console.log('Token not verified or access not granted');
     }
   }, [tokenVerified, accessGranted, router.query]);
-  
-
-  //fetches all users
-  /*
-  useEffect(() => {
-    if (tokenVerified && accessGranted) {
-      const { email } = router.query;
-      if (email) {
-        checkAdminStatus(email);
-      }
-      const fetchUserData = async (userEmail: string) => {
-        try {
-          const response = await fetch(`/api/users?email=${userEmail}`);
-          if (response.ok) {
-            const data = await response.json();
-            if(data.length > 0) {
-              setUserData(data[0]);
-              setHasHistoryAccess(data[0].historyAccess)
-              console.log("user data fetched", data)
-            }
-          } else {
-            console.error('Error fetching user data:', response.status);
-          }
-        } catch (error) {
-          console.error('Error fetching user data:', error);
-        }
-      };
-      fetchUserData(email as string)
-    }
-  }, [tokenVerified, accessGranted, router.query]);
-  */
   
   // DATABASE UPDATE REQUIRED: Move API key storage from localStorage to database
   // This function should be updated to fetch the API key from the database instead of localStorage
@@ -342,26 +320,6 @@ export default function Dashboard() {
     }     /*else {
       return; // Allow user to continue if geminiApiKey is not null
     }*/
-
-      /*
-    // Extracted function to increment daily analysis count
-    const incrementDailyAnalysisCount = async (email) => {
-      console.log(`Attempting to increment daily analysis count for email: ${email}`);
-      try {
-        const response = await fetch('/api/users/increment-analysis', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email }),
-        });
-        console.log(`Received response from API: ${response.status} ${response.statusText}`);
-        return response;
-      } catch (error) {
-        console.error(`Error incrementing daily analysis count for email ${email}: ${error}`);
-        throw error;
-      }
-    };*/
     
     const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (!apiKey) {
