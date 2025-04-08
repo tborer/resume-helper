@@ -354,11 +354,16 @@ export default function Dashboard() {
           })  
       ]);
       
+      console.log('Analyses completed. Updating state...');
       setTopKeywords(keywords.length > 0 ? keywords : []);
       setMissingSkills(matchResult.missingSkills || []);
       setAtsScore(matchResult.score || 0);
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
+      console.log('State updated successfully.');
+    } catch (error) {
+      console.error('Error during analysis:', error);
+    }  
 
       // Increment dailyAnalysisCount
       const response = await fetch('/api/users/increment-analysis', {
