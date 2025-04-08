@@ -304,7 +304,7 @@ export default function Dashboard() {
   
   // DATABASE UPDATE: Save API key to database
   const saveGeminiApiKey = async () => {
-    if (!userEmail) {
+    if (!userData || !userData.email) {
       setApiKeySaveMessage("Error: User email not found");
       setApiKeySaveSuccess(false);
       return;
@@ -324,8 +324,8 @@ export default function Dashboard() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          email: userEmail,
-          apiKey: geminiApiKey 
+          email: userData.email,
+          apiKey: geminiApiKey
         })
       });
       const data = await response.json();
