@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '@/lib/prisma';
-import nodemailer from 'nodemailer';
+//import nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 
 // Ensure body parsing is enabled for this API route
@@ -235,5 +235,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   } else {
     res.setHeader('Allow', 'POST');
     return res.status(405).end('Method Not Allowed');
-  }*/
-}
+  }
+}*/
