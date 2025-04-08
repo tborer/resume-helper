@@ -364,49 +364,49 @@ export default function Dashboard() {
     }
 
     //code to check key and count
-    const response = await fetch('/api/users/get-user-analysis-count', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ email: userData.email }),
-    });
+    try {
+      const response = await fetch('/api/users/get-user-analysis-count', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: userData.email }),
+      });
     
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Received daily analysis count:', data.dailyAnalysisCount);
-      const currentCount = data.dailyAnalysisCount;
-      // Use the currentCount in your logic
-    } else {
-      console.error('Error getting dailyAnalysisCount:', await response.json());
-    }
-
-    //code to use increment value and allow or not allow
-    if (isMasterKey && currentCount >= 10) {
-      alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-      return;
-    } else if (isMasterKey && currentCount < 10) {
-      try {
-        const incrementResponse = await incrementDailyAnalysisCount(userData.email);
-        if (incrementResponse.ok) {
-          const incrementedData = await incrementResponse.json();
-          console.log('User can run analysis and incrementing count.');
-          setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
-        } else {
-          const errorData = await incrementResponse.json();
-          console.error('Error incrementing dailyAnalysisCount:', errorData);
-          alert("There was an error with your daily analysis.");
+      if (response.ok) {
+        const data = await response.json();
+        console.log('Received daily analysis count:', data.dailyAnalysisCount);
+        const currentCount = data.dailyAnalysisCount;
+    
+        if (isMasterKey && currentCount >= 10) {
+          alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
           return;
+        } else if (isMasterKey && currentCount < 10) {
+          try {
+            const incrementResponse = await incrementDailyAnalysisCount(userData.email);
+            if (incrementResponse.ok) {
+              const incrementedData = await incrementResponse.json();
+              console.log('User can run analysis and incrementing count.');
+              setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
+            } else {
+              const errorData = await incrementResponse.json();
+              console.error('Error incrementing dailyAnalysisCount:', errorData);
+              alert("There was an error with your daily analysis.");
+              return;
+            }
+          } catch (error) {
+            console.error("Error incrementing dailyAnalysisCount:", error);
+            alert("There was an error, please refresh and try again.");
+            return;
+          }
         }
-      } catch (error) {
-        console.error("Error incrementing dailyAnalysisCount:", error);
-        alert("There was an error, please refresh and try again.");
-        return;
+      } else {
+        const errorData = await response.json();
+        console.error('Error getting dailyAnalysisCount:', errorData);
       }
+    } catch (error) {
+      console.error("Error getting dailyAnalysisCount:", error);
     }
-  } else {
-    console.error('Error getting dailyAnalysisCount:', await response.json());
-  }
 
     /*
     //code to check key and count
