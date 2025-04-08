@@ -194,8 +194,9 @@ export default function Dashboard() {
               const data = await response.json();
               console.log('User data:', data);
               if (Object.keys(data).length > 0) {
-                setUserData(data[0]);
-                setHasHistoryAccess(data[0].historyAccess);
+                const userData = data;
+                setUserData(userData);
+                setHasHistoryAccess(userData.historyAccess);
                 setUserDataFetched(true); // Set userDataFetched to true
                 const apiKey = getApiKeyToUse(); // Call getApiKeyToUse here
                 console.log(apiKey);
