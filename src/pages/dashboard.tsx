@@ -198,9 +198,9 @@ export default function Dashboard() {
                 setUserData(userData);
                 setHasHistoryAccess(userData.historyAccess);
                 setUserDataFetched(true); // Set userDataFetched to true
-                const apiKey = getApiKeyToUse(); // Call getApiKeyToUse here
-                console.log(apiKey);
                 console.log("User data fetched", data);
+                //const apiKey = getApiKeyToUse(); // Call getApiKeyToUse here
+                //console.log(apiKey);
               } else {
                 console.log('No user data found');
               }
@@ -222,6 +222,10 @@ export default function Dashboard() {
 
   // You can now use the userDataFetched state to conditionally run other functions
   useEffect(() => {
+    if (userDataFetched) {
+      const apiKey = getApiKeyToUse();
+      console.log(apiKey);
+    }
   }, [userDataFetched]);
 
   /*
