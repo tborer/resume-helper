@@ -28,7 +28,7 @@ export default function Dashboard() {
   const [optimizedResume, setOptimizedResume] = useState("");
   const [analysisComplete, setAnalysisComplete] = useState(false);
   const [userEmail, setUserEmail] = useState("");
-  
+  const [userDataFetched, setUserDataFetched] = useState(false);
   const [userData, setUserData] = useState<any | null>(null);
   const [hasHistoryAccess, setHasHistoryAccess] = useState(true);
   // New states for enhanced analysis
