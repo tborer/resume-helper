@@ -4,7 +4,11 @@ import { NextResponse } from 'next/server';
 
 const prisma = new PrismaClient();
 
-export async function GET() {
+export async function GET(req) {
+  if (req.headers.get('Authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
+    return new NextResponse(null, { status: 401 });
+  }
+
   try {
     await prisma.userAccess.updateMany({
       data: {
