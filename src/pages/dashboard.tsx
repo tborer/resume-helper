@@ -374,6 +374,7 @@ export default function Dashboard() {
     
     if (response.ok) {
       const data = await response.json();
+      console.log('Received daily analysis count:', data.dailyAnalysisCount);
       const currentCount = data.dailyAnalysisCount;
       // Use the currentCount in your logic
     } else {
