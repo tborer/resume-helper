@@ -364,7 +364,21 @@ export default function Dashboard() {
     }
 
     //code to check key and count
-    //const { key: apiKey, isMasterKey } = getApiKeyToUse();
+    const response = await fetch('/api/users/get-user-analysis-count', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email: userData.email }),
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      const currentCount = data.dailyAnalysisCount;
+      // Use the currentCount in your logic
+    } else {
+      console.error('Error getting dailyAnalysisCount:', await response.json());
+    }
     if (isMasterKey && userData.dailyAnalysisCount >= 10) {
       alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
       return;
