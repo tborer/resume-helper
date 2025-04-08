@@ -211,6 +211,7 @@ export default function Dashboard() {
             console.error('Error fetching user data:', error);
           }
         };
+        setUserEmail(email as string); 
         fetchUserData(email as string);
       } else {
         console.log('No email found in router query');
