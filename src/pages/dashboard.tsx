@@ -380,10 +380,12 @@ export default function Dashboard() {
     } else {
       console.error('Error getting dailyAnalysisCount:', await response.json());
     }
-    if (isMasterKey && userData.dailyAnalysisCount >= 10) {
+
+    //code to use increment value and allow or not allow
+    if (isMasterKey && currentCount >= 10) {
       alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
       return;
-    } else if (isMasterKey && userData.dailyAnalysisCount < 10) {
+    } else if (isMasterKey && currentCount < 10) {
       try {
         const incrementResponse = await incrementDailyAnalysisCount(userData.email);
         if (incrementResponse.ok) {
@@ -402,6 +404,9 @@ export default function Dashboard() {
         return;
       }
     }
+  } else {
+    console.error('Error getting dailyAnalysisCount:', await response.json());
+  }
 
     /*
     //code to check key and count
