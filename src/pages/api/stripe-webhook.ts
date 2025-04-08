@@ -142,6 +142,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });*/
           
         //creating nodemailer transporter
+        console.log(`[${requestId}] Creating Nodemailer transporter...`);
         const transporter = nodemailer.createTransport({
           host: 'mail.agilerant.info',
           port: 465,
@@ -151,6 +152,28 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             pass: '$Nov2022',
           },
           debug: true, // Enable debug mode
+        }, {logger: true});
+
+        // Verify Nodemailer authentication
+        transporter.verify((error, success) => {
+          if (error) {
+            console.error(`[${requestId}] Nodemailer authentication error:`, error);
+          } else {
+            console.log(`[${requestId}] Nodemailer authentication successful`);
+          }
+        });
+
+        // Add event listeners for more logging
+        transporter.on('idle', () => {
+          console.log(`[${requestId}] Nodemailer transporter idle`);
+        });
+
+        transporter.on('ready', () => {
+          console.log(`[${requestId}] Nodemailer transporter ready`);
+        });
+
+        transporter.on('error', (err) => {
+          console.error(`[${requestId}] Nodemailer transporter error:`, err);
         });
 
         const mailOptions = {
@@ -194,11 +217,38 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         transporter.sendMail(mailOptions, (error, info) => {
           if (error) {
             console.error(`[${requestId}] Error sending email:`, error);
+            const errorDetails = error instanceof Error ? {
+              name: error.name,
+              message: error.message,
+              stack: error.stack
+            } : error;
+            console.error(`[${requestId}] Error details:`, JSON.stringify(errorDetails, null, 2));
+            return res.status(500).json({
+              success: false,
+              message: 'Error sending magic link',
+              requestId,
+            });
+          } else {
+            console.log(`[${requestId}] Email sent successfully!`);
+            console.log(`[${requestId}] Full info object:`, info);
+            console.log(`[${requestId}] Email response:`, info.response);
+            return res.status(200).json({
+              success: true,
+              message: 'Magic link email sent successfully',
+              requestId,
+            });
+          }
+        });
+
+        /*
+        transporter.sendMail(mailOptions, (error, info) => {
+          if (error) {
+            console.error(`[${requestId}] Error sending email:`, error);
           } else {
             console.log('Email sent successfully!');
           }
         });
-        console.log('Send magic link completed');
+        console.log('Send magic link completed');*/
 
         return res.status(200).json({ received: true });
       }
