@@ -29,6 +29,7 @@ async function fetchCustomer(customerId: string) {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  const requestId = uuidv4(); // Generate a unique ID for each request
   if (req.method === 'POST') {
     try {
       // Ensure req.body is properly parsed
