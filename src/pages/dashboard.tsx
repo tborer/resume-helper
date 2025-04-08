@@ -457,7 +457,7 @@ export default function Dashboard() {
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
       console.log('State updated successfully.');
-
+      
 
       // Increment dailyAnalysisCount
       const response = await fetch('/api/users/increment-analysis', {
@@ -467,8 +467,7 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ email: userData.email }),
       });
-      if (!response.ok) {
-        console.error('Error incrementing dailyAnalysisCount:', await response.json());
+      if (response.ok) {
         console.log(`Successfully incremented dailyAnalysisCount for user: ${userData.email}`);
       } else {
         console.error('Error incrementing dailyAnalysisCount:', await response.json());
