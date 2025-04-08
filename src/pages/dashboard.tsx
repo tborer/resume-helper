@@ -225,6 +225,138 @@ export default function Dashboard() {
     if (userDataFetched) {
       const apiKey = getApiKeyToUse();
       console.log(apiKey);
+      const handleAnalyze = async () => {
+        if (!jobDescription || !resumeText) {
+          alert("Please enter both job description and resume");
+          return;
+        }
+    
+        const { key: apiKey, isMasterKey } = getApiKeyToUse();
+        if (!apiKey) {
+          alert("No API key found. Please add your own API key in the Account tab.");
+          return;
+        }
+    
+        /*
+        //code to check key and count
+        if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
+          alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
+          return;
+        } else if (userData.geminiApiKey === null && userData.dailyAnalysisCount < 10) {
+          try {
+            const incrementResponse = await incrementDailyAnalysisCount(userData.email);
+            if (incrementResponse.ok) {
+              const incrementedData = await incrementResponse.json();
+              console.error('User can run analysis and incrementing count.');
+              setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
+            } else {
+              const errorData = await incrementResponse.json();
+              console.error('Error incrementing dailyAnalysisCount:', errorData);
+              alert("There was an error with your daily analysis.");
+              return;
+            }
+          } catch (error) {
+            console.error("Error incrementing dailyAnalysisCount:", error);
+            alert("There was an error, please refresh and try again.");
+            return;
+          }
+        }     /*else {
+          return; // Allow user to continue if geminiApiKey is not null
+        }*/
+        
+        /*
+        const { key: apiKey, isMasterKey } = getApiKeyToUse();
+        if (!apiKey) {
+          alert("using the master key");
+          //return;
+        }*/
+        
+          
+        setIsAnalyzing(true);
+        setTopKeywords([]);
+        setAtsFeedback(""); 
+        setMissingSkills([]);
+        
+        try {
+          // Import the Gemini utility functions
+          console.log('Importing Gemini utility functions...');
+          const { 
+            extractKeywords, 
+            calculateATSMatchScore, 
+            generateOptimizedResume 
+          } = await import('@/lib/gemini');
+          console.log('Gemini utility functions imported successfully.');
+          
+          // Run analyses in parallel
+          console.log('Running analyses in parallel...');
+          const [keywords, matchResult, optimized] = await Promise.all([
+            // Extract keywords from job description
+            extractKeywords(apiKey, jobDescription)
+              .then(result => {
+                console.log('Keywords extracted successfully.');
+                return result;
+              })
+              .catch(error => {
+                console.error("Error extracting keywords:", error);
+                return [];
+              }),
+            
+            // Calculate ATS match score
+            calculateATSMatchScore(apiKey, resumeText, jobDescription)
+              .then(result => {
+                console.log('ATS match score calculated successfully.');
+                return result;
+              })
+              .catch(error => {
+                console.error("Error calculating ATS match:", error);
+                return { score: Math.floor(Math.random() * 40) + 40, feedback: "" };
+              }),
+            
+            // Generate optimized resume
+            generateOptimizedResume(apiKey, resumeText, jobDescription)
+              .then(result => {
+                console.log('Optimized resume generated successfully.');
+                return result;
+              })
+              .catch(error => {
+                console.error("Error generating optimized resume:", error);
+                return resumeText + "\n\n/* Optimized with keywords from job description */";
+              })  
+          ]);
+          
+          console.log('Analyses completed. Updating state...');
+          setTopKeywords(keywords.length > 0 ? keywords : []);
+          setMissingSkills(matchResult.missingSkills || []);
+          setAtsScore(matchResult.score || 0);
+          setAtsFeedback(matchResult.feedback || "");
+          setOptimizedResume(optimized);
+          console.log('State updated successfully.');
+    
+    
+          // Increment dailyAnalysisCount
+          const response = await fetch('/api/users/increment-analysis', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: userData.email }),
+          });
+          if (!response.ok) {
+            console.error('Error incrementing dailyAnalysisCount:', await response.json());
+            console.log(`Successfully incremented dailyAnalysisCount for user: ${userData.email}`);
+          } else {
+            console.error('Error incrementing dailyAnalysisCount:', await response.json());
+          }
+          
+        } catch (error) {
+          console.error("Error during analysis:", error);
+          alert("There was an error analyzing your resume. Please check your API key and try again.");
+        } finally {
+          setIsAnalyzing(false);
+          setAnalysisComplete(true);
+          console.log(`Successfully completed analsis for user: ${userData.email}`);
+        }
+      };
     }
   }, [userDataFetched]);
 
@@ -349,6 +481,7 @@ export default function Dashboard() {
     }
   };
 
+  /*
   const handleAnalyze = async () => {
     if (!jobDescription || !resumeText) {
       alert("Please enter both job description and resume");
@@ -395,6 +528,7 @@ export default function Dashboard() {
       //return;
     }*/
     
+      /*
     setIsAnalyzing(true);
     setTopKeywords([]);
     setAtsFeedback(""); 
@@ -444,7 +578,7 @@ export default function Dashboard() {
           .catch(error => {
             console.error("Error generating optimized resume:", error);
             return resumeText + "\n\n/* Optimized with keywords from job description */";
-          })  
+          /*})  
       ]);
       
       console.log('Analyses completed. Updating state...');
@@ -479,7 +613,7 @@ export default function Dashboard() {
       setAnalysisComplete(true);
       console.log(`Successfully completed analsis for user: ${userData.email}`);
     }
-  };
+  };*/
 
   
   // Test subscription status
