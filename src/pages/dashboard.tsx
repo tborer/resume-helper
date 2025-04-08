@@ -31,7 +31,6 @@ export default function Dashboard() {
   const [userDataFetched, setUserDataFetched] = useState(false);
   const [userData, setUserData] = useState<any | null>(null);
   const [hasHistoryAccess, setHasHistoryAccess] = useState(true);
-  const [userDataFetched, setUserDataFetched] = useState(false);
 
   // New states for enhanced analysis
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
