@@ -193,7 +193,7 @@ export default function Dashboard() {
             if (response.ok) {
               const data = await response.json();
               console.log('User data:', data);
-              if (data.length > 0) {
+              if (Object.keys(data).length > 0) {
                 setUserData(data[0]);
                 setHasHistoryAccess(data[0].historyAccess);
                 setUserDataFetched(true); // Set userDataFetched to true
