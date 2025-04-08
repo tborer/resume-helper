@@ -31,6 +31,8 @@ export default function Dashboard() {
   const [userDataFetched, setUserDataFetched] = useState(false);
   const [userData, setUserData] = useState<any | null>(null);
   const [hasHistoryAccess, setHasHistoryAccess] = useState(true);
+  const [userDataFetched, setUserDataFetched] = useState(false);
+
   // New states for enhanced analysis
   const [topKeywords, setTopKeywords] = useState<string[]>([]);
   const [atsFeedback, setAtsFeedback] = useState("");
@@ -161,6 +163,47 @@ export default function Dashboard() {
             if (response.ok) {
               const data = await response.json();
               console.log('User data:', data);
+              if (data.length > 0) {
+                setUserData(data[0]);
+                setHasHistoryAccess(data[0].historyAccess);
+                setUserDataFetched(true); // Set userDataFetched to true
+                console.log("User data fetched", data);
+              } else {
+                console.log('No user data found');
+              }
+            } else {
+              console.error('Error fetching user data:', response.status);
+            }
+          } catch (error) {
+            console.error('Error fetching user data:', error);
+          }
+        };
+        fetchUserData(email as string);
+      } else {
+        console.log('No email found in router query');
+      }
+    } else {
+      console.log('Token not verified or access not granted');
+    }
+  }, [tokenVerified, accessGranted, router.query]);
+
+  /*
+  //fetches this user
+  useEffect(() => {
+    if (tokenVerified && accessGranted) {
+      console.log('Token verified and access granted');
+      const { email } = router.query;
+      console.log('Email:', email);
+      if (email) {
+        checkAdminStatus(email);
+        const fetchUserData = async (userEmail: string) => {
+          try {
+            console.log('Fetching user data...');
+            const response = await fetch(`/api/users/thisUser?email=${encodeURIComponent(userEmail)}`);
+            console.log('Response:', response);
+            if (response.ok) {
+              const data = await response.json();
+              console.log('User data:', data);
               if(data.length > 0) {
                 setUserData(data[0]);
                 setHasHistoryAccess(data[0].historyAccess)
@@ -183,6 +226,7 @@ export default function Dashboard() {
       console.log('Token not verified or access not granted');
     }
   }, [tokenVerified, accessGranted, router.query]);
+  */
   
   // Get the API key from the users table, fallback to master key
   const getApiKeyToUse = () => {
