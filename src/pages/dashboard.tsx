@@ -361,9 +361,7 @@ export default function Dashboard() {
       setAtsFeedback(matchResult.feedback || "");
       setOptimizedResume(optimized);
       console.log('State updated successfully.');
-    } catch (error) {
-      console.error('Error during analysis:', error);
-    }  
+
 
       // Increment dailyAnalysisCount
       const response = await fetch('/api/users/increment-analysis', {
