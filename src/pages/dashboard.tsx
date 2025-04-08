@@ -381,7 +381,7 @@ export default function Dashboard() {
         if (isMasterKey && currentCount >= 10) {
           alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
           return;
-        } else if (isMasterKey && currentCount < 10) {
+        } /*else if (isMasterKey && currentCount < 10) {
           try {
             const incrementResponse = await incrementDailyAnalysisCount(userData.email);
             if (incrementResponse.ok) {
@@ -399,7 +399,7 @@ export default function Dashboard() {
             alert("There was an error, please refresh and try again.");
             return;
           }
-        }
+        }*/
       } else {
         const errorData = await response.json();
         console.error('Error getting dailyAnalysisCount:', errorData);
