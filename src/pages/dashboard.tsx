@@ -364,7 +364,7 @@ export default function Dashboard() {
     }
 
     //code to check key and count
-    const { key: apiKey, isMasterKey } = getApiKeyToUse();
+    //const { key: apiKey, isMasterKey } = getApiKeyToUse();
     if (isMasterKey && userData.dailyAnalysisCount >= 10) {
       alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
       return;
