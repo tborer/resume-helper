@@ -404,9 +404,9 @@ export default function Dashboard() {
         const errorData = await response.json();
         console.error('Error getting dailyAnalysisCount:', errorData);
       }
-    } /*catch (error) {
+    } catch (error) {
       console.error("Error getting dailyAnalysisCount:", error);
-    }*/
+    }
       
     setIsAnalyzing(true);
     setTopKeywords([]);
