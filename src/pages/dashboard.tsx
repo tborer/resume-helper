@@ -146,6 +146,37 @@ export default function Dashboard() {
     }
   };
 
+  // Get the API key from the users table, fallback to master key
+  const getApiKeyToUse = () => {
+    if (!userDataFetched) {
+      console.log('User data not fetched yet. Delaying analysis...');
+      return;
+    }
+
+    console.log('Getting API key to use...');
+    if (!userData) {
+      console.log('No user data found. Returning empty key.');
+      return { key: "", isMasterKey: false };
+    }
+
+    const apiKey = userData.geminiApiKey;
+    console.log(`User API key: ${apiKey}`);
+    if (apiKey !== null && apiKey !== undefined) {
+      console.log('Using user API key.');
+      return { key: apiKey, isMasterKey: false };
+    } else {
+      console.log('User API key is null or undefined. Falling back to master key.');
+    }
+
+    // If no user key, try to get the master key from environment variable
+    const masterKey = process.env.MASTER_API_KEY;
+    console.log(`Master API key: ${masterKey}`);
+    if (!masterKey) {
+      console.error('No master API key found. Returning empty key.');
+    }
+    return { key: masterKey || "", isMasterKey: true };
+  };
+
   //fetches this user
   useEffect(() => {
     if (tokenVerified && accessGranted) {
@@ -189,38 +220,10 @@ export default function Dashboard() {
   // You can now use the userDataFetched state to conditionally run other functions
   useEffect(() => {
     if (userDataFetched) {
-        // Get the API key from the users table, fallback to master key
-        const getApiKeyToUse = () => {
-          if (!userDataFetched) {
-            console.log('User data not fetched yet. Delaying analysis...');
-            return;
-          }
-
-          console.log('Getting API key to use...');
-          if (!userData) {
-            console.log('No user data found. Returning empty key.');
-            return { key: "", isMasterKey: false };
-          }
-
-          const apiKey = userData.geminiApiKey;
-          console.log(`User API key: ${apiKey}`);
-          if (apiKey !== null && apiKey !== undefined) {
-            console.log('Using user API key.');
-            return { key: apiKey, isMasterKey: false };
-          } else {
-            console.log('User API key is null or undefined. Falling back to master key.');
-          }
-
-          // If no user key, try to get the master key from environment variable
-          const masterKey = process.env.MASTER_API_KEY;
-          console.log(`Master API key: ${masterKey}`);
-          if (!masterKey) {
-            console.error('No master API key found. Returning empty key.');
-          }
-          return { key: masterKey || "", isMasterKey: true };
-        };
-          }
-        }, [userDataFetched]);
+      const apiKey = getApiKeyToUse();
+      // Use the apiKey here
+    }
+  }, [userDataFetched]);
 
   /*
   //fetches this user
