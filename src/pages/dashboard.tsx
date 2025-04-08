@@ -148,10 +148,10 @@ export default function Dashboard() {
 
   // Get the API key from the users table, fallback to master key
   const getApiKeyToUse = () => {
-    if (!userDataFetched) {
+    /*if (!userDataFetched) {
       console.log('User data not fetched yet. Delaying analysis...');
       return;
-    }
+    }*/
 
     console.log('Getting API key to use...');
     if (!userData) {
@@ -169,7 +169,7 @@ export default function Dashboard() {
     }
 
     // If no user key, try to get the master key from environment variable
-    const masterKey = process.env.MASTER_API_KEY;
+    const masterKey = process.env.NEXT_PUBLIC_MASTER_API_KEY;
     console.log(`Master API key: ${masterKey}`);
     if (!masterKey) {
       console.error('No master API key found. Returning empty key.');
