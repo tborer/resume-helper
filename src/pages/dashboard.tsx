@@ -380,7 +380,7 @@ export default function Dashboard() {
         const currentCount = data.dailyAnalysisCount;
     
         if (isMasterKey && currentCount >= 10) {
-          alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
+          alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit. If you just added a key, please refresh and try again.");
           return;
         } /*else if (isMasterKey && currentCount < 10) {
           try {
