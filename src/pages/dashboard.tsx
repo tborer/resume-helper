@@ -404,44 +404,9 @@ export default function Dashboard() {
         const errorData = await response.json();
         console.error('Error getting dailyAnalysisCount:', errorData);
       }
-    } catch (error) {
+    } /*catch (error) {
       console.error("Error getting dailyAnalysisCount:", error);
-    }
-
-    /*
-    //code to check key and count
-    if (userData.geminiApiKey === null && userData.dailyAnalysisCount >= 10) {
-      alert("You have reached your daily limit of resume analyses. Add your own API key in the Account tab to remove this limit.");
-      return;
-    } else if (userData.geminiApiKey === null && userData.dailyAnalysisCount < 10) {
-      try {
-        const incrementResponse = await incrementDailyAnalysisCount(userData.email);
-        if (incrementResponse.ok) {
-          const incrementedData = await incrementResponse.json();
-          console.error('User can run analysis and incrementing count.');
-          setUserData({ ...userData, dailyAnalysisCount: incrementedData.dailyAnalysisCount });
-        } else {
-          const errorData = await incrementResponse.json();
-          console.error('Error incrementing dailyAnalysisCount:', errorData);
-          alert("There was an error with your daily analysis.");
-          return;
-        }
-      } catch (error) {
-        console.error("Error incrementing dailyAnalysisCount:", error);
-        alert("There was an error, please refresh and try again.");
-        return;
-      }
-    }     /*else {
-      return; // Allow user to continue if geminiApiKey is not null
     }*/
-    
-    /*
-    const { key: apiKey, isMasterKey } = getApiKeyToUse();
-    if (!apiKey) {
-      alert("using the master key");
-      //return;
-    }*/
-    
       
     setIsAnalyzing(true);
     setTopKeywords([]);
