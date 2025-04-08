@@ -10,16 +10,25 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { email } = req.body;
 
   try {
-    const userAccess = await prisma.userAccess.findFirst({
+    const user = await prisma.user.findUnique({
       where: { email },
     });
-
-    if (!userAccess) {
+    
+    if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
+    
+    const userAccess = await prisma.userAccess.findUnique({
+      where: { userId: user.id },
+    });
+    
+    if (!userAccess) {
+      return res.status(404).json({ message: 'User access not found' });
+    }
+    
+    // Now you can update the userAccess record
     const updatedUserAccess = await prisma.userAccess.update({
-      where: { email },
+      where: { userId: user.id },
       data: {
         dailyAnalysisCount: userAccess.dailyAnalysisCount + 1,
       },
