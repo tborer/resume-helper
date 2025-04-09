@@ -70,6 +70,15 @@ export default function Home() {
   return (
     <>
       <Head>
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-TXWZK2XVHY"></script>
+        <script>
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+
+          gtag('config', 'G-TXWZK2XVHY');
+        </script>
         <title>Resume Rocket Match AI - ATS Resume Optimizer</title>
         <meta name="description" content="Optimize your resume for ATS systems and land more interviews" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
